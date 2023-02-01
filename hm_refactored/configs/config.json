@@ -1,0 +1,86 @@
+{
+    "dataset_params": {
+        "orig_path" : "/home/omnious/workspace/hyeongseok/datasets/hm",
+        "dataset_path" : "/home/omnious/workspace/hyeongseok/datasets/hm/prep",
+        "target_day": 27,
+        "save_name": "transaction_train_27",
+        "reset": true,
+        "train_data_name":"purchase_user_item.csv",
+        "test_data_name": "purchase_user_item.csv",
+        "remove_cold_user": true,
+        "remove_cold_item": true,
+        "slice_user_by_count": true,
+        "count_high": 200,
+        "count_low": 1,
+        "remove_zero_history": true,
+        "remove_recent_bought": true,
+        "recent_two_weeks": true,
+        "remove_train_recent_bought": false,
+        "embed_metadata": true
+    },
+
+    "model_params": {
+        "embed_size": 32,
+        "weight_decay": 0.001,
+        "weight_decay_opt": false,
+        "num_user_layer": 0,
+        "num_item_layer": 0,
+        "n_layers": 2,
+        "n_heads": 2,
+        "drop_out": 0.4,
+        "loss_type": "BPR",
+        "seq_len": 30,
+        "init_scheme": "Kaiming",
+        "model_type": "Transformer",
+        "sampler_type": "Negative",
+        "learnable_pos": true,
+        "override_mask": true
+    },
+
+    "train_params": {
+        "lr": 1e-4,
+        "batch_size": 256,
+        "train_epoch": 40,
+        "top_k": 10,
+        "optimizer": "Adam",
+        "device_num": 0,
+        "save_epoch": 5,
+        "attention_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/attention_maps",
+        "save_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/checkpoints",
+        "save_name": "working_check",
+        "scheduler_type": "original",
+        "clip_grad_ratio": 0.5,
+        "attention_vis_flag": false,
+        "track_additional_info": true,
+        "interval_additional_info": 4000
+    },
+
+    "eval_params": {
+        "test": true,
+        "benchmark": true,
+        "batch_size_test": 32,
+        "batch_size_benchmark": 32,
+        "test_emb_vis": false,
+        "benchmark_emb_vis": false,
+        "test_emb_vis_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/test_emb_vis",
+        "benchmark_emb_vis_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/benchmark_emb_vis",
+        "popular_ten": false,
+        "recent_ten": false
+    },
+
+    "tuning_params": {
+        "model_params": {
+            "embed_size": [8, 16, 32, 64, 128]
+        },
+        "train_params": {
+            "lr": [1e-3, 1e-4, 1e-5],
+            "batch_size": [256, 512, 1024]
+        }
+    },
+
+    "mlflow_params": {
+        "remote_server_uri": "https://mlflow.labs.omnious.com",
+        "experiment_name": "hs_nipa_hm_sasrec"
+    }
+
+}
