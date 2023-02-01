@@ -69,9 +69,14 @@ class MFBPRModel(nn.Module):
         #print("user_embed:", user_embed)
         #print("pos_embed:", pos_embed)       
         #print("neg_embed:", neg_embed)
-        meta_embed = torch.cat([prodcode_embed, prodtype_embed], dim=1)
+        meta_embed = torch.cat([prodcode_embed, prodtype_embed, graph_appear_embed, colour_group_embed, 
+                                perceived_colour_value_embed, perceived_colour_master_embed, department_embed, 
+                                index_group_embed, section_embed, garment_group_embed], dim=1)
         
         # pos_out, neg_out의 dimension은?
+        pos_embed = pos_embed + meta_embed
+        neg_embed = neg_embed + meta_embed
+        
         pos_out = torch.mul(user_embed, pos_embed).sum(dim=1)
         neg_out = torch.mul(user_embed, neg_embed).sum(dim=1)
         #print("pos_out:", pos_out)
