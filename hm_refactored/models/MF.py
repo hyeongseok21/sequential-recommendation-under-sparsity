@@ -133,7 +133,7 @@ class MFBPRMetaModel(nn.Module):
         #print("pos_embed:", pos_embed)       
         #print("neg_embed:", neg_embed)
         #import pdb; pdb.set_trace()
-        meta_embed = prodcode_embed + prodtype_embed + graph_appear_embed + colour_group_embed + perceived_colour_value_embed + perceived_colour_master_embed + department_embed + index_group_embed + section_embed + garment_group_embed
+        meta_embed = (prodcode_embed + prodtype_embed + department_embed + index_group_embed + section_embed + garment_group_embed)/6
         #meta = torch.cat([prodcode_embed, prodtype_embed, graph_appear_embed, colour_group_embed, perceived_colour_value_embed, perceived_colour_master_embed, department_embed, index_group_embed, section_embed, garment_group_embed], dim=1)
         #meta_embed = torch.cat([prodcode, prodtype, graph_appear, colour_group, pcolval, pcolmas, depart, idxgroup, section, garmgroup], dim=2)
         #meta_embed = self.meta_embedding(meta)

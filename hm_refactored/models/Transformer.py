@@ -55,7 +55,7 @@ class CustomSASRec(nn.Module):
             elif isinstance(m, nn.ReLU):
                 m = nn.ReLU(inplace=False)
 
-    def forward(self, user, pos, prodcode, prodtype, graph_appear, colour_group, neg, history, history_mask, neg_history=None, neg_history_mask=None):
+    def forward(self, user, pos, neg, history, history_mask, neg_history=None, neg_history_mask=None):
         pos_init_embed, neg_init_embed = self.item_embedding(pos), self.item_embedding(neg)
         pos_last_init_embed = self.item_embedding(history[:,-1])
         #print("pos.shape:", pos.shape, "neg.shape:", neg.shape)
@@ -305,9 +305,28 @@ class CustomMetaSASRec(nn.Module):
             elif isinstance(m, nn.ReLU):
                 m = nn.ReLU(inplace=False)
 
-    def forward(self, user, pos, prodcode, prodtype, graph_appear, colour_group, neg, history, history_mask, neg_history=None, neg_history_mask=None):
+    def forward(self, user, pos, prodcode, prodtype, graph_appear, colour_group, pcolval, pcolmas, depart, idxgroup, section, garmgroup,
+                neg, history, history_mask, neg_history=None, neg_history_mask=None):
         pos_init_embed, neg_init_embed = self.item_embedding(pos), self.item_embedding(neg)
         pos_last_init_embed = self.item_embedding(history[:,-1])
+        
+        prodcode_embed = self.product_code_embedding(prodcode)
+        prodtype_embed = self.product_type_embedding(prodtype)
+        graph_appear_embed = self.graphical_appearance_embedding(graph_appear)
+        colour_group_embed = self.colour_group_embedding(colour_group)
+        perceived_colour_value_embed = self.perceived_colour_value(pcolval)
+        perceived_colour_master_embed = self.perceived_colour_master(pcolmas)
+        department_embed = self.department(depart)
+        index_group_embed = self.index_group(idxgroup)
+        section_embed = self.section(section)
+        garment_group_embed = self.garment_group(garmgroup)
+        
+        meta_embed = (prodcode_embed + prodtype_embed + department_embed + index_group_embed + section_embed + garment_group_embed)/6
+        
+        pos_init_embed = pos_init_embed + meta_embed
+        neg_init_embed = neg_init_embed + meta_embed
+        pos_last_init_embed = pos_last_init_embed + meta_embed
+        
         #print("pos.shape:", pos.shape, "neg.shape:", neg.shape)
         #print("pos_init_embed.shape:", pos_init_embed.shape, "neg_init_embed.shape:", neg_init_embed.shape)
         #print("pos_last_init_embed.shape:", pos_last_init_embed.shape)

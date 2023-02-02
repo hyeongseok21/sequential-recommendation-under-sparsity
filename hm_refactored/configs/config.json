@@ -31,7 +31,7 @@
         "loss_type": "BPR",
         "seq_len": 30,
         "init_scheme": "Kaiming",
-        "model_type": "MF",
+        "model_type": "Transformer",
         "sampler_type": "Negative",
         "learnable_pos": true,
         "override_mask": true
@@ -47,7 +47,7 @@
         "save_epoch": 10,
         "attention_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/attention_maps",
         "save_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/checkpoints",
-        "save_name": "MFBPRMeta_epoch40_3",
+        "save_name": "CustomMetaSASRec_40_average_partial_5",
         "scheduler_type": "original",
         "clip_grad_ratio": 0.5,
         "attention_vis_flag": false,
