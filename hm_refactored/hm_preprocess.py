@@ -40,18 +40,17 @@ def hm_prep(config):
     # 1. column 선택 및 정렬, train_target_df, test_target_df 설정
     train_data = load_funcs[train_data_type](train_data_path)
     
-    train_data = train_data[['customer_id', 'article_id', 't_dat']]
-    train_data.columns = ['user_id', 'item_id', 'timestamp']
+    train_data = train_data[['user_id', 'item_id', 'timestamp', 'count', 'occurence']]
     train_data['timestamp'] = pd.to_datetime(train_data['timestamp'])
     
     train_num_days = (train_data['timestamp'].max() - train_data['timestamp'].min()).days
     train_data['day'] = train_num_days - (train_data['timestamp'].max() - train_data['timestamp']).dt.days
-    train_data = train_data.drop_duplicates(subset=['user_id', 'item_id', 'day'], keep='last') # 31788324 -> 28575395 rows
-    train_data = train_data.sort_values(by=['user_id', 'timestamp'], ascending=[True, True])
-    train_data = train_data.reset_index(drop=True)
+    #train_data = train_data.drop_duplicates(subset=['user_id', 'item_id', 'day'], keep='last') # 31788324 -> 28575395 rows
+    #train_data = train_data.sort_values(by=['user_id', 'timestamp'], ascending=[True, True])
+    #train_data = train_data.reset_index(drop=True)
 
     logger.info('Split train / test.')
-    target_columns = ['user_id', 'item_id', 'timestamp', 'day']
+    target_columns = ['user_id', 'item_id', 'timestamp', 'day', 'count', 'occurence']
     train_target_df = train_data[target_columns]
     test_target_df = train_data[target_columns] # 동일한 transactions_train.csv를 쓰므로 train_target_df와 동일하게 설정
     
@@ -64,12 +63,12 @@ def hm_prep(config):
 
     # 3. train_df에 count와 occurence column추가
     if config['slice_user_by_count']:
-        tmp = train_df.groupby('user_id')['item_id'].count()
-        count = tmp.reset_index().rename(columns={"item_id": "count"})
-        occurence = tmp.apply(lambda x : np.arange(x)).explode('item_id').rename("occurence")
+        #tmp = train_df.groupby('user_id')['item_id'].count()
+        #count = tmp.reset_index().rename(columns={"item_id": "count"})
+        #occurence = tmp.apply(lambda x : np.arange(x)).explode('item_id').rename("occurence")
         
-        train_df = train_df.merge(count, on='user_id', how='left')
-        train_df = pd.concat([train_df, occurence], axis=1)
+        #train_df = train_df.merge(count, on='user_id', how='left')
+        #train_df = pd.concat([train_df, occurence], axis=1)
         
         # train_df = train_df[train_df['count'] < config['count_high']][train_df['count'] > config['count_low']]
         train_df = train_df[(train_df['count'] < config['count_high']) & (train_df['count'] > config['count_low'])] # 499120 rows

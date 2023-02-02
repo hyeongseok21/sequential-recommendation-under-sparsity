@@ -89,7 +89,7 @@ class MFBPRMetaModel(nn.Module):
         self.device = device
         
         self.item_embedding = nn.Embedding(self.num_item, self.embed_size)
-        #self.meta_embedding = nn.Embedding(10, self.embed_size)
+        self.meta_embedding = nn.Embedding(320, self.embed_size)
         self.product_code_embedding = nn.Embedding(self.num_product_code, self.embed_size)
         self.product_type_embedding = nn.Embedding(self.num_product_type, self.embed_size)
         self.graphical_appearance_embedding = nn.Embedding(self.num_graphical_appearance, self.embed_size)
@@ -124,7 +124,7 @@ class MFBPRMetaModel(nn.Module):
         perceived_colour_value_embed = self.perceived_colour_value(pcolval)
         perceived_colour_master_embed = self.perceived_colour_master(pcolmas)
         department_embed = self.department(depart)
-        index_group_embed = self.index_group(idxgroup) # <- error
+        index_group_embed = self.index_group(idxgroup)
         section_embed = self.section(section)
         garment_group_embed = self.garment_group(garmgroup)        
         
@@ -132,8 +132,10 @@ class MFBPRMetaModel(nn.Module):
         #print("user_embed:", user_embed)
         #print("pos_embed:", pos_embed)       
         #print("neg_embed:", neg_embed)
-        
-        meta_embed = torch.cat([prodcode, prodtype, graph_appear, colour_group, pcolval, pcolmas, depart, idxgroup, section, garmgroup], dim=2)
+        #import pdb; pdb.set_trace()
+        meta_embed = prodcode_embed + prodtype_embed + graph_appear_embed + colour_group_embed + perceived_colour_value_embed + perceived_colour_master_embed + department_embed + index_group_embed + section_embed + garment_group_embed
+        #meta = torch.cat([prodcode_embed, prodtype_embed, graph_appear_embed, colour_group_embed, perceived_colour_value_embed, perceived_colour_master_embed, department_embed, index_group_embed, section_embed, garment_group_embed], dim=1)
+        #meta_embed = torch.cat([prodcode, prodtype, graph_appear, colour_group, pcolval, pcolmas, depart, idxgroup, section, garmgroup], dim=2)
         #meta_embed = self.meta_embedding(meta)
         
         # pos_out, neg_out의 dimension은?

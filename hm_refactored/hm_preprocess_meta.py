@@ -50,7 +50,7 @@ def hm_prep_meta(config):
     # train_data = train_data.drop_duplicates(subset=['user_id', 'item_id', 'day'], keep='last') # 31788324 -> 28575395 rows
     # train_data = train_data.sort_values(by=['user_id', 'timestamp'], ascending=[True, True])
     # train_data = train_data.reset_index(drop=True)
-
+    
     logger.info('Split train / test.')
     target_columns = ['user_id', 'item_id', 'price', 'timestamp', 'day', 'count', 'occurence', 'product_code', 'product_type_no', 'graphical_appearance_no',
                       'colour_group_code', 'perceived_colour_value_id', 'perceived_colour_master_id', 'department_no', 'index_group_no', 'section_no', 'garment_group_no']
