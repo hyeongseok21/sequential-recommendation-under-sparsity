@@ -3,10 +3,10 @@
         "orig_path": "/home/omnious/workspace/hyeongseok/datasets/hm",
         "dataset_path": "/home/omnious/workspace/hyeongseok/datasets/hm/prep",
         "target_day": 27,
-        "save_name": "transaction_train_27",
+        "save_name": "transaction_train_27_MFBPR",
         "reset": true,
-        "train_data_name": "purchase_user_item.csv",
-        "test_data_name": "purchase_user_item.csv",
+        "train_data_name": "transactions_train.csv",
+        "test_data_name": "transactions_train.csv",
         "remove_cold_user": true,
         "remove_cold_item": true,
         "slice_user_by_count": true,
@@ -15,7 +15,8 @@
         "remove_zero_history": true,
         "remove_recent_bought": true,
         "recent_two_weeks": true,
-        "remove_train_recent_bought": false
+        "remove_train_recent_bought": false,
+        "embed_metadata": false
     },
     "model_params": {
         "embed_size": 32,
@@ -29,7 +30,7 @@
         "loss_type": "BPR",
         "seq_len": 30,
         "init_scheme": "Kaiming",
-        "model_type": "Transformer",
+        "model_type": "MF",
         "sampler_type": "Negative",
         "learnable_pos": true,
         "override_mask": true
@@ -88,6 +89,6 @@
     },
     "mlflow_params": {
         "remote_server_uri": "https://mlflow.labs.omnious.com",
-        "experiment_name": "hs_nipa_hm_sasrec"
+        "experiment_name": "hs_hm_MFBPR"
     }
 }

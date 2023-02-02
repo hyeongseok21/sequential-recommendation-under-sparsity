@@ -107,16 +107,16 @@ def hm_prep_meta(config):
     # test_df['age'] = test_df['age'].astype('int64')
     # test_df['price'] = test_df['price'].astype('int64')
     # test_df['postal_code'] = test_df['postal_code'].astype('category')
-    test_df['product_code'] = test_df['product_code'].astype('category')
-    test_df['product_type_no'] = test_df['product_type_no'].astype('category')
-    test_df['graphical_appearance_no'] = test_df['graphical_appearance_no'].astype('category')
-    test_df['colour_group_code'] = test_df['colour_group_code'].astype('category')
-    test_df['perceived_colour_value_id'] = test_df['perceived_colour_value_id'].astype('category')
-    test_df['perceived_colour_master_id'] = test_df['perceived_colour_master_id'].astype('category')
-    test_df['department_no'] = test_df['department_no'].astype('category')
-    test_df['index_group_no'] = test_df['index_group_no'].astype('category')
-    test_df['section_no'] = test_df['section_no'].astype('category')
-    test_df['garment_group_no'] = test_df['garment_group_no'].astype('category')
+    #test_df['product_code'] = test_df['product_code'].astype('category')
+    #test_df['product_type_no'] = test_df['product_type_no'].astype('category')
+    #test_df['graphical_appearance_no'] = test_df['graphical_appearance_no'].astype('category')
+    #test_df['colour_group_code'] = test_df['colour_group_code'].astype('category')
+    #test_df['perceived_colour_value_id'] = test_df['perceived_colour_value_id'].astype('category')
+    #test_df['perceived_colour_master_id'] = test_df['perceived_colour_master_id'].astype('category')
+    #test_df['department_no'] = test_df['department_no'].astype('category')
+    #test_df['index_group_no'] = test_df['index_group_no'].astype('category')
+    #test_df['section_no'] = test_df['section_no'].astype('category')
+    #test_df['garment_group_no'] = test_df['garment_group_no'].astype('category')
     
     # 5-3. unique_last_test_df
     unique_last_test_df['user_id'] = unique_last_test_df['user_id'].astype('category')
@@ -124,16 +124,16 @@ def hm_prep_meta(config):
     # unique_last_test_df['age'] = unique_last_test_df['age'].astype('int64')
     # unique_last_test_df['price'] = unique_last_test_df['price'].astype('int64')
     # unique_last_test_df['postal_code'] = unique_last_test_df['postal_code'].astype('category')
-    unique_last_test_df['product_code'] = unique_last_test_df['product_code'].astype('category')
-    unique_last_test_df['product_type_no'] = unique_last_test_df['product_type_no'].astype('category')
-    unique_last_test_df['graphical_appearance_no'] = unique_last_test_df['graphical_appearance_no'].astype('category')
-    unique_last_test_df['colour_group_code'] = unique_last_test_df['colour_group_code'].astype('category')
-    unique_last_test_df['perceived_colour_value_id'] = unique_last_test_df['perceived_colour_value_id'].astype('category')
-    unique_last_test_df['perceived_colour_master_id'] = unique_last_test_df['perceived_colour_master_id'].astype('category')
-    unique_last_test_df['department_no'] = unique_last_test_df['department_no'].astype('category')
-    unique_last_test_df['index_group_no'] = unique_last_test_df['index_group_no'].astype('category')
-    unique_last_test_df['section_no'] = unique_last_test_df['section_no'].astype('category')
-    unique_last_test_df['garment_group_no'] = unique_last_test_df['garment_group_no'].astype('category')
+    #unique_last_test_df['product_code'] = unique_last_test_df['product_code'].astype('category')
+    #unique_last_test_df['product_type_no'] = unique_last_test_df['product_type_no'].astype('category')
+    #unique_last_test_df['graphical_appearance_no'] = unique_last_test_df['graphical_appearance_no'].astype('category')
+    #unique_last_test_df['colour_group_code'] = unique_last_test_df['colour_group_code'].astype('category')
+    #unique_last_test_df['perceived_colour_value_id'] = unique_last_test_df['perceived_colour_value_id'].astype('category')
+    #unique_last_test_df['perceived_colour_master_id'] = unique_last_test_df['perceived_colour_master_id'].astype('category')
+    #unique_last_test_df['department_no'] = unique_last_test_df['department_no'].astype('category')
+    #unique_last_test_df['index_group_no'] = unique_last_test_df['index_group_no'].astype('category')
+    #unique_last_test_df['section_no'] = unique_last_test_df['section_no'].astype('category')
+    #unique_last_test_df['garment_group_no'] = unique_last_test_df['garment_group_no'].astype('category')
     
     combined_user_ids = copy.deepcopy(train_df['user_id']).append(unique_last_test_df['user_id'], ignore_index=True).astype('category')
     combined_item_ids = copy.deepcopy(train_df['item_id']).append(unique_last_test_df['item_id'], ignore_index=True).astype('category')
@@ -188,11 +188,21 @@ def hm_prep_meta(config):
     section2idx = {section: idx for idx, section in enumerate(combined_section_ids.cat.categories)}
     idx2section = {idx: section for section, idx in section2idx.items()}
     garment_group2idx = {garment_group: idx for idx, garment_group in enumerate(combined_garment_group_ids.cat.categories)}
-    idx2garment_group = {idx: garment_group for garment_group in garment_group2idx.items()}
+    idx2garment_group = {idx: garment_group for garment_group, idx in garment_group2idx.items()}
     
     # 6-2. user_id, item_id, item_meta를 각각 user_idx, item_idx, meta_idx로 매핑
     train_df['user_id'] = train_df['user_id'].apply(lambda x: user2idx[x])
     train_df['item_id'] = train_df['item_id'].apply(lambda x: item2idx[x])
+    train_df['product_code'] = train_df['product_code'].apply(lambda x: product_code2idx[x])
+    train_df['product_type_no'] = train_df['product_type_no'].apply(lambda x: product_type2idx[x])
+    train_df['graphical_appearance_no'] = train_df['graphical_appearance_no'].apply(lambda x: graphical_appearance2idx[x])
+    train_df['colour_group_code'] = train_df['colour_group_code'].apply(lambda x: colour_group2idx[x])
+    train_df['perceived_colour_value_id'] = train_df['perceived_colour_value_id'].apply(lambda x: perceived_colour_value2idx[x])
+    train_df['perceived_colour_master_id'] = train_df['perceived_colour_master_id'].apply(lambda x: perceived_colour_master2idx[x])
+    train_df['department_no'] = train_df['department_no'].apply(lambda x: department2idx[x])
+    train_df['index_group_no'] = train_df['index_group_no'].apply(lambda x: index_group2idx[x])
+    train_df['section_no'] = train_df['section_no'].apply(lambda x: section2idx[x])
+    train_df['garment_group_no'] = train_df['garment_group_no'].apply(lambda x: garment_group2idx[x])    
     
     # 6-3. cold_user와 cold_item 제거
     if config['remove_cold_user']:

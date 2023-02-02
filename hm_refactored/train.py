@@ -19,7 +19,7 @@ from torch.utils.data import Dataset, DataLoader
 sys.path.append(os.path.dirname(os.path.dirname(os.getcwd())))
 from hm_preprocess import hm_prep
 from hm_preprocess_meta import hm_prep_meta
-from dataset import TrainDataset, TestDataset, BenchmarkDataset, BenchmarkTotalDataset
+from dataset import TrainDataset, TrainMetaDataset, TestDataset, BenchmarkDataset, BenchmarkTotalDataset
 from dataset import NegativeSampler, TwoViewSampler, TwoViewConsistentSampler, TwoViewRandomSampler
 from util.helper import init_logger
 from util.metric import hit, ndcg, map_, diversity
@@ -34,7 +34,8 @@ from mpl_toolkits.mplot3d import Axes3D
 class Trainer:
     def __init__(self, config_path, config=None):
         self.logger = init_logger('trainer')
-        
+        os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+        os.environ["CUDA_VISIBLE_DEVICES"] = "0"
         # 0. config file을 불러와서 parameter 초기화
         if config is None:
             with open(config_path, 'rb') as f:
@@ -49,23 +50,34 @@ class Trainer:
 
         self.logger.info('Loading Dataset.')
         dataset_path = os.path.join(self.dataset_params['dataset_path'], self.dataset_params['save_name'] + '.pkl')
-        if not os.path.isfile(dataset_path): 
-            self.logger.info('No preprocessed data')  
-            self.data_dict = hm_prep(self.dataset_params)
-        elif self.dataset_params['embed_metadata']:
-            self.logger.info('metadata preprocess starts')
-            self.data_dict = hm_prep_meta(self.dataset_params)
+        #if not os.path.isfile(dataset_path): 
+        if self.dataset_params['embed_metadata'] == False:
+            if not os.path.isfile(dataset_path):
+                self.logger.info('No preprocessed data')  
+                self.data_dict = hm_prep(self.dataset_params)
+            else:
+                self.logger.info('Preprocessed data already exist. Loading...')  
+                with open(dataset_path, 'rb') as f:
+                    self.data_dict = pickle.load(f)
         else:
-            self.logger.info('Preprocessed data already exist. Loading...')  
-            with open(dataset_path, 'rb') as f:
-                self.data_dict = pickle.load(f)
+            if not os.path.isfile(dataset_path):
+                self.logger.info('metadata preprocess starts')
+                self.data_dict = hm_prep_meta(self.dataset_params)
+            else:
+                self.logger.info('Preprocessed data already exist. Loading...')  
+                with open(dataset_path, 'rb') as f:
+                    self.data_dict = pickle.load(f)
+        
         self.logger.info('Number of users : {}\tNumber of items : {}'.format(
             self.data_dict['num_user'], self.data_dict['num_item'])
         )
 
         # 1. train, test, benchmark dataset 초기화
         self.logger.info('Initialize Dataset & Negative Sampler.')
-        train_ds = TrainDataset(self.data_dict, self.model_params['seq_len'])
+        if self.dataset_params['embed_metadata'] == False:
+            train_ds = TrainDataset(self.data_dict, self.model_params['seq_len'])
+        else:
+            train_ds = TrainMetaDataset(self.data_dict, self.model_params['seq_len'])
         test_ds = TestDataset(self.data_dict, self.model_params['seq_len'])
         benchmark_ds = BenchmarkTotalDataset(self.data_dict, self.model_params['seq_len'], num_negatives=100)
         
@@ -102,29 +114,45 @@ class Trainer:
         self.device = torch.device('cuda:{}'.format(self.train_params['device_num']))
         
         # 4. model_type에 따라 self.model 초기화
-        if self.model_params['model_type'] == "MF":
-            from models.MF import MFBPRModel
-            get_model = MFBPRModel
-        elif self.model_params['model_type'] == "Transformer":
-            from models.Transformer import CustomSASRec
-            get_model = CustomSASRec
-
-        self.model = get_model(
-            self.model_params, 
-            num_user = self.data_dict['num_user'],
-            num_item = self.data_dict['num_item'],
-            num_product_code = self.data_dict['num_product_code'],
-            num_product_type = self.data_dict['num_product_type'],
-            num_graphical_appearance = self.data_dict['num_graphical_appearance'],
-            num_colour_group = self.data_dict['num_colour_group'],
-            num_perceived_colour_value = self.data_dict['num_perceived_colour_value'],
-            num_perceived_colour_master = self.data_dict['num_perceived_colour_master'],
-            num_department = self.data_dict['num_department'],
-            num_index_group = self.data_dict['num_index_group'],
-            num_section = self.data_dict['num_section'],
-            num_garment_group = self.data_dict['num_garment_group'],
-            device=self.device
-        ).to(self.device)
+        if self.dataset_params['embed_metadata'] == False:
+            if self.model_params['model_type'] == "MF":
+                from models.MF import MFBPRModel
+                get_model = MFBPRModel
+            elif self.model_params['model_type'] == "Transformer":
+                from models.Transformer import CustomSASRec
+                get_model = CustomSASRec
+        else:
+            if self.model_params['model_type'] == "MF":
+                from models.MF import MFBPRMetaModel
+                get_model = MFBPRMetaModel
+            elif self.model_params['model_type'] == "Transformer":
+                from models.Transformer import CustomMetaSASRec
+                get_model = CustomMetaSASRec
+        
+        if self.dataset_params['embed_metadata'] == False:
+            self.model = get_model(
+                self.model_params, 
+                num_user = self.data_dict['num_user'],
+                num_item = self.data_dict['num_item'],
+                device=self.device
+            ).to(self.device)
+        else:
+            self.model = get_model(
+                self.model_params, 
+                num_user = self.data_dict['num_user'],
+                num_item = self.data_dict['num_item'],
+                num_product_code = self.data_dict['num_product_code'],
+                num_product_type = self.data_dict['num_product_type'],
+                num_graphical_appearance = self.data_dict['num_graphical_appearance'],
+                num_colour_group = self.data_dict['num_colour_group'],
+                num_perceived_colour_value = self.data_dict['num_perceived_colour_value'],
+                num_perceived_colour_master = self.data_dict['num_perceived_colour_master'],
+                num_department = self.data_dict['num_department'],
+                num_index_group = self.data_dict['num_index_group'],
+                num_section = self.data_dict['num_section'],
+                num_garment_group = self.data_dict['num_garment_group'],
+                device=self.device
+            ).to(self.device)
 
         # 4-1. weight_decay option 활성화 시, optimizer에 weight_decay를 설정
         if self.model_params['weight_decay_opt']:
@@ -392,11 +420,15 @@ class Trainer:
                 neg_history, neg_history_mask = None, None
                 
                 # train DataLoader로부터 model에 input으로 넣어주는 vector
-                user, pos, neg = pos_neg_pair[:, 0], pos_neg_pair[:, 1], pos_neg_pair[:, -1]
-                prodcode, prodtype = pos_neg_pair[:, 2], pos_neg_pair[:, 3]
-                graph_appear, colour_group, pcolval, pcolmas = pos_neg_pair[:, 4], pos_neg_pair[:, 5], pos_neg_pair[:, 6], pos_neg_pair[:, 7]
-                depart, idxgroup, section, garmgroup = pos_neg_pair[:, 7], pos_neg_pair[:, 8], pos_neg_pair[:, 9], pos_neg_pair[:, 10]
-                history, history_mask = pos_neg_pair[:, 11:11+self.model_params['seq_len']], pos_neg_pair[:, 11+self.model_params['seq_len']:11+2*self.model_params['seq_len']]
+                if self.dataset_params['embed_metadata'] == False:
+                    user, pos, neg = pos_neg_pair[:, 0], pos_neg_pair[:, 1], pos_neg_pair[:, -1]
+                    history, history_mask = pos_neg_pair[:, 2:2+self.model_params['seq_len']], pos_neg_pair[:, 2+self.model_params['seq_len']:2+2*self.model_params['seq_len']]
+                else:
+                    user, pos, neg = pos_neg_pair[:, 0], pos_neg_pair[:, 1], pos_neg_pair[:, -1]
+                    prodcode, prodtype = pos_neg_pair[:, 2], pos_neg_pair[:, 3]
+                    graph_appear, colour_group, pcolval, pcolmas = pos_neg_pair[:, 4], pos_neg_pair[:, 5], pos_neg_pair[:, 6], pos_neg_pair[:, 7]
+                    depart, idxgroup, section, garmgroup = pos_neg_pair[:, 8], pos_neg_pair[:, 9], pos_neg_pair[:, 10], pos_neg_pair[:, 11]
+                    history, history_mask = pos_neg_pair[:, 12:12+self.model_params['seq_len']], pos_neg_pair[:, 12+self.model_params['seq_len']:12+2*self.model_params['seq_len']]
                 
                 # sampler가 TwoView인 경우 neg_history, neg_history_mask
                 if self.model_params['sampler_type'] == "TwoView":
@@ -406,34 +438,42 @@ class Trainer:
                     neg_history = torch.LongTensor(neg_history).to(self.device)
                     neg_history_mask = torch.LongTensor(neg_history_mask).to(self.device)
 
-                if sum(history_mask[:,-1]) < pos_neg_pair.shape[0]:
-                    import pdb; pdb.set_trace()
+                #if sum(history_mask[:,-1]) < pos_neg_pair.shape[0]:
+                #    import pdb; pdb.set_trace()
                 
                 # tensor 값을 int64 value로 변경하고 self.device에 넣음
-                user = torch.LongTensor(user).to(self.device)
-                pos = torch.LongTensor(pos).to(self.device)
-                prodcode = torch.LongTensor(prodcode).to(self.device)
-                prodtype = torch.LongTensor(prodtype).to(self.device)
-                graph_appear = torch.LongTensor(graph_appear).to(self.device)
-                colour_group = torch.LongTensor(colour_group).to(self.device)
-                pcolval = torch.LongTensor(pcolval).to(self.device)
-                pcolmas = torch.LongTensor(pcolmas).to(self.device)
-                depart = torch.LongTensor(depart).to(self.device)
-                idxgroup = torch.LongTensor(idxgroup).to(self.device)
-                section = torch.LongTensor(section).to(self.device)
-                garmgroup = torch.LongTensor(garmgroup).to(self.device)
-                neg = torch.LongTensor(neg).to(self.device)
-                history = torch.LongTensor(history).to(self.device)
-                history_mask = torch.LongTensor(history_mask).to(self.device)
-                
+                if self.dataset_params['embed_metadata'] == False:
+                    user = torch.LongTensor(user).to(self.device)
+                    pos = torch.LongTensor(pos).to(self.device)
+                    neg = torch.LongTensor(neg).to(self.device)
+                    history = torch.LongTensor(history).to(self.device)
+                    history_mask = torch.LongTensor(history_mask).to(self.device)
+                else:
+                    user = torch.LongTensor(user).to(self.device)
+                    pos = torch.LongTensor(pos).to(self.device)
+                    prodcode = torch.LongTensor(prodcode).to(self.device)
+                    prodtype = torch.LongTensor(prodtype).to(self.device)
+                    graph_appear = torch.LongTensor(graph_appear).to(self.device)
+                    colour_group = torch.LongTensor(colour_group).to(self.device)
+                    pcolval = torch.LongTensor(pcolval).to(self.device)
+                    pcolmas = torch.LongTensor(pcolmas).to(self.device)
+                    depart = torch.LongTensor(depart).to(self.device)
+                    idxgroup = torch.LongTensor(idxgroup).to(self.device)
+                    section = torch.LongTensor(section).to(self.device)
+                    garmgroup = torch.LongTensor(garmgroup).to(self.device)
+                    neg = torch.LongTensor(neg).to(self.device)
+                    history = torch.LongTensor(history).to(self.device)
+                    history_mask = torch.LongTensor(history_mask).to(self.device)
                 # gradient 초기화
                 self.opt.zero_grad() 
                 
                 # input vector들을 model에 넣고 output 산출
-                total_loss, loss, reg, user_history_att, user_out, pos_out, neg_out = self.model(user, pos, prodcode, prodtype, graph_appear, colour_group,
+                if self.dataset_params['embed_metadata'] == False:
+                    total_loss, loss, reg, user_history_att, user_out, pos_out, neg_out = self.model(user, pos, neg, history, history_mask)
+                else:
+                    total_loss, loss, reg, user_history_att, user_out, pos_out, neg_out = self.model(user, pos, prodcode, prodtype, graph_appear, colour_group,
                                                                                                  pcolval, pcolmas, depart, idxgroup, section, garmgroup,
                                                                                                  neg, history, history_mask)
-                
                 #import pdb; pdb.set_trace()
                 
                 # gradient descent 계산

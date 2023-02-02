@@ -36,7 +36,7 @@ def hm_prep(config):
     test_data_path = os.path.join(orig_path, test_data_name)
 
     load_funcs = {'csv': (lambda x: pd.read_csv(x)), 'pkl': (lambda x: pickle.load(open(x, 'rb')))}
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     # 1. column 선택 및 정렬, train_target_df, test_target_df 설정
     train_data = load_funcs[train_data_type](train_data_path)
     
