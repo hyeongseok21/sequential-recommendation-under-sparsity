@@ -16,7 +16,7 @@
         "remove_recent_bought": true,
         "recent_two_weeks": true,
         "remove_train_recent_bought": false,
-        "embed_metadata": true
+        "embed_metadata": false
     },
 
     "model_params": {
@@ -32,7 +32,7 @@
         "seq_len": 30,
         "init_scheme": "Kaiming",
         "model_type": "Transformer",
-        "sampler_type": "Negative",
+        "sampler_type": "TwoView",
         "learnable_pos": true,
         "override_mask": true
     },
@@ -40,14 +40,14 @@
     "train_params": {
         "lr": 1e-4,
         "batch_size": 256,
-        "train_epoch": 40,
+        "train_epoch": 100,
         "top_k": 10,
         "optimizer": "Adam",
         "device_num": 0,
-        "save_epoch": 10,
+        "save_epoch": 5,
         "attention_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/attention_maps",
         "save_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/checkpoints",
-        "save_name": "CustomMetaSASRec_40_average_partial_5",
+        "save_name": "CustomSASRec_100_1",
         "scheduler_type": "original",
         "clip_grad_ratio": 0.5,
         "attention_vis_flag": false,
@@ -80,7 +80,7 @@
 
     "mlflow_params": {
         "remote_server_uri": "https://mlflow.labs.omnious.com",
-        "experiment_name": "hs_hm_MFBPR"
+        "experiment_name": "hs_hm_SASRec"
     }
 
 }
