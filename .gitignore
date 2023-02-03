@@ -206,5 +206,6 @@ poetry.toml
 
 datasets/
 hm_refactored/hm_out/checkpoints
+gs_refactored/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,python,visualstudiocode
