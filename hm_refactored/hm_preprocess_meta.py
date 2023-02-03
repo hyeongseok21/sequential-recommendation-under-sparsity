@@ -29,6 +29,7 @@ def hm_prep_meta(config):
     target_day = config['target_day']
     reset = config['reset']
 
+
     logger.info('Read data files.')
     train_data_type, test_data_type = train_data_name[-3:], test_data_name[-3:]
     
