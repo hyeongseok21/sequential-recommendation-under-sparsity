@@ -34,6 +34,8 @@ from mpl_toolkits.mplot3d import Axes3D
 class Trainer:
     def __init__(self, config_path, config=None):
         self.logger = init_logger('trainer')
+        
+        # Identify & Track GPU Error detail
         os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
         # 0. config file을 불러와서 parameter 초기화

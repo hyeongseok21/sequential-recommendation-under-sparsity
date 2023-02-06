@@ -26,7 +26,7 @@ def hm_prep(config):
     test_data_name = config['test_data_name']
     orig_path = config['orig_path']
     save_path = os.path.join(config['dataset_path'], config['save_name'] + '.pkl')
-    target_day = config['target_day']
+    target_week = config['target_week']
     reset = config['reset']
 
     logger.info('Read data files.')
@@ -43,23 +43,23 @@ def hm_prep(config):
     train_data = train_data[['user_id', 'item_id', 'timestamp', 'count', 'occurence']]
     train_data['timestamp'] = pd.to_datetime(train_data['timestamp'])
     
-    train_num_days = (train_data['timestamp'].max() - train_data['timestamp'].min()).days
-    train_data['day'] = train_num_days - (train_data['timestamp'].max() - train_data['timestamp']).dt.days
+    train_num_weeks = (train_data['timestamp'].max() - train_data['timestamp'].min()).days
+    train_data['week'] = train_num_weeks - (train_data['timestamp'].max() - train_data['timestamp']).dt.days
     #train_data = train_data.drop_duplicates(subset=['user_id', 'item_id', 'day'], keep='last') # 31788324 -> 28575395 rows
     #train_data = train_data.sort_values(by=['user_id', 'timestamp'], ascending=[True, True])
     #train_data = train_data.reset_index(drop=True)
 
     logger.info('Split train / test.')
-    target_columns = ['user_id', 'item_id', 'timestamp', 'day', 'count', 'occurence']
+    target_columns = ['user_id', 'item_id', 'timestamp', 'week', 'count', 'occurence']
     train_target_df = train_data[target_columns]
     test_target_df = train_data[target_columns] # 동일한 transactions_train.csv를 쓰므로 train_target_df와 동일하게 설정
     
     # 2. target_day 이전 날짜와 target_day 해당 날짜의 데이터를 분리해 각각 train_df, test_df에 저장
     if config['recent_two_weeks']:
-        train_df = train_target_df[(train_target_df['day'] < target_day) & (train_target_df['day'] > (target_day - 15))] # 28575395 -> 534352 rows
+        train_df = train_target_df[(train_target_df['week'] < target_week) & (train_target_df['week'] > (target_week - 15))] # 28575395 -> 534352 rows
     else:
-        train_df = train_target_df[train_target_df['day'] < target_day]
-    test_df = test_target_df[test_target_df['day'] == target_day] # 53280 rows
+        train_df = train_target_df[train_target_df['week'] < target_week]
+    test_df = test_target_df[test_target_df['week'] == target_week] # 53280 rows
 
     # 3. train_df에 count와 occurence column추가
     if config['slice_user_by_count']:

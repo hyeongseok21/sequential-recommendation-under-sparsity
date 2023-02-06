@@ -26,9 +26,8 @@ def hm_prep_meta(config):
     test_data_name = config['test_data_name']
     orig_path = config['orig_path']
     save_path = os.path.join(config['dataset_path'], config['save_name'] + '.pkl')
-    target_day = config['target_day']
+    target_week = config['target_week']
     reset = config['reset']
-
 
     logger.info('Read data files.')
     train_data_type, test_data_type = train_data_name[-3:], test_data_name[-3:]
@@ -46,24 +45,24 @@ def hm_prep_meta(config):
     # train_data.columns = ['user_id', 'item_id', 'timestamp']
     train_data['timestamp'] = pd.to_datetime(train_data['timestamp'])
     
-    train_num_days = (train_data['timestamp'].max() - train_data['timestamp'].min()).days
-    train_data['day'] = train_num_days - (train_data['timestamp'].max() - train_data['timestamp']).dt.days
+    train_num_weeks = (train_data['timestamp'].max() - train_data['timestamp'].min()).days // 7
+    train_data['week'] = train_num_weeks - (train_data['timestamp'].max() - train_data['timestamp']).dt.days // 7
     # train_data = train_data.drop_duplicates(subset=['user_id', 'item_id', 'day'], keep='last') # 31788324 -> 28575395 rows
     # train_data = train_data.sort_values(by=['user_id', 'timestamp'], ascending=[True, True])
     # train_data = train_data.reset_index(drop=True)
     
     logger.info('Split train / test.')
-    target_columns = ['user_id', 'item_id', 'price', 'timestamp', 'day', 'count', 'occurence', 'product_code', 'product_type_no', 'graphical_appearance_no',
+    target_columns = ['user_id', 'item_id', 'price', 'timestamp', 'week', 'count', 'occurence', 'product_code', 'product_type_no', 'graphical_appearance_no',
                       'colour_group_code', 'perceived_colour_value_id', 'perceived_colour_master_id', 'department_no', 'index_group_no', 'section_no', 'garment_group_no']
     train_target_df = train_data[target_columns]
     test_target_df = train_data[target_columns] # 동일한 purchase_user_item.csv를 쓰므로 train_target_df와 동일하게 설정
     
     # 2. target_day 이전 날짜와 target_day 해당 날짜의 데이터를 분리해 각각 train_df, test_df에 저장
     if config['recent_two_weeks']:
-        train_df = train_target_df[(train_target_df['day'] < target_day) & (train_target_df['day'] > (target_day - 15))] # 28575395 -> 534352 rows
+        train_df = train_target_df[(train_target_df['week'] < target_week) & (train_target_df['week'] > (target_week - 15))] # 28575395 -> rows
     else:
-        train_df = train_target_df[train_target_df['day'] < target_day]
-    test_df = test_target_df[test_target_df['day'] == target_day] # 53280 rows
+        train_df = train_target_df[train_target_df['week'] < target_week]
+    test_df = test_target_df[test_target_df['week'] == target_week] # ~~ rows
 
     # 3. train_df를 count_high와 count_low 사이값으로 자름
     if config['slice_user_by_count']:
@@ -105,36 +104,10 @@ def hm_prep_meta(config):
     # 5-2. test_df
     test_df['user_id'] = test_df['user_id'].astype('category')
     test_df['item_id'] = test_df['item_id'].astype('category')
-    # test_df['age'] = test_df['age'].astype('int64')
-    # test_df['price'] = test_df['price'].astype('int64')
-    # test_df['postal_code'] = test_df['postal_code'].astype('category')
-    #test_df['product_code'] = test_df['product_code'].astype('category')
-    #test_df['product_type_no'] = test_df['product_type_no'].astype('category')
-    #test_df['graphical_appearance_no'] = test_df['graphical_appearance_no'].astype('category')
-    #test_df['colour_group_code'] = test_df['colour_group_code'].astype('category')
-    #test_df['perceived_colour_value_id'] = test_df['perceived_colour_value_id'].astype('category')
-    #test_df['perceived_colour_master_id'] = test_df['perceived_colour_master_id'].astype('category')
-    #test_df['department_no'] = test_df['department_no'].astype('category')
-    #test_df['index_group_no'] = test_df['index_group_no'].astype('category')
-    #test_df['section_no'] = test_df['section_no'].astype('category')
-    #test_df['garment_group_no'] = test_df['garment_group_no'].astype('category')
     
     # 5-3. unique_last_test_df
     unique_last_test_df['user_id'] = unique_last_test_df['user_id'].astype('category')
     unique_last_test_df['item_id'] = unique_last_test_df['item_id'].astype('category')
-    # unique_last_test_df['age'] = unique_last_test_df['age'].astype('int64')
-    # unique_last_test_df['price'] = unique_last_test_df['price'].astype('int64')
-    # unique_last_test_df['postal_code'] = unique_last_test_df['postal_code'].astype('category')
-    #unique_last_test_df['product_code'] = unique_last_test_df['product_code'].astype('category')
-    #unique_last_test_df['product_type_no'] = unique_last_test_df['product_type_no'].astype('category')
-    #unique_last_test_df['graphical_appearance_no'] = unique_last_test_df['graphical_appearance_no'].astype('category')
-    #unique_last_test_df['colour_group_code'] = unique_last_test_df['colour_group_code'].astype('category')
-    #unique_last_test_df['perceived_colour_value_id'] = unique_last_test_df['perceived_colour_value_id'].astype('category')
-    #unique_last_test_df['perceived_colour_master_id'] = unique_last_test_df['perceived_colour_master_id'].astype('category')
-    #unique_last_test_df['department_no'] = unique_last_test_df['department_no'].astype('category')
-    #unique_last_test_df['index_group_no'] = unique_last_test_df['index_group_no'].astype('category')
-    #unique_last_test_df['section_no'] = unique_last_test_df['section_no'].astype('category')
-    #unique_last_test_df['garment_group_no'] = unique_last_test_df['garment_group_no'].astype('category')
     
     combined_user_ids = copy.deepcopy(train_df['user_id']).append(unique_last_test_df['user_id'], ignore_index=True).astype('category')
     combined_item_ids = copy.deepcopy(train_df['item_id']).append(unique_last_test_df['item_id'], ignore_index=True).astype('category')
@@ -155,16 +128,6 @@ def hm_prep_meta(config):
     # 6-1. user, item, item_meta idx mapping set 생성
     train_user2idx = {user_id: idx for idx, user_id in enumerate(train_df['user_id'].cat.categories)}
     train_item2idx = {item_id: idx for idx, item_id in enumerate(train_df['item_id'].cat.categories)}
-    train_product_code2idx = {product_code: idx for idx, product_code in enumerate(train_df['product_code'].cat.categories)}
-    train_product_type2idx = {product_type: idx for idx, product_type in enumerate(train_df['product_type_no'].cat.categories)}
-    train_graphical_appearance2idx = {graphical_appearance: idx for idx, graphical_appearance in enumerate(train_df['graphical_appearance_no'].cat.categories)}
-    train_colour_group_code2idx = {colour_group_code: idx for idx, colour_group_code in enumerate(train_df['colour_group_code'].cat.categories)}
-    train_perceived_colour_value2idx = {perceived_colour_value: idx for idx, perceived_colour_value in enumerate(train_df['perceived_colour_value_id'].cat.categories)}
-    train_perceived_colour_master2idx = {perceived_colour_master: idx for idx, perceived_colour_master in enumerate(train_df['perceived_colour_master_id'].cat.categories)}
-    train_department2idx = {department_no: idx for idx, department_no in enumerate(train_df['department_no'].cat.categories)}
-    train_index_group2idx = {index_group_no: idx for idx, index_group_no in enumerate(train_df['index_group_no'].cat.categories)}
-    train_section2idx = {section_no: idx for idx, section_no in enumerate(train_df['section_no'].cat.categories)}
-    train_garment_group2idx = {garment_group_no: idx for idx, garment_group_no in enumerate(train_df['garment_group_no'].cat.categories)}
 
     user2idx = {user_id: idx for idx, user_id in enumerate(combined_user_ids.cat.categories)}
     idx2user = {idx: user_id for user_id, idx in user2idx.items()}

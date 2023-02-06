@@ -321,7 +321,8 @@ class CustomMetaSASRec(nn.Module):
         section_embed = self.section(section)
         garment_group_embed = self.garment_group(garmgroup)
         
-        meta_embed = (prodcode_embed + prodtype_embed + department_embed + index_group_embed + section_embed + garment_group_embed)/6
+        meta_embed = (prodcode_embed + prodtype_embed + graph_appear_embed + colour_group_embed + perceived_colour_value_embed 
+                      + perceived_colour_master_embed + department_embed + index_group_embed + section_embed + garment_group_embed)/10
         
         pos_init_embed = pos_init_embed + meta_embed
         neg_init_embed = neg_init_embed + meta_embed
