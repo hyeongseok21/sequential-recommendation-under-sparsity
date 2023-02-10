@@ -237,7 +237,7 @@ class CustomSASRec(nn.Module):
 class CustomMetaSASRec(nn.Module):
     def __init__(self, config, num_user, num_item, num_product_code, num_product_type, num_graphical_appearance, 
                  num_colour_group, num_perceived_colour_value, num_perceived_colour_master, num_department,
-                 num_index_group, num_section, num_garment_group, device):
+                 num_index_group, num_section, num_garment_group, num_age, num_price, device):
         super().__init__()
         self.num_user = num_user
         self.num_item = num_item
@@ -251,6 +251,8 @@ class CustomMetaSASRec(nn.Module):
         self.num_index_group = num_index_group
         self.num_section = num_section
         self.num_garment_group = num_garment_group
+        self.num_age = num_age
+        self.num_price = num_price
         
         self.weight_decay = config['weight_decay']
         self.embed_size = config['embed_size']
@@ -271,16 +273,20 @@ class CustomMetaSASRec(nn.Module):
         self.override_mask = config["override_mask"]
 
         self.item_embedding = nn.Embedding(self.num_item, self.embed_size)
-        self.product_code_embedding = nn.Embedding(self.num_product_code, self.embed_size)
-        self.product_type_embedding = nn.Embedding(self.num_product_type, self.embed_size)
-        self.graphical_appearance_embedding = nn.Embedding(self.num_graphical_appearance, self.embed_size)
-        self.colour_group_embedding = nn.Embedding(self.num_colour_group, self.embed_size)
-        self.perceived_colour_value = nn.Embedding(self.num_perceived_colour_value, self.embed_size)
-        self.perceived_colour_master = nn.Embedding(self.num_perceived_colour_master, self.embed_size)
-        self.department = nn.Embedding(self.num_department, self.embed_size)
-        self.index_group = nn.Embedding(self.num_index_group, self.embed_size)
-        self.section = nn.Embedding(self.num_section, self.embed_size)
-        self.garment_group = nn.Embedding(self.num_garment_group, self.embed_size)
+        #self.product_code_embedding = nn.Embedding(self.num_product_code, self.embed_size)
+        self.product_type_embedding = nn.Embedding(self.num_product_type, self.embed_size // 4)
+        #self.graphical_appearance_embedding = nn.Embedding(self.num_graphical_appearance, self.embed_size)
+        #self.colour_group_embedding = nn.Embedding(self.num_colour_group, self.embed_size)
+        #self.perceived_colour_value = nn.Embedding(self.num_perceived_colour_value, self.embed_size)
+        #self.perceived_colour_master = nn.Embedding(self.num_perceived_colour_master, self.embed_size)
+        self.department = nn.Embedding(self.num_department, self.embed_size // 4)
+        #self.index_group = nn.Embedding(self.num_index_group, self.embed_size)
+        #self.section = nn.Embedding(self.num_section, self.embed_size)
+        self.garment_group = nn.Embedding(self.num_garment_group, self.embed_size // 4)
+        self.age = nn.Embedding(self.num_age, self.embed_size // 4)
+        #self.price = nn.Embedding(self.num_price, self.embed_size)
+        
+        self.project = nn.Linear(320, self.embed_size)
 
         if config["learnable_pos"]:
             self.positional_encoding = nn.Parameter(torch.empty(self.seq_len, self.embed_size))
@@ -305,28 +311,62 @@ class CustomMetaSASRec(nn.Module):
             elif isinstance(m, nn.ReLU):
                 m = nn.ReLU(inplace=False)
 
-    def forward(self, user, pos, prodcode, prodtype, graph_appear, colour_group, pcolval, pcolmas, depart, idxgroup, section, garmgroup,
+    def forward(self, user, pos, prodtype, depart, garmgroup, age,
                 neg, history, history_mask, neg_history=None, neg_history_mask=None):
         pos_init_embed, neg_init_embed = self.item_embedding(pos), self.item_embedding(neg)
         pos_last_init_embed = self.item_embedding(history[:,-1])
         
-        prodcode_embed = self.product_code_embedding(prodcode)
+        #import pdb; pdb.set_trace()
+        #prodcode_embed = self.product_code_embedding(prodcode)
         prodtype_embed = self.product_type_embedding(prodtype)
-        graph_appear_embed = self.graphical_appearance_embedding(graph_appear)
-        colour_group_embed = self.colour_group_embedding(colour_group)
-        perceived_colour_value_embed = self.perceived_colour_value(pcolval)
-        perceived_colour_master_embed = self.perceived_colour_master(pcolmas)
+        #graph_appear_embed = self.graphical_appearance_embedding(graph_appear)
+        #colour_group_embed = self.colour_group_embedding(colour_group)
+        #perceived_colour_value_embed = self.perceived_colour_value(pcolval)
+        #perceived_colour_master_embed = self.perceived_colour_master(pcolmas)
         department_embed = self.department(depart)
-        index_group_embed = self.index_group(idxgroup)
-        section_embed = self.section(section)
+        #index_group_embed = self.index_group(idxgroup)
+        #section_embed = self.section(section)
         garment_group_embed = self.garment_group(garmgroup)
+        age_embed = self.age(age)
+        #price_embed = self.price(price)
         
-        meta_embed = (prodcode_embed + prodtype_embed + graph_appear_embed + colour_group_embed + perceived_colour_value_embed 
-                      + perceived_colour_master_embed + department_embed + index_group_embed + section_embed + garment_group_embed)/10
+        # 1. average_all
+        # meta_embed = (prodcode_embed + prodtype_embed + graph_appear_embed + colour_group_embed + perceived_colour_value_embed 
+        #              + perceived_colour_master_embed + department_embed + index_group_embed + section_embed + garment_group_embed)/10
+        
+        # 2. add_all
+        # meta_embed = prodcode_embed + prodtype_embed + graph_appear_embed + colour_group_embed + perceived_colour_value_embed 
+        #              + perceived_colour_master_embed + department_embed + index_group_embed + section_embed + garment_group_embed
+        
+        # 3. average_partial (neglect personal preference)
+        # meta_embed = (prodcode_embed + prodtype_embed + department_embed + index_group_embed + section_embed + garment_group_embed)/6
+        
+        # 4. add_partial (neglect personal preference)
+        # meta_embed = (prodcode_embed + prodtype_embed + department_embed + index_group_embed + section_embed + garment_group_embed)/6
+        
+        # 5. 8 feature concat (neglect perceived_colour_value, perceived_colour_master)
+        #meta_embed = torch.cat([prodcode_embed, prodtype_embed, graph_appear_embed, colour_group_embed, department_embed, index_group_embed, section_embed, garment_group_embed], dim=-1)
+        
+        # 6. important feature concat
+        meta_embed = torch.cat([prodtype_embed, department_embed, garment_group_embed, age_embed], dim=-1)
+        
+        #pos_init_embed = torch.cat([pos_init_embed, prodtype_embed, department_embed, garment_group_embed], dim=-1)
+        #neg_init_embed = torch.cat([neg_init_embed, prodtype_embed, department_embed, garment_group_embed], dim=-1)
+        #pos_last_init_embed = torch.cat([pos_last_init_embed, prodtype_embed, department_embed, garment_group_embed], dim=-1)
+        
+        # 7. all concat and project to embed_size
+        #meta_embed = torch.cat([prodcode_embed, prodtype_embed, graph_appear_embed, colour_group_embed, perceived_colour_value_embed, 
+        #                        perceived_colour_master_embed, department_embed, index_group_embed, section_embed, garment_group_embed], dim=-1)
+        #meta_embed = self.project(meta_embed)
         
         pos_init_embed = pos_init_embed + meta_embed
         neg_init_embed = neg_init_embed + meta_embed
         pos_last_init_embed = pos_last_init_embed + meta_embed
+        
+        #meta_embed = torch.as_tensor(meta_embed, dtype=torch.long)
+        #meta_embed = self.meta_embedding(meta_embed)
+        
+
         
         #print("pos.shape:", pos.shape, "neg.shape:", neg.shape)
         #print("pos_init_embed.shape:", pos_init_embed.shape, "neg_init_embed.shape:", neg_init_embed.shape)
@@ -433,6 +473,7 @@ class CustomMetaSASRec(nn.Module):
         return history_embed
 
     def _compute_BPR(self, history_embed, pos_embed, neg_embed):
+        #print("history_embed:", history_embed, "pos_embed:", pos_embed)
         pos_preds = torch.mul(history_embed, pos_embed).sum(dim=-1, keepdims=True)
         neg_preds = torch.mul(history_embed, neg_embed).sum(dim=-1, keepdims=True)
 

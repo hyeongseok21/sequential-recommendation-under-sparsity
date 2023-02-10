@@ -6,7 +6,7 @@ import uuid
 import pickle
 import argparse
 import collections
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from collections import defaultdict
 
 import mlflow
@@ -153,6 +153,8 @@ class Trainer:
                 num_index_group = self.data_dict['num_index_group'],
                 num_section = self.data_dict['num_section'],
                 num_garment_group = self.data_dict['num_garment_group'],
+                num_age = self.data_dict['num_age'],
+                num_price = self.data_dict['num_price'],
                 device=self.device
             ).to(self.device)
 
@@ -427,15 +429,17 @@ class Trainer:
                     history, history_mask = pos_neg_pair[:, 2:2+self.model_params['seq_len']], pos_neg_pair[:, 2+self.model_params['seq_len']:2+2*self.model_params['seq_len']]
                 else:
                     user, pos, neg = pos_neg_pair[:, 0], pos_neg_pair[:, 1], pos_neg_pair[:, -1]
-                    prodcode, prodtype = pos_neg_pair[:, 2], pos_neg_pair[:, 3]
-                    graph_appear, colour_group, pcolval, pcolmas = pos_neg_pair[:, 4], pos_neg_pair[:, 5], pos_neg_pair[:, 6], pos_neg_pair[:, 7]
-                    depart, idxgroup, section, garmgroup = pos_neg_pair[:, 8], pos_neg_pair[:, 9], pos_neg_pair[:, 10], pos_neg_pair[:, 11]
-                    history, history_mask = pos_neg_pair[:, 12:12+self.model_params['seq_len']], pos_neg_pair[:, 12+self.model_params['seq_len']:12+2*self.model_params['seq_len']]
+                    #prodcode, prodtype = pos_neg_pair[:, 2], pos_neg_pair[:, 3]
+                    #graph_appear, colour_group, pcolval, pcolmas = pos_neg_pair[:, 4], pos_neg_pair[:, 5], pos_neg_pair[:, 6], pos_neg_pair[:, 7]
+                    #depart, idxgroup, section, garmgroup, age, price = pos_neg_pair[:, 8], pos_neg_pair[:, 9], pos_neg_pair[:, 10], pos_neg_pair[:, 11], pos_neg_pair[:, 12], pos_neg_pair[:, 13]
+                    
+                    prodtype, depart, garmgroup, age = pos_neg_pair[:, 2], pos_neg_pair[:, 3], pos_neg_pair[:, 4], pos_neg_pair[:, 5]
+                    history, history_mask = pos_neg_pair[:, 6:6+self.model_params['seq_len']], pos_neg_pair[:, 6+self.model_params['seq_len']:6+2*self.model_params['seq_len']]
                 
                 # sampler가 TwoView인 경우 neg_history, neg_history_mask
                 if self.model_params['sampler_type'] == "TwoView":
-                    neg_history = pos_neg_pair[:, 11+2*self.model_params['seq_len']:11+3*self.model_params['seq_len']]
-                    neg_history_mask = pos_neg_pair[:, 11+3*self.model_params['seq_len']:11+4*self.model_params['seq_len']]
+                    neg_history = pos_neg_pair[:, 6+2*self.model_params['seq_len']:6+3*self.model_params['seq_len']]
+                    neg_history_mask = pos_neg_pair[:, 6+3*self.model_params['seq_len']:6+4*self.model_params['seq_len']]
 
                     neg_history = torch.LongTensor(neg_history).to(self.device)
                     neg_history_mask = torch.LongTensor(neg_history_mask).to(self.device)
@@ -453,29 +457,29 @@ class Trainer:
                 else:
                     user = torch.LongTensor(user).to(self.device)
                     pos = torch.LongTensor(pos).to(self.device)
-                    prodcode = torch.LongTensor(prodcode).to(self.device)
+                    #prodcode = torch.LongTensor(prodcode).to(self.device)
                     prodtype = torch.LongTensor(prodtype).to(self.device)
-                    graph_appear = torch.LongTensor(graph_appear).to(self.device)
-                    colour_group = torch.LongTensor(colour_group).to(self.device)
-                    pcolval = torch.LongTensor(pcolval).to(self.device)
-                    pcolmas = torch.LongTensor(pcolmas).to(self.device)
+                    #graph_appear = torch.LongTensor(graph_appear).to(self.device)
+                    #colour_group = torch.LongTensor(colour_group).to(self.device)
+                    #pcolval = torch.LongTensor(pcolval).to(self.device)
+                    #pcolmas = torch.LongTensor(pcolmas).to(self.device)
                     depart = torch.LongTensor(depart).to(self.device)
-                    idxgroup = torch.LongTensor(idxgroup).to(self.device)
-                    section = torch.LongTensor(section).to(self.device)
+                    #idxgroup = torch.LongTensor(idxgroup).to(self.device)
+                    #section = torch.LongTensor(section).to(self.device)
                     garmgroup = torch.LongTensor(garmgroup).to(self.device)
+                    age = torch.LongTensor(age).to(self.device)
                     neg = torch.LongTensor(neg).to(self.device)
+                    #price = torch.LongTensor(price).to(self.device)
                     history = torch.LongTensor(history).to(self.device)
                     history_mask = torch.LongTensor(history_mask).to(self.device)
                 # gradient 초기화
-                self.opt.zero_grad() 
+                self.opt.zero_grad()
                 
                 # input vector들을 model에 넣고 output 산출
                 if self.dataset_params['embed_metadata'] == False:
                     total_loss, loss, reg, user_history_att, user_out, pos_out, neg_out = self.model(user, pos, neg, history, history_mask)
                 else:
-                    total_loss, loss, reg, user_history_att, user_out, pos_out, neg_out = self.model(user, pos, prodcode, prodtype, graph_appear, colour_group,
-                                                                                                 pcolval, pcolmas, depart, idxgroup, section, garmgroup,
-                                                                                                 neg, history, history_mask)
+                    total_loss, loss, reg, user_history_att, user_out, pos_out, neg_out = self.model(user, pos, prodtype, depart, garmgroup, age, neg, history, history_mask)
                 #import pdb; pdb.set_trace()
                 
                 # gradient descent 계산

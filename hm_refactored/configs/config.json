@@ -3,7 +3,7 @@
         "orig_path" : "/home/omnious/workspace/hyeongseok/datasets/hm",
         "dataset_path" : "/home/omnious/workspace/hyeongseok/datasets/hm/prep",
         "target_week": 27,
-        "save_name": "hm_sasrec_27",
+        "save_name": "hm_meta_27_age&price",
         "reset": true,
         "train_data_name":"purchase_user_item.csv",
         "test_data_name": "purchase_user_item.csv",
@@ -14,9 +14,9 @@
         "count_low": 1,
         "remove_zero_history": true,
         "remove_recent_bought": true,
-        "recent_two_weeks": true,
+        "recent_two_weeks": false,
         "remove_train_recent_bought": false,
-        "embed_metadata": false
+        "embed_metadata": true
     },
 
     "model_params": {
@@ -40,14 +40,14 @@
     "train_params": {
         "lr": 1e-4,
         "batch_size": 256,
-        "train_epoch": 40,
+        "train_epoch": 100,
         "top_k": 10,
         "optimizer": "Adam",
-        "device_num": 3,
+        "device_num": 0,
         "save_epoch": 5,
         "attention_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/attention_maps",
         "save_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/checkpoints",
-        "save_name": "CustomSASRec_40_3",
+        "save_name": "MetaSASRec_27_important4_concat_and_add_100",
         "scheduler_type": "original",
         "clip_grad_ratio": 0.5,
         "attention_vis_flag": false,
@@ -64,7 +64,7 @@
         "benchmark_emb_vis": false,
         "test_emb_vis_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/test_emb_vis",
         "benchmark_emb_vis_path": "/home/omnious/workspace/hyeongseok/hm_refactored/hm_out/benchmark_emb_vis",
-        "popular_ten": false,
+        "popular_ten": true,
         "recent_ten": false
     },
 

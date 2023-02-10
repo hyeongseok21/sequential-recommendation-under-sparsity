@@ -12,24 +12,13 @@ class NegativeSampler:
     
     def sampling(self, batch): # batch가 어떤 형태로 되어있는가? -> train.py에서 넣어주는거 보니깐 data_dict 형태인듯
         triplets = []
-        #print("batch:", batch)
         for pos_pair in batch: # pos_pair: key-value pair
-            #print("pos_pair:", pos_pair)
-            #print("pos_pair.shape:", pos_pair.shape)
             neg = np.random.randint(self.num_item) # num_item 개수만큼 num_item range에서 random int의 1-dim matrix 생성
-            #print("neg:", neg)
             while neg in self.train_dict[pos_pair[0]]: # pos_pair[0]: key-value pair에서 key?
-                #print("pos_pair[0]:", pos_pair[0])
-                #print("neg0:", neg)
                 neg = np.random.randint(self.num_item) # user_id마다 neg 초기화
-                #print("neg1:", neg)
                 break
             triplet = np.expand_dims(np.concatenate([pos_pair, [neg]], axis=0), 0) # [[0: [1,2], [neg1, neg2, ... ]]] 형태인지?
             triplets.append(triplet)
-            #print("triplet:", triplet)
-            #print("triplet.shape:", triplet.shape)
-            #print("triplets:", triplets)
-            #print("triplets.shape:", triplets.shape)
         triplets = np.concatenate(triplets, axis=0) # triplet의 array
         return triplets
 
@@ -196,41 +185,24 @@ class TrainDataset(Dataset):
         pos_pair = self.pos_pairs[idx] # [user_id, item_id]
 
         user_interaction = self.train_dict.get(int(pos_pair[0]), []) # user_id에 해당하는 item_id리스트 반환. 없으면 []반환. float32 type이므로 int32로 변환.
-        #user_interaction = self.train_dict.get(int(pos_pair_with_meta[0]), []) # user_id에 해당하는 item_id리스트 반환. 없으면 []반환. float32 type이므로 int32로 변환.        
-        #print("self.pos_pairs:", self.pos_pairs)
-        #print("len:", len(self.pos_pairs))
-        #print("idx:", idx)
-        #print("pos_pair:", pos_pair)
-        #print("pos_pair[0]:", pos_pair[0])
-        #print("int(pos_pair[0]):", int(pos_pair[0]))
-        #print("user_interaction:", user_interaction)
 
         # user_history, user_history_mask = np.zeros(self.seq_len), np.concatenate([[1], np.zeros(self.seq_len-1)])
         user_history, user_history_mask = np.zeros(self.seq_len), np.zeros(self.seq_len)
         if len(user_interaction) > 0:
             # valid_history = user_interaction[:user_interaction.index(int(pos_pair[1]))]
             occurence = self.occurences[idx][0]
-            #print("self.occurences:", self.occurences)
-            #print("self.occurences[idx]:", self.occurences[idx])
-            #print("occurence:", occurence)
             valid_history = user_interaction[:occurence]
             valid_history = valid_history[-1 * self.seq_len:] # valid_history를 seq_len길이만큼 뒤에서부터 자름
-            #print("valid_history:", valid_history)
             starting_idx = -1 * len(valid_history) if len(valid_history) > 0 else len(user_history)
             user_history[starting_idx:] = valid_history
-            #print("user_history:", user_history)
             user_history_mask[starting_idx:] = np.ones_like(valid_history)
-            #print("user_history_mask:", user_history_mask)
         train_dataset = np.concatenate([pos_pair, user_history, user_history_mask])
-        #print("train_dataset:", train_dataset, "train_dataset.shape:", train_dataset.shape)
         return train_dataset
 
 class TrainMetaDataset(Dataset):
     def __init__(self, data_dict, seq_len):
         super(TrainMetaDataset, self).__init__()
-        self.pos_pairs_with_meta = data_dict['train_df'][['user_id', 'item_id', 'product_code', 'product_type_no', 'graphical_appearance_no', 'colour_group_code',
-                                                'perceived_colour_value_id', 'perceived_colour_master_id', 'department_no', 'index_group_no', 'section_no', 
-                                                'garment_group_no']].values.astype(np.float32)
+        self.pos_pairs_with_meta = data_dict['train_df'][['user_id', 'item_id', 'product_type_no', 'department_no', 'garment_group_no', 'age']].values.astype(np.float32)
         self.train_dict = data_dict['user_train_dict']
 
         self.seq_len = int(seq_len)
@@ -245,37 +217,20 @@ class TrainMetaDataset(Dataset):
         
         pos_pair_with_meta = self.pos_pairs_with_meta[idx] # [user_id, item_id, product_code, product_type_no, graphical_appearance_no, colour_group_code,
                                                            #  perceived_colour_value_id, perceived_colour_master_id, department_no, index_group_no, section_no,
-                                                           #  garment_group_no]
+                                                           #  garment_group_no, age]
         
         user_interaction = self.train_dict.get(int(pos_pair_with_meta[0]), []) # user_id에 해당하는 item_id리스트 반환. 없으면 []반환. float32 type이므로 int32로 변환.
-        #user_interaction = self.train_dict.get(int(pos_pair_with_meta[0]), []) # user_id에 해당하는 item_id리스트 반환. 없으면 []반환. float32 type이므로 int32로 변환.        
-        #print("self.pos_pairs:", self.pos_pairs)
-        #print("len:", len(self.pos_pairs))
-        #print("idx:", idx)
-        #print("pos_pair:", pos_pair)
-        #print("pos_pair[0]:", pos_pair[0])
-        #print("int(pos_pair[0]):", int(pos_pair[0]))
-        #print("user_interaction:", user_interaction)
 
         # user_history, user_history_mask = np.zeros(self.seq_len), np.concatenate([[1], np.zeros(self.seq_len-1)])
         user_history, user_history_mask = np.zeros(self.seq_len), np.zeros(self.seq_len)
         if len(user_interaction) > 0:
-            # valid_history = user_interaction[:user_interaction.index(int(pos_pair[1]))]
             occurence = self.occurences[idx][0]
-            #print("self.occurences:", self.occurences)
-            #print("self.occurences[idx]:", self.occurences[idx])
-            #print("occurence:", occurence)
             valid_history = user_interaction[:occurence]
             valid_history = valid_history[-1 * self.seq_len:] # valid_history를 seq_len길이만큼 뒤에서부터 자름
-            #print("valid_history:", valid_history)
             starting_idx = -1 * len(valid_history) if len(valid_history) > 0 else len(user_history)
             user_history[starting_idx:] = valid_history
-            #print("user_history:", user_history)
             user_history_mask[starting_idx:] = np.ones_like(valid_history)
-            #print("user_history_mask:", user_history_mask)
         train_dataset = np.concatenate([pos_pair_with_meta, user_history, user_history_mask])
-        #train_dataset = np.concatenate([pos_pair_with_meta, user_history, user_history_mask])
-        #print("train_dataset:", train_dataset, "train_dataset.shape:", train_dataset.shape)
         return train_dataset
 
 class TestDataset(Dataset):

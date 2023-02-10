@@ -45,15 +45,8 @@ def hm_prep_meta(config):
     # train_data.columns = ['user_id', 'item_id', 'timestamp']
     train_data['timestamp'] = pd.to_datetime(train_data['timestamp'])
     
-    #import pdb; pdb.set_trace()
     train_num_weeks = (train_data['timestamp'].max() - train_data['timestamp'].min()).days // 7
     train_data['week'] = train_num_weeks - (train_data['timestamp'].max() - train_data['timestamp']).dt.days // 7
-    train_data = train_data.fillna('None')
-    train_data = train_data.replace({'age': {'None': 0.0}})
-    #user_max_age = train_data['age'].max()
-    #train_data['age'] = train_data['age'] / user_max_age
-    max_price = train_data['price'].max()
-    train_data['price'] = train_data['price'] / max_price 
     # train_data = train_data.drop_duplicates(subset=['user_id', 'item_id', 'day'], keep='last') # 31788324 -> 28575395 rows
     # train_data = train_data.sort_values(by=['user_id', 'timestamp'], ascending=[True, True])
     # train_data = train_data.reset_index(drop=True)
@@ -107,7 +100,6 @@ def hm_prep_meta(config):
     train_df['index_group_no'] = train_df['index_group_no'].astype('category')
     train_df['section_no'] = train_df['section_no'].astype('category')
     train_df['garment_group_no'] = train_df['garment_group_no'].astype('category')
-    train_df['age'] = train_df['age'].astype('category')
     
     # 5-2. test_df
     test_df['user_id'] = test_df['user_id'].astype('category')
@@ -129,7 +121,6 @@ def hm_prep_meta(config):
     combined_index_group_ids = copy.deepcopy(train_df['index_group_no']).append(unique_last_test_df['index_group_no'], ignore_index=True).astype('category')
     combined_section_ids = copy.deepcopy(train_df['section_no']).append(unique_last_test_df['section_no'], ignore_index=True).astype('category')
     combined_garment_group_ids = copy.deepcopy(train_df['garment_group_no']).append(unique_last_test_df['garment_group_no'], ignore_index=True).astype('category')
-    combined_age_ids = copy.deepcopy(train_df['age']).append(unique_last_test_df['age'], ignore_index=True).astype('category')
     
     # 6. user/item dictionary 생성, interaction과 mapping
     logger.info('Make user item index dictionary & map to interactions.')
@@ -143,26 +134,25 @@ def hm_prep_meta(config):
     item2idx = {item_id: idx for idx, item_id in enumerate(combined_item_ids.cat.categories)}
     idx2item = {idx: item_id for item_id, idx in item2idx.items()}
     product_code2idx = {product_code: idx for idx, product_code in enumerate(combined_prodct_code_ids.cat.categories)}
-    #idx2product_code = {idx: product_code for product_code, idx in product_code2idx.items()}
+    idx2product_code = {idx: product_code for product_code, idx in product_code2idx.items()}
     product_type2idx = {product_type: idx for idx, product_type in enumerate(combined_prodct_type_ids.cat.categories)}
-    #idx2product_type = {idx: product_type for product_type, idx in product_type2idx.items()}
+    idx2product_type = {idx: product_type for product_type, idx in product_type2idx.items()}
     graphical_appearance2idx = {graphical_appearance: idx for idx, graphical_appearance in enumerate(combined_graphical_appearance_ids.cat.categories)}
-    #idx2graphical_appearance = {idx: graphical_appearance for graphical_appearance, idx in graphical_appearance2idx.items()}
+    idx2graphical_appearance = {idx: graphical_appearance for graphical_appearance, idx in graphical_appearance2idx.items()}
     colour_group2idx = {colour_group: idx for idx, colour_group in enumerate(combined_colour_group_code_ids.cat.categories)}
-    #idx2colour_group = {idx: colour_group for colour_group, idx in colour_group2idx.items()}
+    idx2colour_group = {idx: colour_group for colour_group, idx in colour_group2idx.items()}
     perceived_colour_value2idx = {perceived_colour_value: idx for idx, perceived_colour_value in enumerate(combined_perceived_colour_value_ids.cat.categories)}
-    #idx2perceived_colour_value = {idx: perceived_colour_value for perceived_colour_value, idx in perceived_colour_value2idx.items()}
+    idx2perceived_colour_value = {idx: perceived_colour_value for perceived_colour_value, idx in perceived_colour_value2idx.items()}
     perceived_colour_master2idx = {perceived_colour_master: idx for idx, perceived_colour_master in enumerate(combined_perceived_colour_master_ids.cat.categories)}
-    #idx2perceived_colour_master = {idx: perceived_colour_master for idx, perceived_colour_master in perceived_colour_master2idx.items()}
+    idx2perceived_colour_master = {idx: perceived_colour_master for idx, perceived_colour_master in perceived_colour_master2idx.items()}
     department2idx = {department: idx for idx, department in enumerate(combined_department_ids.cat.categories)}
-    #idx2department = {idx: department for department, idx in department2idx.items()}
+    idx2department = {idx: department for department, idx in department2idx.items()}
     index_group2idx = {index_group: idx for idx, index_group in enumerate(combined_index_group_ids.cat.categories)}
-    #idx2index_group = {idx: index_group for index_group, idx in index_group2idx.items()}
+    idx2index_group = {idx: index_group for index_group, idx in index_group2idx.items()}
     section2idx = {section: idx for idx, section in enumerate(combined_section_ids.cat.categories)}
-    #idx2section = {idx: section for section, idx in section2idx.items()}
+    idx2section = {idx: section for section, idx in section2idx.items()}
     garment_group2idx = {garment_group: idx for idx, garment_group in enumerate(combined_garment_group_ids.cat.categories)}
-    #idx2garment_group = {idx: garment_group for garment_group, idx in garment_group2idx.items()}
-    age2idx = {age: idx for idx, age in enumerate(combined_age_ids.cat.categories)}
+    idx2garment_group = {idx: garment_group for garment_group, idx in garment_group2idx.items()}
     
     # 6-2. user_id, item_id, item_meta를 각각 user_idx, item_idx, meta_idx로 매핑
     train_df['user_id'] = train_df['user_id'].apply(lambda x: user2idx[x])
@@ -176,8 +166,7 @@ def hm_prep_meta(config):
     train_df['department_no'] = train_df['department_no'].apply(lambda x: department2idx[x])
     train_df['index_group_no'] = train_df['index_group_no'].apply(lambda x: index_group2idx[x])
     train_df['section_no'] = train_df['section_no'].apply(lambda x: section2idx[x])
-    train_df['garment_group_no'] = train_df['garment_group_no'].apply(lambda x: garment_group2idx[x])
-    train_df['age'] = train_df['age'].apply(lambda x: age2idx[x])
+    train_df['garment_group_no'] = train_df['garment_group_no'].apply(lambda x: garment_group2idx[x])    
     
     # 6-3. cold_user와 cold_item 제거
     if config['remove_cold_user']:
@@ -206,7 +195,6 @@ def hm_prep_meta(config):
     num_index_group = len(index_group2idx)
     num_section = len(section2idx)
     num_garment_group = len(garment_group2idx)
-    num_age = len(age2idx)
     
     # 6-4. train/test에 사용할 Dictionary 생성
     user_train_dict = train_df.sort_values(by='timestamp').groupby('user_id')['item_id'].apply(list).to_dict()
@@ -251,34 +239,31 @@ def hm_prep_meta(config):
     data_dict['num_index_group'] = num_index_group
     data_dict['num_section'] = num_section
     data_dict['num_garment_group'] = num_garment_group
-    data_dict['num_age'] = num_age
-    data_dict['num_price'] = train_df['price'].nunique()
     
     data_dict['user2idx'] = user2idx
     data_dict['idx2user'] = idx2user
     data_dict['item2idx'] = item2idx
     data_dict['idx2item'] = idx2item
     data_dict['product_code2idx'] = product_code2idx
-    #data_dict['idx2product_code'] = idx2product_code
+    data_dict['idx2product_code'] = idx2product_code
     data_dict['product_type2idx'] = product_type2idx
-    #data_dict['idx2product_type'] = idx2product_type
+    data_dict['idx2product_type'] = idx2product_type
     data_dict['graphical_appearance2idx'] = graphical_appearance2idx
-    #data_dict['idx2graphical_appearance'] = idx2graphical_appearance
+    data_dict['idx2graphical_appearance'] = idx2graphical_appearance
     data_dict['colour_group2idx'] = colour_group2idx
-    #data_dict['idx2_colour_group'] = idx2colour_group
+    data_dict['idx2_colour_group'] = idx2colour_group
     data_dict['perceived_colour_value'] = perceived_colour_value2idx
-    #data_dict['idx2perceived_colour_value'] = idx2perceived_colour_value
+    data_dict['idx2perceived_colour_value'] = idx2perceived_colour_value
     data_dict['perceived_colour_master'] = perceived_colour_master2idx
-    #data_dict['idx2perceived_colour_master'] = idx2perceived_colour_master
+    data_dict['idx2perceived_colour_master'] = idx2perceived_colour_master
     data_dict['department2idx'] = department2idx
-    #data_dict['idx2department'] = idx2department
+    data_dict['idx2department'] = idx2department
     data_dict['index_group2idx'] = index_group2idx
-    #data_dict['idx2index_group'] = idx2index_group
+    data_dict['idx2index_group'] = idx2index_group
     data_dict['section2idx'] = section2idx
-    #data_dict['idx2section'] = idx2section
+    data_dict['idx2section'] = idx2section
     data_dict['garment_group2idx'] = garment_group2idx
-    #data_dict['idx2garment_group'] = idx2garment_group
-    data_dict['age'] = age2idx
+    data_dict['idx2garment_group'] = idx2garment_group
     
     data_dict['user_train_dict'] = user_train_dict
     data_dict['user_test_dict'] = user_test_dict
