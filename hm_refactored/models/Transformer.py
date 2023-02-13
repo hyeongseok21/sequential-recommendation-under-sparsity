@@ -274,19 +274,19 @@ class CustomMetaSASRec(nn.Module):
 
         self.item_embedding = nn.Embedding(self.num_item, self.embed_size)
         #self.product_code_embedding = nn.Embedding(self.num_product_code, self.embed_size)
-        self.product_type_embedding = nn.Embedding(self.num_product_type, self.embed_size // 4)
+        self.product_type_embedding = nn.Embedding(self.num_product_type, self.embed_size)
         #self.graphical_appearance_embedding = nn.Embedding(self.num_graphical_appearance, self.embed_size)
         #self.colour_group_embedding = nn.Embedding(self.num_colour_group, self.embed_size)
         #self.perceived_colour_value = nn.Embedding(self.num_perceived_colour_value, self.embed_size)
         #self.perceived_colour_master = nn.Embedding(self.num_perceived_colour_master, self.embed_size)
-        self.department = nn.Embedding(self.num_department, self.embed_size // 4)
+        self.department = nn.Embedding(self.num_department, self.embed_size)
         #self.index_group = nn.Embedding(self.num_index_group, self.embed_size)
         #self.section = nn.Embedding(self.num_section, self.embed_size)
-        self.garment_group = nn.Embedding(self.num_garment_group, self.embed_size // 4)
-        self.age = nn.Embedding(self.num_age, self.embed_size // 4)
+        self.garment_group = nn.Embedding(self.num_garment_group, self.embed_size)
+        self.age = nn.Embedding(self.num_age, self.embed_size)
         #self.price = nn.Embedding(self.num_price, self.embed_size)
         
-        self.project = nn.Linear(320, self.embed_size)
+        self.project = nn.Linear(4*self.embed_size, self.embed_size)
 
         if config["learnable_pos"]:
             self.positional_encoding = nn.Parameter(torch.empty(self.seq_len, self.embed_size))
@@ -347,9 +347,19 @@ class CustomMetaSASRec(nn.Module):
         # 5. 8 feature concat (neglect perceived_colour_value, perceived_colour_master)
         #meta_embed = torch.cat([prodcode_embed, prodtype_embed, graph_appear_embed, colour_group_embed, department_embed, index_group_embed, section_embed, garment_group_embed], dim=-1)
         
-        # 6. important feature concat
-        meta_embed = torch.cat([prodtype_embed, department_embed, garment_group_embed, age_embed], dim=-1)
+        # 6-1. important feature divide & concat
+        #meta_embed = torch.cat([prodtype_embed, department_embed, garment_group_embed, age_embed], dim=-1)
         
+        # 6-2. important feature addition
+        #meta_embed = prodtype_embed + department_embed + garment_group_embed + age_embed
+
+        # 6-3. important feature average
+        #meta_embed = (prodtype_embed + department_embed + garment_group_embed + age_embed)/4
+        
+        # 6-4. important feature concat & project
+        meta_embed = torch.cat([prodtype_embed, department_embed, garment_group_embed, age_embed], dim=-1)
+        meta_embed = self.project(meta_embed)
+
         #pos_init_embed = torch.cat([pos_init_embed, prodtype_embed, department_embed, garment_group_embed], dim=-1)
         #neg_init_embed = torch.cat([neg_init_embed, prodtype_embed, department_embed, garment_group_embed], dim=-1)
         #pos_last_init_embed = torch.cat([pos_last_init_embed, prodtype_embed, department_embed, garment_group_embed], dim=-1)
