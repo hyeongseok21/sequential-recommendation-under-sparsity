@@ -14,7 +14,7 @@ class NegativeSampler:
         triplets = []
         for pos_pair in batch: # pos_pair: key-value pair
             neg = np.random.randint(self.num_item) # num_item 개수만큼 num_item range에서 random int의 1-dim matrix 생성
-            while neg in self.train_dict[pos_pair[0]]: # pos_pair[0]: key-value pair에서 key?
+            while neg in self.train_dict[pos_pair[0]]: # pos_pair[0]: key-value pair에서 key
                 neg = np.random.randint(self.num_item) # user_id마다 neg 초기화
                 break
             triplet = np.expand_dims(np.concatenate([pos_pair, [neg]], axis=0), 0) # [[0: [1,2], [neg1, neg2, ... ]]] 형태인지?
@@ -264,11 +264,6 @@ class TestDataset(Dataset):
         mask = np.ones(self.num_item)
         mask[user_train_data] = -10000
         
-        #print("idx:", idx)
-        #print("self.test_data:", self.test_data)
-        #print("u:", u)
-        #print("user_train_data", user_train_data)
-        #print("mask", mask)
         # return u, mask
 
         user_interaction = self.train_dict.get(int(u[0]), [])
@@ -280,7 +275,6 @@ class TestDataset(Dataset):
             starting_idx = -1 * len(user_interaction)
             user_history[starting_idx:] = user_interaction
             user_history_mask[starting_idx:] = np.ones_like(user_interaction)
-        #print("user_history:", user_history, "user_history_mask:", user_history_mask)
         return u, mask, user_history, user_history_mask
 
 class BenchmarkDataset(Dataset):
@@ -416,7 +410,6 @@ class BenchmarkTotalDataset(Dataset):
         
         # target_day last_order data의 [user_id, item_id] pair
         test_df = data_dict['unique_last_test_df'][['user_id', 'item_id']]
-        #print("test_df:", test_df)
         
         # user_id, item_id를 각각 user_idx, item_idx로 변환
         test_df['user_idx'] = test_df['user_id'].apply(lambda x: self.user2idx.get(x, -1)) # dict.get(x, -1): key가 x인 value를 return하고, 없으면 -1 return
@@ -428,14 +421,12 @@ class BenchmarkTotalDataset(Dataset):
 
         self.unique_test_items = self.test_data['item_id'].unique().to_numpy() # item_idx의 고유한 값들만의 array
         num_unique_item = len(self.unique_test_items)
-        #print("num_unique_item:", num_unique_item)
 
         print("Num Unique Item : {}".format(num_unique_item))
         print("Num Negatives : {}".format(num_negatives))
 
         self.test_data = self.test_data.drop(['user_idx', 'item_idx'], axis=1) # user_idx, item_idx column 제거
         self.test_data = self.test_data.values.astype(np.float32)
-        #print("test_df after id to idx transition:", test_df)
         
         self.cold_users = test_df[test_df['user_idx'] == -1]['user_id'].unique()
         self.cold_items = test_df[test_df['item_idx'] == -1]['item_id'].unique()
@@ -447,12 +438,6 @@ class BenchmarkTotalDataset(Dataset):
         negatives = np.array(list(set(self.unique_test_items).difference([int(self.test_data[idx][1])]))) # list(set())으로 list내 중복 제거. difference로 [item_idx]를 제거해 negative array생성
         
         user_interaction = self.train_dict.get(int(self.test_data[idx][0]), [])
-        #print("self.unique_test_items:", self.unique_test_items)
-        #print("self.test_data[idx]:", self.test_data[idx])
-        #print("self.test_data[idx][0]:", self.test_data[idx][0], "self.test_data[idx][1]:", self.test_data[idx][1])
-        #print("negatives:", negatives)
-        #print("user_interaction:", user_interaction)
-        #print("num_unique_item:", len(self.unique_test_items), "num_negatives:", len(negatives))
 
         # user_history, user_history_mask = np.zeros(self.seq_len), np.concatenate([[1], np.zeros(self.seq_len-1)])
         user_history, user_history_mask = np.zeros(self.seq_len), np.zeros(self.seq_len)
@@ -461,7 +446,5 @@ class BenchmarkTotalDataset(Dataset):
             starting_idx = -1 * len(user_interaction)
             user_history[starting_idx:] = user_interaction
             user_history_mask[starting_idx:] = np.ones_like(user_interaction)
-        #print("user_history:", user_history, "user_history_mask:", user_history_mask)
         benchmark_dataset = (np.concatenate([self.test_data[idx], negatives]), user_history, user_history_mask)
-        #print("benchmark_dataset:", benchmark_dataset)
         return benchmark_dataset 
