@@ -1,0 +1,10 @@
+{
+  "phase": "P3",
+  "primary_metric": "B_NDCG",
+  "baseline": 0.0135,
+  "treatment": 0.0096,
+  "delta": -0.0039,
+  "verdict": "FAIL",
+  "reason": "target projection regressed primary metric",
+  "notes": "current implementation failed; champion remains concat DIF-SR + lr=2e-4"
+}

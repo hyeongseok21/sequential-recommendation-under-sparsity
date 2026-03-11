@@ -1,0 +1,3 @@
+display_name: Recsys Self Evolution Runbook
+short_description: Operate recursive recommendation experiments with champion promotion, gate checks, and experiment memory.
+default_prompt: Run the next recommendation experiment loop in this repository using the local runbook, self-evolution loop, and protocol files.

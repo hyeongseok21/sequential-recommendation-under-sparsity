@@ -1,0 +1,74 @@
+# Experiment Protocol
+
+## Naming
+
+- config: `config.<topic>.json`
+- update log: `updates/<phase>/<timestamp>-<topic>.md`
+- checkpoint save name은 config name과 최대한 맞춘다
+
+## Required Inputs Per Experiment
+
+- `phase`
+- `hypothesis`
+- `baseline_config`
+- `treatment_config`
+- `primary_metric`
+
+## Required Outputs Per Experiment
+
+- gate result JSON
+- experiment memory row
+- update log
+
+## Gate Result Schema
+
+```json
+{
+  "phase": "P2",
+  "primary_metric": "B_NDCG",
+  "baseline": 0.0103,
+  "treatment": 0.0135,
+  "delta": 0.0032,
+  "verdict": "PASS",
+  "reason": "treatment improved primary metric"
+}
+```
+
+## Experiment Memory CSV Columns
+
+- `timestamp`
+- `phase`
+- `axis`
+- `hypothesis`
+- `baseline_config`
+- `treatment_config`
+- `primary_metric`
+- `baseline_value`
+- `treatment_value`
+- `delta`
+- `verdict`
+- `notes`
+
+## Fast-Scout Protocol
+
+- 목적: low-cost signal capture
+- 조건:
+  - 보통 `train_epoch=1`
+  - 필요 시 더 큰 `batch_size`
+- 규칙:
+  - PASS여도 full run 전에는 champion 교체 금지
+
+## Early Stop Heuristic
+
+- epoch 0 기준으로 baseline champion 대비 `B_NDCG`가 뚜렷하게 낮고
+- runtime 비용도 증가하면 조기 중단 가능
+
+## Checkpoint Policy
+
+- best epoch 기준 수치를 update log에 남긴다
+- final epoch보다 best epoch를 우선한다
+
+## Doc Policy
+
+- 모든 update log는 한국어로 쓴다
+- “idea fail”과 “current implementation fail”은 구분해서 적는다
