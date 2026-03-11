@@ -201,6 +201,18 @@ class SideInfoMultiHeadAttention(nn.Module):
 
         return out, scores
 
+class VanillaAttention(nn.Module):
+    def __init__(self, input_dim, hidden_dim):
+        super().__init__()
+        self.proj = nn.Linear(input_dim, hidden_dim)
+        self.score = nn.Linear(hidden_dim, input_dim)
+
+    def forward(self, x):
+        gate_logits = self.score(torch.tanh(self.proj(x)))
+        gate = torch.softmax(gate_logits, dim=-1)
+        context = torch.sum(gate * x, dim=-1)
+        return context, gate
+
 class DIFMultiHeadAttention(nn.Module):
     """
     DIF Multi-head Self-attention layers, a attention score dropout layer is introduced. 
@@ -251,7 +263,7 @@ class DIFMultiHeadAttention(nn.Module):
         if self.fusion_type == 'concat':
             self.fusion_layer = nn.Linear(self.max_len*(2+self.feat_num), self.max_len)
         elif self.fusion_type == 'gate':
-            self.fusion_layer = VanillaAttention(self.max_len, self.max_len)
+            self.fusion_layer = VanillaAttention(2 + self.feat_num, 2 + self.feat_num)
         self.attn_dropout = nn.Dropout(attn_dropout_prob)
         
         self.dense = nn.Linear(hidden_dim, hidden_dim)
@@ -308,8 +320,9 @@ class DIFMultiHeadAttention(nn.Module):
         elif self.fusion_type == 'gate':
             attention_scores = torch.cat(
                 [attribute_attention_table, item_attention_scores.unsqueeze(-2), pos_scores.unsqueeze(-2)], dim=-2)
-            attention_scores,_ = self.fusion_layer(attention_scores)
-        
+            attention_scores = attention_scores.permute(0, 1, 2, 4, 3).contiguous()
+            attention_scores, _ = self.fusion_layer(attention_scores)
+
         attention_scores = attention_scores / math.sqrt(self.attention_head_size)
         # Apply the attention mask is (precomputed for all laeyrs in BertModel forward() function)
         # [batch_size heads seq_len] scores
