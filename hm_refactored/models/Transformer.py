@@ -238,6 +238,7 @@ class CustomDIFSR(nn.Module):
         self.product_type_embedding = nn.Embedding(num_product_type, self.embed_size)
         self.department_embedding = nn.Embedding(num_department, self.embed_size)
         self.garment_group_embedding = nn.Embedding(num_garment_group, self.embed_size)
+        self.meta_project = nn.Linear(self.embed_size * 3, self.embed_size)
 
         self.register_buffer("item_product_type_ids", torch.as_tensor(item_product_type_ids, dtype=torch.long))
         self.register_buffer("item_department_ids", torch.as_tensor(item_department_ids, dtype=torch.long))
@@ -283,6 +284,15 @@ class CustomDIFSR(nn.Module):
         garment_group = self.garment_group_embedding(self.item_garment_group_ids[item_ids]).unsqueeze(-2)
         return [product_type, department, garment_group]
 
+    def _get_item_representation(self, item_ids):
+        item_embed = self.item_embedding(item_ids)
+        product_type_embed = self.product_type_embedding(self.item_product_type_ids[item_ids])
+        department_embed = self.department_embedding(self.item_department_ids[item_ids])
+        garment_group_embed = self.garment_group_embedding(self.item_garment_group_ids[item_ids])
+        meta_embed = torch.cat([product_type_embed, department_embed, garment_group_embed], dim=-1)
+        meta_embed = self.meta_project(meta_embed)
+        return item_embed + meta_embed
+
     def _get_position_embedding(self, batch_size, seq_len):
         if self.learnable_pos:
             return self.positional_encoding[:seq_len].unsqueeze(0).expand(batch_size, -1, -1)
@@ -297,7 +307,7 @@ class CustomDIFSR(nn.Module):
 
     def _get_history_embedding(self, history, history_mask):
         batch_size, seq_len = history.shape
-        history_embed = self.item_embedding(history)
+        history_embed = self._get_item_representation(history)
         position_embedding = self._get_position_embedding(batch_size, seq_len)
         attribute_embed = self._lookup_item_attributes(history)
         attention_mask = self._get_attention_mask(history_mask)
@@ -343,8 +353,8 @@ class CustomDIFSR(nn.Module):
     def forward(self, user, pos, prodtype, depart, garmgroup, age, neg, history, history_mask,
                 neg_history=None, neg_history_mask=None):
         del user, prodtype, depart, garmgroup, age, neg_history, neg_history_mask
-        pos_init_embed = self.item_embedding(pos)
-        neg_init_embed = self.item_embedding(neg)
+        pos_init_embed = self._get_item_representation(pos)
+        neg_init_embed = self._get_item_representation(neg)
         history_embed = self._get_history_embedding(history, history_mask)
         total_loss, loss_to_track, reg_term = self._get_loss(history_embed, pos_init_embed, neg_init_embed)
         if self.loss_type == "BPR":
@@ -357,9 +367,10 @@ class CustomDIFSR(nn.Module):
         history_embed = self._get_history_embedding(history, history_mask).unsqueeze(1)
 
         if item is None:
-            item_init_embed = self.item_embedding.weight
+            all_items = torch.arange(self.num_item, device=self.device, dtype=torch.long)
+            item_init_embed = self._get_item_representation(all_items)
         else:
-            item_init_embed = self.item_embedding(item)
+            item_init_embed = self._get_item_representation(item)
 
         if self.loss_type == "BCE":
             out = torch.mul(history_embed, item_init_embed).sum(dim=-1)
