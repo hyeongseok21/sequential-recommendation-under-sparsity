@@ -6,6 +6,7 @@ import uuid
 import pickle
 import argparse
 import collections
+import random
 from pathlib import Path
 from tqdm.auto import tqdm
 from collections import defaultdict
@@ -89,6 +90,8 @@ class Trainer:
         self.train_params = self.config['train_params']
         self.eval_params = self.config['eval_params']
         self._normalize_config_paths()
+        self.seed = int(self.train_params.get('seed', 42))
+        self._set_seed(self.seed)
 
         # Identify & Track GPU Error detail
         os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
@@ -144,21 +147,25 @@ class Trainer:
             collate_fn=sampler.sampling,
             batch_size=self.train_params['batch_size'],
             shuffle=True,
-            num_workers=self.num_workers
+            num_workers=self.num_workers,
+            generator=self._build_dataloader_generator(),
+            worker_init_fn=self._seed_worker if self.num_workers > 0 else None
         )
         if self.eval_params['test']:
             self.test_dl = DataLoader(
                 test_ds,
                 batch_size=self.eval_params['batch_size_test'],
                 shuffle=False,
-                num_workers=self.num_workers
+                num_workers=self.num_workers,
+                worker_init_fn=self._seed_worker if self.num_workers > 0 else None
             )
         if self.eval_params['benchmark']:
             self.benchmark_dl = DataLoader(
                 benchmark_ds,
                 batch_size=self.eval_params['batch_size_benchmark'],
                 shuffle=False,
-                num_workers=self.num_workers
+                num_workers=self.num_workers,
+                worker_init_fn=self._seed_worker if self.num_workers > 0 else None
             )
 
         self.logger.info('Initializing Model.')
@@ -255,6 +262,26 @@ class Trainer:
         if torch.backends.mps.is_available():
             return torch.device('mps')
         return torch.device('cpu')
+
+    def _set_seed(self, seed):
+        os.environ["PYTHONHASHSEED"] = str(seed)
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed(seed)
+            torch.cuda.manual_seed_all(seed)
+
+    def _build_dataloader_generator(self):
+        generator = torch.Generator()
+        generator.manual_seed(self.seed)
+        return generator
+
+    def _seed_worker(self, worker_id):
+        worker_seed = self.seed + worker_id
+        random.seed(worker_seed)
+        np.random.seed(worker_seed)
+        torch.manual_seed(worker_seed)
 
     def _to_device_tensor(self, value, dtype):
         return torch.as_tensor(value, dtype=dtype, device=self.device)

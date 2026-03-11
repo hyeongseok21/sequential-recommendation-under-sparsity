@@ -435,7 +435,8 @@ class BenchmarkTotalDataset(Dataset):
         return len(self.test_data)
 
     def __getitem__(self, idx):
-        negatives = np.array(list(set(self.unique_test_items).difference([int(self.test_data[idx][1])]))) # list(set())으로 list내 중복 제거. difference로 [item_idx]를 제거해 negative array생성
+        target_item = int(self.test_data[idx][1])
+        negatives = self.unique_test_items[self.unique_test_items != target_item].astype(np.float32)
         
         user_interaction = self.train_dict.get(int(self.test_data[idx][0]), [])
 

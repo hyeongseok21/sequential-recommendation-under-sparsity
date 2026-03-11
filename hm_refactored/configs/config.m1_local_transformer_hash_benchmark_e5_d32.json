@@ -40,7 +40,7 @@
         "seed": 42,
         "batch_size": 64,
         "num_workers": 0,
-        "train_epoch": 3,
+        "train_epoch": 5,
         "top_k": 10,
         "optimizer": "Adam",
         "accelerator": "auto",
@@ -48,7 +48,7 @@
         "save_epoch": 1,
         "attention_path": "hm_refactored/hm_out/attention_maps",
         "save_path": "hm_refactored/hm_out/checkpoints",
-        "save_name": "hm_m1_local_transformer_hash_benchmark_e3_d32",
+        "save_name": "hm_m1_local_transformer_hash_benchmark_e5_d32",
         "scheduler_type": "original",
         "clip_grad_ratio": 0.5,
         "attention_vis_flag": false,
@@ -78,6 +78,6 @@
     },
     "mlflow_params": {
         "remote_server_uri": "mlruns",
-        "experiment_name": "hm_m1_local_transformer_hash_benchmark_e3_d32"
+        "experiment_name": "hm_m1_local_transformer_hash_benchmark_e5_d32"
     }
 }

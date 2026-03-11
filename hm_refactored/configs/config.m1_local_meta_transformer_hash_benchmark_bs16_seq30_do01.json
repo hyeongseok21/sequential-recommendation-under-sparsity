@@ -3,7 +3,7 @@
         "orig_path": "datasets/hm/local",
         "dataset_path": "datasets/hm/local/prep",
         "target_week": 27,
-        "save_name": "hm_local_userhash32_week27",
+        "save_name": "hm_local_meta_userhash32_week27",
         "reset": false,
         "train_data_name": "purchase_user_item_local_userhash32.csv",
         "test_data_name": "purchase_user_item_local_userhash32.csv",
@@ -16,7 +16,7 @@
         "remove_recent_bought": true,
         "recent_two_weeks": false,
         "remove_train_recent_bought": false,
-        "embed_metadata": false
+        "embed_metadata": true
     },
     "model_params": {
         "embed_size": 32,
@@ -26,9 +26,9 @@
         "num_item_layer": 0,
         "n_layers": 1,
         "n_heads": 2,
-        "drop_out": 0.2,
+        "drop_out": 0.1,
         "loss_type": "BPR",
-        "seq_len": 20,
+        "seq_len": 30,
         "init_scheme": "Kaiming",
         "model_type": "Transformer",
         "sampler_type": "Negative",
@@ -38,7 +38,7 @@
     "train_params": {
         "lr": 1e-4,
         "seed": 42,
-        "batch_size": 64,
+        "batch_size": 16,
         "num_workers": 0,
         "train_epoch": 3,
         "top_k": 10,
@@ -48,7 +48,7 @@
         "save_epoch": 1,
         "attention_path": "hm_refactored/hm_out/attention_maps",
         "save_path": "hm_refactored/hm_out/checkpoints",
-        "save_name": "hm_m1_local_transformer_hash_benchmark_e3_d32",
+        "save_name": "hm_m1_local_meta_transformer_hash_benchmark_bs16_seq30_do01",
         "scheduler_type": "original",
         "clip_grad_ratio": 0.5,
         "attention_vis_flag": false,
@@ -69,15 +69,17 @@
     },
     "tuning_params": {
         "model_params": {
-            "embed_size": [8, 16, 32]
+            "embed_size": [16, 32],
+            "seq_len": [20, 30],
+            "drop_out": [0.1, 0.2]
         },
         "train_params": {
-            "lr": [1e-3, 1e-4],
-            "batch_size": [32, 64]
+            "lr": [1e-4, 2e-4],
+            "batch_size": [16, 32]
         }
     },
     "mlflow_params": {
         "remote_server_uri": "mlruns",
-        "experiment_name": "hm_m1_local_transformer_hash_benchmark_e3_d32"
+        "experiment_name": "hm_m1_local_meta_transformer_hash_benchmark_bs16_seq30_do01"
     }
 }
