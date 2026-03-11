@@ -1,0 +1,11 @@
+mlflow
+numpy
+opencv-python
+pandas
+Pillow
+scikit-learn
+scipy
+six
+torch
+tqdm
+matplotlib

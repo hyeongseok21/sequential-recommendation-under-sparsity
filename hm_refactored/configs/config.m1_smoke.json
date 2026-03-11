@@ -1,61 +1,59 @@
 {
     "dataset_params": {
-        "orig_path" : "datasets/hm",
-        "dataset_path" : "datasets/hm/prep",
+        "orig_path": "datasets/hm",
+        "dataset_path": "datasets/hm/prep",
         "target_week": 27,
-        "save_name": "hm_meta_27_age&price",
+        "save_name": "hm_smoke_basic_week27",
         "reset": true,
-        "train_data_name":"purchase_user_item.csv",
+        "train_data_name": "purchase_user_item.csv",
         "test_data_name": "purchase_user_item.csv",
         "remove_cold_user": true,
         "remove_cold_item": true,
         "slice_user_by_count": true,
-        "count_high": 200,
+        "count_high": 50,
         "count_low": 1,
         "remove_zero_history": true,
         "remove_recent_bought": true,
-        "recent_two_weeks": false,
+        "recent_two_weeks": true,
         "remove_train_recent_bought": false,
-        "embed_metadata": true
+        "embed_metadata": false
     },
-
     "model_params": {
-        "embed_size": 32,
+        "embed_size": 16,
         "weight_decay": 0.001,
         "weight_decay_opt": false,
         "num_user_layer": 0,
         "num_item_layer": 0,
-        "n_layers": 2,
-        "n_heads": 2,
-        "drop_out": 0.4,
+        "n_layers": 1,
+        "n_heads": 1,
+        "drop_out": 0.2,
         "loss_type": "BPR",
-        "seq_len": 30,
+        "seq_len": 20,
         "init_scheme": "Kaiming",
-        "model_type": "Transformer",
-        "sampler_type": "TwoView",
+        "model_type": "MF",
+        "sampler_type": "Negative",
         "learnable_pos": true,
-        "override_mask": true
+        "override_mask": false
     },
-
     "train_params": {
         "lr": 1e-4,
-        "batch_size": 256,
+        "batch_size": 64,
         "num_workers": 0,
-        "train_epoch": 100,
+        "train_epoch": 1,
         "top_k": 10,
         "optimizer": "Adam",
+        "accelerator": "auto",
         "device_num": 0,
-        "save_epoch": 5,
+        "save_epoch": 1,
         "attention_path": "hm_refactored/hm_out/attention_maps",
         "save_path": "hm_refactored/hm_out/checkpoints",
-        "save_name": "MetaSASRec_27_important4_concat&project_100",
+        "save_name": "hm_m1_smoke_mf",
         "scheduler_type": "original",
         "clip_grad_ratio": 0.5,
         "attention_vis_flag": false,
-        "track_additional_info": true,
+        "track_additional_info": false,
         "interval_additional_info": 4000
     },
-
     "eval_params": {
         "test": true,
         "benchmark": true,
@@ -68,20 +66,17 @@
         "popular_ten": true,
         "recent_ten": false
     },
-
     "tuning_params": {
         "model_params": {
-            "embed_size": [8, 16, 32, 64, 128]
+            "embed_size": [8, 16, 32]
         },
         "train_params": {
-            "lr": [1e-3, 1e-4, 1e-5],
-            "batch_size": [256, 512, 1024]
+            "lr": [1e-3, 1e-4],
+            "batch_size": [32, 64]
         }
     },
-
     "mlflow_params": {
         "remote_server_uri": "mlruns",
-        "experiment_name": "hs_hm_SASRec"
+        "experiment_name": "hm_m1_smoke"
     }
-
 }
