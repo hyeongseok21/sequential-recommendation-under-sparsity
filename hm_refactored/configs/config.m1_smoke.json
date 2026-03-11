@@ -1,12 +1,12 @@
 {
     "dataset_params": {
-        "orig_path": "datasets/hm",
-        "dataset_path": "datasets/hm/prep",
+        "orig_path": "datasets/hm/smoke",
+        "dataset_path": "datasets/hm/smoke/prep",
         "target_week": 27,
         "save_name": "hm_smoke_basic_week27",
         "reset": true,
-        "train_data_name": "purchase_user_item.csv",
-        "test_data_name": "purchase_user_item.csv",
+        "train_data_name": "purchase_user_item_smoke.csv",
+        "test_data_name": "purchase_user_item_smoke.csv",
         "remove_cold_user": true,
         "remove_cold_item": true,
         "slice_user_by_count": true,
@@ -56,7 +56,7 @@
     },
     "eval_params": {
         "test": true,
-        "benchmark": true,
+        "benchmark": false,
         "batch_size_test": 32,
         "batch_size_benchmark": 32,
         "test_emb_vis": false,

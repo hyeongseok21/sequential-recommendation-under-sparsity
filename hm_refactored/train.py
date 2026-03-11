@@ -6,10 +6,10 @@ import uuid
 import pickle
 import argparse
 import collections
+from pathlib import Path
 from tqdm.auto import tqdm
 from collections import defaultdict
 
-import mlflow
 import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
@@ -31,24 +31,73 @@ import matplotlib
 from visualizer import dosnes
 from mpl_toolkits.mplot3d import Axes3D
 
+try:
+    import mlflow
+except ImportError:
+    class _DummyTracking:
+        @staticmethod
+        def get_tracking_uri():
+            return "disabled"
+
+    class _DummyMlflow:
+        tracking = _DummyTracking()
+
+        @staticmethod
+        def log_metric(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def log_params(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def set_tracking_uri(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def set_experiment(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def start_run(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def end_run(*args, **kwargs):
+            return None
+
+    mlflow = _DummyMlflow()
+
 class Trainer:
     def __init__(self, config_path, config=None):
         self.logger = init_logger('trainer')
+        self.project_root = Path(__file__).resolve().parents[1]
+        self.module_root = Path(__file__).resolve().parent
         
-        # Identify & Track GPU Error detail
-        os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
-        os.environ["CUDA_VISIBLE_DEVICES"] = "0"
         # 0. config file을 불러와서 parameter 초기화
         if config is None:
-            with open(config_path, 'rb') as f:
+            resolved_config_path = Path(config_path)
+            if not resolved_config_path.is_absolute():
+                resolved_config_path = (Path.cwd() / resolved_config_path).resolve()
+                if not resolved_config_path.exists():
+                    resolved_config_path = (self.project_root / config_path).resolve()
+            with open(resolved_config_path, 'rb') as f:
                 config = json.load(f)
         self.config = config
-
-        self.logger.info('Parameter settings : {}'.format(json.dumps(self.config, indent=4)))
         self.dataset_params = self.config['dataset_params']
         self.model_params = self.config['model_params']
         self.train_params = self.config['train_params']
         self.eval_params = self.config['eval_params']
+        self._normalize_config_paths()
+
+        # Identify & Track GPU Error detail
+        os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+        if self.train_params.get('accelerator', 'auto') == 'cuda' and torch.cuda.is_available():
+            visible_device = str(self.train_params.get('device_num', 0))
+            os.environ["CUDA_VISIBLE_DEVICES"] = visible_device
+
+        self.logger.info('Parameter settings : {}'.format(json.dumps(self.config, indent=4)))
+        self.num_workers = self.train_params.get('num_workers', 0)
 
         self.logger.info('Loading Dataset.')
         dataset_path = os.path.join(self.dataset_params['dataset_path'], self.dataset_params['save_name'] + '.pkl')
@@ -95,25 +144,25 @@ class Trainer:
             collate_fn=sampler.sampling,
             batch_size=self.train_params['batch_size'],
             shuffle=True,
-            num_workers=8
+            num_workers=self.num_workers
         )
         if self.eval_params['test']:
             self.test_dl = DataLoader(
                 test_ds,
                 batch_size=self.eval_params['batch_size_test'],
                 shuffle=False,
-                num_workers=8
+                num_workers=self.num_workers
             )
         if self.eval_params['benchmark']:
             self.benchmark_dl = DataLoader(
                 benchmark_ds,
                 batch_size=self.eval_params['batch_size_benchmark'],
                 shuffle=False,
-                num_workers=8
+                num_workers=self.num_workers
             )
 
         self.logger.info('Initializing Model.')
-        self.device = torch.device('cuda:{}'.format(self.train_params['device_num']))
+        self.device = self._select_device()
         
         # 4. model_type에 따라 self.model 초기화
         if self.dataset_params['embed_metadata'] == False:
@@ -187,6 +236,52 @@ class Trainer:
                 if len(self.popular_items) > self.train_params['top_k']:
                     break
                 self.popular_items = self.popular_items + list(item_count_inv[per_item_count])[:(self.train_params['top_k'] - len(self.popular_items))]
+
+    def _select_device(self):
+        accelerator = self.train_params.get('accelerator', 'auto')
+        if accelerator == 'cuda':
+            if not torch.cuda.is_available():
+                raise RuntimeError('accelerator is set to cuda, but CUDA is not available.')
+            return torch.device('cuda:{}'.format(self.train_params.get('device_num', 0)))
+        if accelerator == 'mps':
+            if not torch.backends.mps.is_available():
+                raise RuntimeError('accelerator is set to mps, but MPS is not available.')
+            return torch.device('mps')
+        if accelerator == 'cpu':
+            return torch.device('cpu')
+
+        if torch.cuda.is_available():
+            return torch.device('cuda:{}'.format(self.train_params.get('device_num', 0)))
+        if torch.backends.mps.is_available():
+            return torch.device('mps')
+        return torch.device('cpu')
+
+    def _to_device_tensor(self, value, dtype):
+        return torch.as_tensor(value, dtype=dtype, device=self.device)
+
+    def _resolve_path(self, value):
+        path = Path(value)
+        if path.is_absolute():
+            return str(path)
+        return str((self.project_root / path).resolve())
+
+    def _normalize_config_paths(self):
+        path_fields = {
+            'dataset_params': ['orig_path', 'dataset_path'],
+            'train_params': ['attention_path', 'save_path'],
+            'eval_params': ['test_emb_vis_path', 'benchmark_emb_vis_path'],
+            'mlflow_params': ['remote_server_uri'],
+        }
+        for section, fields in path_fields.items():
+            if section not in self.config:
+                continue
+            for field in fields:
+                value = self.config[section].get(field)
+                if not value:
+                    continue
+                if section == 'mlflow_params' and '://' in value:
+                    continue
+                self.config[section][field] = self._resolve_path(value)
 
     # config 저장
     def save_config(self):
@@ -262,11 +357,11 @@ class Trainer:
             user, pos_neg = pos_neg_pair[:, 0], pos_neg_pair[:, 1:]
             num_negs = pos_neg.shape[1] - 1
 
-            user = user.type(torch.LongTensor).to(self.device)
-            pos_neg = pos_neg.type(torch.LongTensor).to(self.device)
+            user = self._to_device_tensor(user, torch.long)
+            pos_neg = self._to_device_tensor(pos_neg, torch.long)
 
-            history = history.type(torch.LongTensor).to(self.device)
-            history_mask = history_mask.type(torch.LongTensor).to(self.device)
+            history = self._to_device_tensor(history, torch.long)
+            history_mask = self._to_device_tensor(history_mask, torch.long)
 
             predictions, inf_user_embed, inf_item_embed = self.model.recommend(user, history, history_mask, item=pos_neg)
             predictions = predictions.detach()
@@ -323,11 +418,11 @@ class Trainer:
         
         # self.test_ds의 batch수 만큼 iterate
         for idx, (user, mask, history, history_mask) in enumerate(tqdm(self.test_dl)):
-            user = user[:, 0].type(torch.LongTensor).to(self.device)
-            mask = mask.type(torch.FloatTensor).to(self.device)
+            user = self._to_device_tensor(user[:, 0], torch.long)
+            mask = self._to_device_tensor(mask, torch.float32)
 
-            history = history.type(torch.LongTensor).to(self.device)
-            history_mask = history_mask.type(torch.LongTensor).to(self.device)
+            history = self._to_device_tensor(history, torch.long)
+            history_mask = self._to_device_tensor(history_mask, torch.long)
 
             predictions, inf_user_embed, inf_item_embed = self.model.recommend(user, history, history_mask)
             predictions = predictions.detach()
@@ -441,37 +536,37 @@ class Trainer:
                     neg_history = pos_neg_pair[:, 6+2*self.model_params['seq_len']:6+3*self.model_params['seq_len']]
                     neg_history_mask = pos_neg_pair[:, 6+3*self.model_params['seq_len']:6+4*self.model_params['seq_len']]
 
-                    neg_history = torch.LongTensor(neg_history).to(self.device)
-                    neg_history_mask = torch.LongTensor(neg_history_mask).to(self.device)
+                    neg_history = self._to_device_tensor(neg_history, torch.long)
+                    neg_history_mask = self._to_device_tensor(neg_history_mask, torch.long)
 
                 #if sum(history_mask[:,-1]) < pos_neg_pair.shape[0]:
                 #    import pdb; pdb.set_trace()
                 
                 # tensor 값을 int64 value로 변경하고 self.device에 넣음
                 if self.dataset_params['embed_metadata'] == False:
-                    user = torch.LongTensor(user).to(self.device)
-                    pos = torch.LongTensor(pos).to(self.device)
-                    neg = torch.LongTensor(neg).to(self.device)
-                    history = torch.LongTensor(history).to(self.device)
-                    history_mask = torch.LongTensor(history_mask).to(self.device)
+                    user = self._to_device_tensor(user, torch.long)
+                    pos = self._to_device_tensor(pos, torch.long)
+                    neg = self._to_device_tensor(neg, torch.long)
+                    history = self._to_device_tensor(history, torch.long)
+                    history_mask = self._to_device_tensor(history_mask, torch.long)
                 else:
-                    user = torch.LongTensor(user).to(self.device)
-                    pos = torch.LongTensor(pos).to(self.device)
+                    user = self._to_device_tensor(user, torch.long)
+                    pos = self._to_device_tensor(pos, torch.long)
                     #prodcode = torch.LongTensor(prodcode).to(self.device)
-                    prodtype = torch.LongTensor(prodtype).to(self.device)
+                    prodtype = self._to_device_tensor(prodtype, torch.long)
                     #graph_appear = torch.LongTensor(graph_appear).to(self.device)
                     #colour_group = torch.LongTensor(colour_group).to(self.device)
                     #pcolval = torch.LongTensor(pcolval).to(self.device)
                     #pcolmas = torch.LongTensor(pcolmas).to(self.device)
-                    depart = torch.LongTensor(depart).to(self.device)
+                    depart = self._to_device_tensor(depart, torch.long)
                     #idxgroup = torch.LongTensor(idxgroup).to(self.device)
                     #section = torch.LongTensor(section).to(self.device)
-                    garmgroup = torch.LongTensor(garmgroup).to(self.device)
-                    age = torch.LongTensor(age).to(self.device)
-                    neg = torch.LongTensor(neg).to(self.device)
+                    garmgroup = self._to_device_tensor(garmgroup, torch.long)
+                    age = self._to_device_tensor(age, torch.long)
+                    neg = self._to_device_tensor(neg, torch.long)
                     #price = torch.LongTensor(price).to(self.device)
-                    history = torch.LongTensor(history).to(self.device)
-                    history_mask = torch.LongTensor(history_mask).to(self.device)
+                    history = self._to_device_tensor(history, torch.long)
+                    history_mask = self._to_device_tensor(history_mask, torch.long)
                 # gradient 초기화
                 self.opt.zero_grad()
                 
@@ -564,8 +659,18 @@ class Trainer:
                 plt.savefig(os.path.join(self.train_params['attention_path'], self.train_params['save_name'],'attention_map_{}.png'.format(e)))
                 plt.close(fig)
             
-            if total_res['b_global_HR'] > best_hr:
-                best_hr, best_ndcg, best_epoch = total_res['b_global_HR'], total_res['b_global_NDCG'], e
+            if self.eval_params['benchmark']:
+                current_primary = total_res['b_global_HR']
+                current_secondary = total_res['b_global_NDCG']
+            elif self.eval_params['test']:
+                current_primary = total_res['t_global_HR']
+                current_secondary = total_res['t_global_MAP']
+            else:
+                current_primary = -train_loss_
+                current_secondary = -train_loss_
+
+            if current_primary > best_hr:
+                best_hr, best_ndcg, best_epoch = current_primary, current_secondary, e
             self.save_checkpoint(e, best_hr, best_ndcg, best_epoch, self.model)
 
         self.logger.info("Training Completed. Best epoch {:03d}: GLOBAL_HR = {:.4f}, GLOBAL_NDCG = {:.4f}".format(best_epoch, best_hr, best_ndcg))

@@ -88,8 +88,14 @@ def hm_prep(config):
     unique_last_test_df['user_id'] = unique_last_test_df['user_id'].astype('category')
     unique_last_test_df['item_id'] = unique_last_test_df['item_id'].astype('category')
     
-    combined_user_ids = copy.deepcopy(train_df['user_id']).append(unique_last_test_df['user_id'], ignore_index=True).astype('category')
-    combined_item_ids = copy.deepcopy(train_df['item_id']).append(unique_last_test_df['item_id'], ignore_index=True).astype('category')
+    combined_user_ids = pd.concat(
+        [copy.deepcopy(train_df['user_id']), unique_last_test_df['user_id']],
+        ignore_index=True
+    ).astype('category')
+    combined_item_ids = pd.concat(
+        [copy.deepcopy(train_df['item_id']), unique_last_test_df['item_id']],
+        ignore_index=True
+    ).astype('category')
 
     # 6. user/item dictionary 생성, interaction과 mapping
     logger.info('Make user item index dictionary & map to interactions.')
