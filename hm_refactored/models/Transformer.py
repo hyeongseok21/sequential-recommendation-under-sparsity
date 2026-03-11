@@ -234,6 +234,8 @@ class CustomDIFSR(nn.Module):
         self.learnable_pos = config["learnable_pos"]
         self.fusion_type = config.get("fusion_type", "sum")
         self.use_target_projection = config.get("use_target_projection", False)
+        self.history_meta_scale = config.get("history_meta_scale", 1.0)
+        self.target_meta_scale = config.get("target_meta_scale", 1.0)
 
         self.item_embedding = nn.Embedding(self.num_item, self.embed_size)
         self.product_type_embedding = nn.Embedding(num_product_type, self.embed_size)
@@ -287,17 +289,17 @@ class CustomDIFSR(nn.Module):
         garment_group = self.garment_group_embedding(self.item_garment_group_ids[item_ids]).unsqueeze(-2)
         return [product_type, department, garment_group]
 
-    def _get_item_representation(self, item_ids):
+    def _get_item_representation(self, item_ids, meta_scale=1.0):
         item_embed = self.item_embedding(item_ids)
         product_type_embed = self.product_type_embedding(self.item_product_type_ids[item_ids])
         department_embed = self.department_embedding(self.item_department_ids[item_ids])
         garment_group_embed = self.garment_group_embedding(self.item_garment_group_ids[item_ids])
         meta_embed = torch.cat([product_type_embed, department_embed, garment_group_embed], dim=-1)
         meta_embed = self.meta_project(meta_embed)
-        return item_embed + meta_embed
+        return item_embed + (meta_scale * meta_embed)
 
     def _get_target_representation(self, item_ids):
-        item_repr = self._get_item_representation(item_ids)
+        item_repr = self._get_item_representation(item_ids, meta_scale=self.target_meta_scale)
         if self.use_target_projection:
             item_repr = self.target_project(item_repr)
         return item_repr
@@ -316,7 +318,7 @@ class CustomDIFSR(nn.Module):
 
     def _get_history_embedding(self, history, history_mask):
         batch_size, seq_len = history.shape
-        history_embed = self._get_item_representation(history)
+        history_embed = self._get_item_representation(history, meta_scale=self.history_meta_scale)
         position_embedding = self._get_position_embedding(batch_size, seq_len)
         attribute_embed = self._lookup_item_attributes(history)
         attention_mask = self._get_attention_mask(history_mask)
