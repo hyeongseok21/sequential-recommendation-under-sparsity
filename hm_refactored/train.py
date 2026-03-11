@@ -365,7 +365,10 @@ class Trainer:
 
             predictions, inf_user_embed, inf_item_embed = self.model.recommend(user, history, history_mask, item=pos_neg)
             predictions = predictions.detach()
-            _, recommends = torch.topk(predictions, self.train_params['top_k'])
+            effective_top_k = min(self.train_params['top_k'], predictions.shape[1])
+            if effective_top_k == 0:
+                continue
+            _, recommends = torch.topk(predictions, effective_top_k)
             recommends = recommends.detach().cpu().numpy()
             #print("recommends.shape:", recommends.shape)
 
@@ -406,8 +409,8 @@ class Trainer:
 
         res['b_global_NUM'] = len(global_HR)
         res['b_global_HIT'] = int(np.sum(global_HR))
-        res['b_global_HR'] = np.mean(global_HR)
-        res['b_global_NDCG'] = np.mean(global_NDCG)
+        res['b_global_HR'] = np.mean(global_HR) if len(global_HR) > 0 else 0.0
+        res['b_global_NDCG'] = np.mean(global_NDCG) if len(global_NDCG) > 0 else 0.0
         #import pdb; pdb.set_trace()
         return res
 
@@ -426,7 +429,10 @@ class Trainer:
 
             predictions, inf_user_embed, inf_item_embed = self.model.recommend(user, history, history_mask)
             predictions = predictions.detach()
-            _, recommends = torch.topk(predictions, self.train_params['top_k'])
+            effective_top_k = min(self.train_params['top_k'], predictions.shape[1])
+            if effective_top_k == 0:
+                continue
+            _, recommends = torch.topk(predictions, effective_top_k)
             recommends = recommends.detach().cpu().numpy()
 
             row2row_comp = np.concatenate([np.tile(np.expand_dims(recommends, axis=1),(1, recommends.shape[0], 1)), 
@@ -472,8 +478,8 @@ class Trainer:
 
         res['t_global_NUM'] = len(global_HR)
         res['t_global_HIT'] = int(np.sum(global_HR))
-        res['t_global_HR'] = np.mean(global_HR)
-        res['t_global_MAP'] = np.mean(global_MAP)
+        res['t_global_HR'] = np.mean(global_HR) if len(global_HR) > 0 else 0.0
+        res['t_global_MAP'] = np.mean(global_MAP) if len(global_MAP) > 0 else 0.0
 
         return res
 

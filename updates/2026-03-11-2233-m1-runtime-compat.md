@@ -1,15 +1,15 @@
-# 2026-03-11 22:33 m1 runtime compat
+# 2026-03-11 22:33 M1 런타임 호환성
 
-## Included changes
+## 포함된 변경
 
-- Added automatic device selection for `cuda`, `mps`, and `cpu` in `hm_refactored/train.py`.
-- Switched tensor materialization to `torch.as_tensor(..., device=...)` for better MPS compatibility.
-- Added an MLflow fallback so training can proceed even if `mlflow` is not installed.
-- Fixed `benchmark=false` training completion logic in `hm_refactored/train.py`.
-- Replaced deprecated `Series.append()` usage with `pandas.concat()` in preprocessing code for pandas 2.x compatibility.
-- Updated `config.m1_smoke.json` to use the smoke dataset and disable benchmark mode.
+- `hm_refactored/train.py`에서 `cuda`, `mps`, `cpu`를 자동으로 선택하도록 장치 선택 로직을 추가했다.
+- MPS 호환성을 높이기 위해 텐서 생성 방식을 `torch.as_tensor(..., device=...)`로 정리했다.
+- `mlflow`가 설치되지 않은 환경에서도 학습이 계속되도록 fallback 처리를 추가했다.
+- `benchmark=false`일 때 학습 종료 단계에서 깨지던 로직을 수정했다.
+- `pandas 2.x` 호환성을 위해 전처리 코드의 `Series.append()`를 `pandas.concat()`으로 교체했다.
+- `config.m1_smoke.json`이 smoke 데이터셋을 사용하고 benchmark를 비활성화하도록 수정했다.
 
-## Excluded from this commit
+## 커밋에서 제외한 변경
 
-- Generated artifacts such as `.venv`, `mlruns/`, sampled CSVs, and preprocessed pickle files were left out.
-- Finder metadata files such as `.DS_Store` were left out.
+- `.venv`, `mlruns/`, 샘플 CSV, 전처리 pickle 같은 생성물은 포함하지 않았다.
+- Finder 메타데이터 파일인 `.DS_Store`도 포함하지 않았다.
