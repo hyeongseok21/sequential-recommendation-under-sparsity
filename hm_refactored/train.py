@@ -170,6 +170,7 @@ class Trainer:
 
         self.logger.info('Initializing Model.')
         self.device = self._select_device()
+        item_feature_map = self._build_item_feature_map() if self.dataset_params['embed_metadata'] else None
         
         # 4. model_type에 따라 self.model 초기화
         if self.dataset_params['embed_metadata'] == False:
@@ -186,6 +187,9 @@ class Trainer:
             elif self.model_params['model_type'] == "Transformer":
                 from models.Transformer import CustomMetaSASRec
                 get_model = CustomMetaSASRec
+            elif self.model_params['model_type'] == "DIFSR":
+                from models.Transformer import CustomDIFSR
+                get_model = CustomDIFSR
         
         if self.dataset_params['embed_metadata'] == False:
             self.model = get_model(
@@ -195,24 +199,38 @@ class Trainer:
                 device=self.device
             ).to(self.device)
         else:
-            self.model = get_model(
-                self.model_params, 
-                num_user = self.data_dict['num_user'],
-                num_item = self.data_dict['num_item'],
-                num_product_code = self.data_dict['num_product_code'],
-                num_product_type = self.data_dict['num_product_type'],
-                num_graphical_appearance = self.data_dict['num_graphical_appearance'],
-                num_colour_group = self.data_dict['num_colour_group'],
-                num_perceived_colour_value = self.data_dict['num_perceived_colour_value'],
-                num_perceived_colour_master = self.data_dict['num_perceived_colour_master'],
-                num_department = self.data_dict['num_department'],
-                num_index_group = self.data_dict['num_index_group'],
-                num_section = self.data_dict['num_section'],
-                num_garment_group = self.data_dict['num_garment_group'],
-                num_age = self.data_dict['num_age'],
-                num_price = self.data_dict['num_price'],
-                device=self.device
-            ).to(self.device)
+            if self.model_params['model_type'] == "DIFSR":
+                self.model = get_model(
+                    self.model_params,
+                    num_user=self.data_dict['num_user'],
+                    num_item=self.data_dict['num_item'],
+                    num_product_type=self.data_dict['num_product_type'],
+                    num_department=self.data_dict['num_department'],
+                    num_garment_group=self.data_dict['num_garment_group'],
+                    item_product_type_ids=item_feature_map['product_type'],
+                    item_department_ids=item_feature_map['department'],
+                    item_garment_group_ids=item_feature_map['garment_group'],
+                    device=self.device
+                ).to(self.device)
+            else:
+                self.model = get_model(
+                    self.model_params, 
+                    num_user = self.data_dict['num_user'],
+                    num_item = self.data_dict['num_item'],
+                    num_product_code = self.data_dict['num_product_code'],
+                    num_product_type = self.data_dict['num_product_type'],
+                    num_graphical_appearance = self.data_dict['num_graphical_appearance'],
+                    num_colour_group = self.data_dict['num_colour_group'],
+                    num_perceived_colour_value = self.data_dict['num_perceived_colour_value'],
+                    num_perceived_colour_master = self.data_dict['num_perceived_colour_master'],
+                    num_department = self.data_dict['num_department'],
+                    num_index_group = self.data_dict['num_index_group'],
+                    num_section = self.data_dict['num_section'],
+                    num_garment_group = self.data_dict['num_garment_group'],
+                    num_age = self.data_dict['num_age'],
+                    num_price = self.data_dict['num_price'],
+                    device=self.device
+                ).to(self.device)
 
         # 4-1. weight_decay option 활성화 시, optimizer에 weight_decay를 설정
         if self.model_params['weight_decay_opt']:
@@ -309,6 +327,24 @@ class Trainer:
                 if section == 'mlflow_params' and '://' in value:
                     continue
                 self.config[section][field] = self._resolve_path(value)
+
+    def _build_item_feature_map(self):
+        default = np.zeros(self.data_dict['num_item'], dtype=np.int64)
+        feature_map = {
+            'product_type': default.copy(),
+            'department': default.copy(),
+            'garment_group': default.copy(),
+        }
+        item_features = (
+            self.data_dict['train_df'][['item_id', 'product_type_no', 'department_no', 'garment_group_no']]
+            .drop_duplicates('item_id')
+            .set_index('item_id')
+        )
+        valid_items = item_features.index.to_numpy(dtype=np.int64)
+        feature_map['product_type'][valid_items] = item_features['product_type_no'].to_numpy(dtype=np.int64)
+        feature_map['department'][valid_items] = item_features['department_no'].to_numpy(dtype=np.int64)
+        feature_map['garment_group'][valid_items] = item_features['garment_group_no'].to_numpy(dtype=np.int64)
+        return feature_map
 
     # config 저장
     def save_config(self):

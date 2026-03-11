@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import math
 
 from models.loss import InfoNCE
-from models.layers import EncoderLayer, PositionalEncoding
+from models.layers import EncoderLayer, PositionalEncoding, DIFTransformerLayer
 
 class CustomSASRec(nn.Module):
     def __init__(self, config, num_user, num_item, device):
@@ -212,6 +212,163 @@ class CustomSASRec(nn.Module):
         attention_mask.requires_grad = False
 
         return attention_mask
+
+
+class CustomDIFSR(nn.Module):
+    def __init__(self, config, num_user, num_item, num_product_type, num_department,
+                 num_garment_group, item_product_type_ids, item_department_ids,
+                 item_garment_group_ids, device):
+        super().__init__()
+        self.num_user = num_user
+        self.num_item = num_item
+        self.weight_decay = config['weight_decay']
+        self.embed_size = config['embed_size']
+        self.device = device
+
+        self.n_layers = config["n_layers"]
+        self.n_heads = config["n_heads"]
+        self.drop_out = config["drop_out"]
+        self.seq_len = config["seq_len"]
+        self.loss_type = config["loss_type"]
+        self.init_scheme = config["init_scheme"]
+        self.learnable_pos = config["learnable_pos"]
+        self.fusion_type = config.get("fusion_type", "sum")
+
+        self.item_embedding = nn.Embedding(self.num_item, self.embed_size)
+        self.product_type_embedding = nn.Embedding(num_product_type, self.embed_size)
+        self.department_embedding = nn.Embedding(num_department, self.embed_size)
+        self.garment_group_embedding = nn.Embedding(num_garment_group, self.embed_size)
+
+        self.register_buffer("item_product_type_ids", torch.as_tensor(item_product_type_ids, dtype=torch.long))
+        self.register_buffer("item_department_ids", torch.as_tensor(item_department_ids, dtype=torch.long))
+        self.register_buffer("item_garment_group_ids", torch.as_tensor(item_garment_group_ids, dtype=torch.long))
+
+        if self.learnable_pos:
+            self.positional_encoding = nn.Parameter(torch.empty(self.seq_len, self.embed_size))
+            nn.init.kaiming_normal_(self.positional_encoding)
+        else:
+            self.positional_encoding = PositionalEncoding(hidden_dim=self.embed_size, device=self.device)
+
+        self.transformer_layers = nn.ModuleList([
+            DIFTransformerLayer(
+                self.n_heads,
+                self.embed_size,
+                [self.embed_size, self.embed_size, self.embed_size],
+                3,
+                self.embed_size * 2,
+                self.drop_out,
+                self.drop_out,
+                self.seq_len,
+                fusion_type=self.fusion_type,
+            )
+            for _ in range(self.n_layers)
+        ])
+
+        if self.loss_type == "BCE":
+            self.activation = nn.Sigmoid()
+
+        self._init_weight()
+
+    def _init_weight(self):
+        for m in self.modules():
+            if isinstance(m, nn.Linear) or isinstance(m, nn.Embedding):
+                if self.init_scheme in ["Kaiming", "kaiming"]:
+                    torch.nn.init.kaiming_normal_(m.weight)
+                elif self.init_scheme in ["Xavier", "xavier"]:
+                    torch.nn.init.xavier_normal_(m.weight)
+
+    def _lookup_item_attributes(self, item_ids):
+        product_type = self.product_type_embedding(self.item_product_type_ids[item_ids]).unsqueeze(-2)
+        department = self.department_embedding(self.item_department_ids[item_ids]).unsqueeze(-2)
+        garment_group = self.garment_group_embedding(self.item_garment_group_ids[item_ids]).unsqueeze(-2)
+        return [product_type, department, garment_group]
+
+    def _get_position_embedding(self, batch_size, seq_len):
+        if self.learnable_pos:
+            return self.positional_encoding[:seq_len].unsqueeze(0).expand(batch_size, -1, -1)
+        return self.positional_encoding.encoding[:, :seq_len, :].expand(batch_size, -1, -1)
+
+    def _get_attention_mask(self, history_mask):
+        seq_len = history_mask.shape[1]
+        mask_1 = history_mask.unsqueeze(1).repeat(1, seq_len, 1)
+        mask_2 = history_mask.unsqueeze(2).repeat(1, 1, seq_len)
+        sequence_mask = (mask_1 * mask_2).unsqueeze(1).float().to(self.device)
+        return (1.0 - sequence_mask) * -10000.0
+
+    def _get_history_embedding(self, history, history_mask):
+        batch_size, seq_len = history.shape
+        history_embed = self.item_embedding(history)
+        position_embedding = self._get_position_embedding(batch_size, seq_len)
+        attribute_embed = self._lookup_item_attributes(history)
+        attention_mask = self._get_attention_mask(history_mask)
+
+        for layer in self.transformer_layers:
+            history_embed = layer(history_embed, attribute_embed, position_embedding, attention_mask)
+
+        return history_embed[:, -1, :]
+
+    def _compute_BPR(self, history_embed, pos_embed, neg_embed):
+        pos_preds = torch.mul(history_embed, pos_embed).sum(dim=-1, keepdims=True)
+        neg_preds = torch.mul(history_embed, neg_embed).sum(dim=-1, keepdims=True)
+        return -F.logsigmoid(pos_preds - neg_preds).sum()
+
+    def _compute_triplet(self, history_embed, pos_embed, neg_embed):
+        criterion = nn.TripletMarginWithDistanceLoss(
+            distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y)
+        )
+        return criterion(
+            F.normalize(history_embed, dim=-1),
+            F.normalize(pos_embed, dim=-1),
+            F.normalize(neg_embed, dim=-1),
+        )
+
+    def _compute_BCE(self, history_embed, pos_embed, neg_embed):
+        pos_preds = self.activation(torch.mul(history_embed, pos_embed).sum(dim=-1, keepdims=True))
+        neg_preds = self.activation(torch.mul(history_embed, neg_embed).sum(dim=-1, keepdims=True))
+        preds = torch.cat([pos_preds, neg_preds], dim=-1)
+        labels = torch.cat([torch.ones_like(pos_preds), torch.zeros_like(neg_preds)], dim=-1).to(self.device)
+        return nn.BCELoss()(preds, labels)
+
+    def _get_loss(self, history_embed, pos_item_embed, neg_item_embed):
+        loss_func = {"BPR": self._compute_BPR, "Triplet": self._compute_triplet, "BCE": self._compute_BCE}
+        history_anchor_loss = loss_func[self.loss_type](history_embed, pos_item_embed, neg_item_embed)
+        raw_reg_term = (
+            history_embed.norm(dim=1).pow(2).sum()
+            + pos_item_embed.norm(dim=1).pow(2).sum()
+            + neg_item_embed.norm(dim=1).pow(2).sum()
+        )
+        reg_term = self.weight_decay * raw_reg_term
+        return history_anchor_loss, history_anchor_loss, reg_term
+
+    def forward(self, user, pos, prodtype, depart, garmgroup, age, neg, history, history_mask,
+                neg_history=None, neg_history_mask=None):
+        del user, prodtype, depart, garmgroup, age, neg_history, neg_history_mask
+        pos_init_embed = self.item_embedding(pos)
+        neg_init_embed = self.item_embedding(neg)
+        history_embed = self._get_history_embedding(history, history_mask)
+        total_loss, loss_to_track, reg_term = self._get_loss(history_embed, pos_init_embed, neg_init_embed)
+        if self.loss_type == "BPR":
+            total_loss = total_loss + reg_term
+        return total_loss, loss_to_track, reg_term, None, history_embed, pos_init_embed, neg_init_embed
+
+    @torch.inference_mode()
+    def recommend(self, user, history, history_mask, item=None):
+        del user
+        history_embed = self._get_history_embedding(history, history_mask).unsqueeze(1)
+
+        if item is None:
+            item_init_embed = self.item_embedding.weight
+        else:
+            item_init_embed = self.item_embedding(item)
+
+        if self.loss_type == "BCE":
+            out = torch.mul(history_embed, item_init_embed).sum(dim=-1)
+        else:
+            history_embed = F.normalize(history_embed, dim=-1)
+            item_init_embed = F.normalize(item_init_embed, dim=-1)
+            out = torch.mul(history_embed, item_init_embed).sum(dim=-1)
+
+        return out, history_embed, item_init_embed
     
 class CustomMetaSASRec(nn.Module):
     def __init__(self, config, num_user, num_item, num_product_code, num_product_type, num_graphical_appearance, 

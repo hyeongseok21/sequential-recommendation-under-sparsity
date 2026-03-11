@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import copy
 
 import math
 
@@ -346,11 +347,12 @@ class DIFTransformerLayer(nn.Module):
     
     """
     
-    def __init__(self, n_heads, hidden_size, attribute_hidden_size, feat_num, intermediate_size, hidden_dropout_prob, 
-                 attn_dropout_prob, max_len):
+    def __init__(self, n_heads, hidden_size, attribute_hidden_size, feat_num, intermediate_size, hidden_dropout_prob,
+                 attn_dropout_prob, max_len, fusion_type='sum', layer_norm_eps=1e-12):
         super(DIFTransformerLayer, self).__init__()
         self.multi_head_attention = DIFMultiHeadAttention(
-            n_heads, hidden_size, attribute_hidden_size, feat_num, intermediate_size, hidden_dropout_prob, attn_dropout_prob, max_len)
+            n_heads, hidden_size, attribute_hidden_size, feat_num, hidden_dropout_prob, attn_dropout_prob,
+            layer_norm_eps, fusion_type, max_len)
         self.feed_forward = ResidualFF(hidden_size, intermediate_size, hidden_dropout_prob)
         
     def forward(self, hidden_states, attribute_embed, position_embedding, attention_mask):
