@@ -373,6 +373,13 @@ class Trainer:
             "best_epoch": best_epoch,
         }, checkpoint_path)
 
+    def save_epoch_summary(self, summary):
+        save_dir = os.path.join(self.train_params['save_path'], self.train_params['save_name'])
+        os.makedirs(save_dir, exist_ok=True)
+        summary_path = os.path.join(save_dir, 'epoch_summary.json')
+        with open(summary_path, 'w') as f:
+            json.dump(summary, f, indent=4)
+
     # loss 기록
     def record_loss(self, res, e, train_loss_=None):
         f = open(os.path.join(self.train_params['save_path'], self.train_params['save_name'], 'loss.txt'), 'a')
@@ -590,6 +597,8 @@ class Trainer:
         else:
             start_epoch = 0
             best_primary, best_secondary, best_epoch = 0, 0, 0
+        best_benchmark = {"epoch": best_epoch, "b_hr": 0.0, "b_ndcg": 0.0}
+        best_test = {"epoch": best_epoch, "t_hr": 0.0, "t_map": 0.0}
 
         # benchmark_res와 test_res의 시작값을 초기화하고 기록
         start_benchmark_res, start_test_res = {}, {}
@@ -758,7 +767,35 @@ class Trainer:
 
             if current_primary > best_primary:
                 best_primary, best_secondary, best_epoch = current_primary, current_secondary, e
+            if self.eval_params['benchmark'] and total_res.get('b_global_NDCG', float('-inf')) > best_benchmark['b_ndcg']:
+                best_benchmark = {
+                    "epoch": e,
+                    "b_hr": total_res.get('b_global_HR', 0.0),
+                    "b_ndcg": total_res.get('b_global_NDCG', 0.0),
+                    "t_hr": total_res.get('t_global_HR', 0.0),
+                    "t_map": total_res.get('t_global_MAP', 0.0),
+                }
+            if self.eval_params['test'] and total_res.get('t_global_MAP', float('-inf')) > best_test['t_map']:
+                best_test = {
+                    "epoch": e,
+                    "b_hr": total_res.get('b_global_HR', 0.0),
+                    "b_ndcg": total_res.get('b_global_NDCG', 0.0),
+                    "t_hr": total_res.get('t_global_HR', 0.0),
+                    "t_map": total_res.get('t_global_MAP', 0.0),
+                }
             self.save_checkpoint(e, best_primary, best_secondary, best_epoch, self.model)
+
+        self.save_epoch_summary({
+            "checkpoint_policy": {
+                "primary_metric": self._get_checkpoint_metric_names()[0],
+                "secondary_metric": self._get_checkpoint_metric_names()[1],
+                "best_epoch": best_epoch,
+                "best_primary": best_primary,
+                "best_secondary": best_secondary,
+            },
+            "best_benchmark": best_benchmark,
+            "best_test": best_test,
+        })
 
         primary_metric_name, secondary_metric_name = self._get_checkpoint_metric_names()
         self.logger.info(
