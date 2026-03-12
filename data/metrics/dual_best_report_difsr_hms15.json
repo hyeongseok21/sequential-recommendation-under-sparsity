@@ -1,0 +1,62 @@
+{
+  "checkpoint_dir": "hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15",
+  "loss_path": "hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/loss.txt",
+  "best_benchmark": {
+    "epoch": 1,
+    "b_hr": 0.0291,
+    "b_ndcg": 0.0137,
+    "t_hr": 0.0054,
+    "t_map": 0.0016
+  },
+  "best_test": {
+    "epoch": 2,
+    "b_hr": 0.025,
+    "b_ndcg": 0.012,
+    "t_hr": 0.0042,
+    "t_map": 0.002
+  },
+  "different_epoch": true,
+  "epoch_gap": 1,
+  "evaluated_checkpoints": {
+    "1": {
+      "checkpoint_epoch": 1,
+      "results": {
+        "b_global_NUM": 1681,
+        "b_global_HIT": 49,
+        "b_global_HR": 0.029149315883402735,
+        "b_global_NDCG": 0.013671354377945024,
+        "t_global_NUM": 1681,
+        "t_global_HIT": 9,
+        "t_global_HR": 0.005353955978584176,
+        "t_global_MAP": 0.0016161015268689274
+      },
+      "checkpoint_meta": {
+        "best_epoch": 1,
+        "best_primary_metric": "UNKNOWN",
+        "best_secondary_metric": "UNKNOWN",
+        "best_primary": 0.029149315883402735,
+        "best_secondary": 0.013671354377945024
+      }
+    },
+    "2": {
+      "checkpoint_epoch": 2,
+      "results": {
+        "b_global_NUM": 1681,
+        "b_global_HIT": 42,
+        "b_global_HR": 0.024985127900059488,
+        "b_global_NDCG": 0.011964732131818076,
+        "t_global_NUM": 1681,
+        "t_global_HIT": 7,
+        "t_global_HR": 0.004164187983343248,
+        "t_global_MAP": 0.0019928613920285544
+      },
+      "checkpoint_meta": {
+        "best_epoch": 1,
+        "best_primary_metric": "UNKNOWN",
+        "best_secondary_metric": "UNKNOWN",
+        "best_primary": 0.029149315883402735,
+        "best_secondary": 0.013671354377945024
+      }
+    }
+  }
+}
