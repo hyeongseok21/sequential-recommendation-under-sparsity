@@ -234,6 +234,8 @@ class CustomDIFSR(nn.Module):
         self.learnable_pos = config["learnable_pos"]
         self.fusion_type = config.get("fusion_type", "sum")
         self.use_target_projection = config.get("use_target_projection", False)
+        self.use_history_meta_projection = config.get("use_history_meta_projection", False)
+        self.history_meta_residual_blend = config.get("history_meta_residual_blend", 0.0)
         self.history_meta_scale = config.get("history_meta_scale", 1.0)
         self.target_meta_scale = config.get("target_meta_scale", 1.0)
 
@@ -242,6 +244,8 @@ class CustomDIFSR(nn.Module):
         self.department_embedding = nn.Embedding(num_department, self.embed_size)
         self.garment_group_embedding = nn.Embedding(num_garment_group, self.embed_size)
         self.meta_project = nn.Linear(self.embed_size * 3, self.embed_size)
+        if self.use_history_meta_projection:
+            self.history_meta_project = nn.Linear(self.embed_size * 3, self.embed_size)
         if self.use_target_projection:
             self.target_project = nn.Linear(self.embed_size, self.embed_size)
 
@@ -289,13 +293,18 @@ class CustomDIFSR(nn.Module):
         garment_group = self.garment_group_embedding(self.item_garment_group_ids[item_ids]).unsqueeze(-2)
         return [product_type, department, garment_group]
 
-    def _get_item_representation(self, item_ids, meta_scale=1.0):
+    def _get_item_representation(self, item_ids, meta_scale=1.0, history_mode=False):
         item_embed = self.item_embedding(item_ids)
         product_type_embed = self.product_type_embedding(self.item_product_type_ids[item_ids])
         department_embed = self.department_embedding(self.item_department_ids[item_ids])
         garment_group_embed = self.garment_group_embedding(self.item_garment_group_ids[item_ids])
         meta_embed = torch.cat([product_type_embed, department_embed, garment_group_embed], dim=-1)
-        meta_embed = self.meta_project(meta_embed)
+        shared_meta_embed = self.meta_project(meta_embed)
+        if history_mode and self.use_history_meta_projection:
+            history_meta_embed = self.history_meta_project(meta_embed)
+            meta_embed = shared_meta_embed + (self.history_meta_residual_blend * history_meta_embed)
+        else:
+            meta_embed = shared_meta_embed
         return item_embed + (meta_scale * meta_embed)
 
     def _get_target_representation(self, item_ids):
@@ -318,7 +327,7 @@ class CustomDIFSR(nn.Module):
 
     def _get_history_embedding(self, history, history_mask):
         batch_size, seq_len = history.shape
-        history_embed = self._get_item_representation(history, meta_scale=self.history_meta_scale)
+        history_embed = self._get_item_representation(history, meta_scale=self.history_meta_scale, history_mode=True)
         position_embedding = self._get_position_embedding(batch_size, seq_len)
         attribute_embed = self._lookup_item_attributes(history)
         attention_mask = self._get_attention_mask(history_mask)
