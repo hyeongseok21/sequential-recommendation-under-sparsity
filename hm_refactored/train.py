@@ -355,16 +355,21 @@ class Trainer:
             json.dump(dict(self.config), f, indent=4)
 
     # checkpoint 저장
-    def save_checkpoint(self, epoch, best_hr, best_ndcg, best_epoch, model):
+    def save_checkpoint(self, epoch, best_primary, best_secondary, best_epoch, model):
         save_dir = os.path.join(self.train_params['save_path'], self.train_params['save_name'])
         os.makedirs(save_dir, exist_ok=True)
 
         checkpoint_path = os.path.join(save_dir, '{:06d}_epoch.pth'.format(epoch))
+        primary_metric_name, secondary_metric_name = self._get_checkpoint_metric_names()
         torch.save({
             "state_dict": model.state_dict(),
             "epoch": epoch,
-            "best_hr": best_hr,
-            "best_ndcg": best_ndcg,
+            "best_primary": best_primary,
+            "best_secondary": best_secondary,
+            "best_primary_metric": primary_metric_name,
+            "best_secondary_metric": secondary_metric_name,
+            "best_hr": best_primary,
+            "best_ndcg": best_secondary,
             "best_epoch": best_epoch,
         }, checkpoint_path)
 
@@ -407,6 +412,25 @@ class Trainer:
 
         if reg_term_ is not None:
             mlflow.log_metric("Reg Term", reg_term_, e)
+
+    def _select_checkpoint_metrics(self, total_res, train_loss_):
+        primary_metric = self.train_params.get('checkpoint_primary_metric', 'benchmark_ndcg')
+        secondary_metric = self.train_params.get('checkpoint_secondary_metric', 'benchmark_hr')
+
+        metric_map = {
+            'benchmark_hr': total_res.get('b_global_HR', float('-inf')),
+            'benchmark_ndcg': total_res.get('b_global_NDCG', float('-inf')),
+            'test_hr': total_res.get('t_global_HR', float('-inf')),
+            'test_map': total_res.get('t_global_MAP', float('-inf')),
+            'neg_train_loss': -train_loss_,
+        }
+
+        return metric_map.get(primary_metric, float('-inf')), metric_map.get(secondary_metric, float('-inf'))
+
+    def _get_checkpoint_metric_names(self):
+        primary_metric = self.train_params.get('checkpoint_primary_metric', 'benchmark_ndcg')
+        secondary_metric = self.train_params.get('checkpoint_secondary_metric', 'benchmark_hr')
+        return primary_metric.upper(), secondary_metric.upper()
 
     # benchmark process시 result 계산. HR과 NDCG 계산
     def benchmark_process_batch(self, cur_epoch, recent_user_interval=8):
@@ -559,11 +583,13 @@ class Trainer:
             checkpoint_path = os.path.join(self.train_params['save_path'], self.train_params['save_name'], '{:06d}_epoch.pth'.format(use_checkpoint))
             cp = torch.load(checkpoint_path)
             self.model.load_state_dict(cp['state_dict'])
-            best_hr, best_ndcg, best_epoch = cp['best_hr'], cp['best_ndcg'], cp['best_epoch']
+            best_primary = cp.get('best_primary', cp['best_hr'])
+            best_secondary = cp.get('best_secondary', cp['best_ndcg'])
+            best_epoch = cp['best_epoch']
             start_epoch = use_checkpoint + 1
         else:
             start_epoch = 0
-            best_hr, best_ndcg, best_epoch = 0, 0, 0
+            best_primary, best_secondary, best_epoch = 0, 0, 0
 
         # benchmark_res와 test_res의 시작값을 초기화하고 기록
         start_benchmark_res, start_test_res = {}, {}
@@ -728,21 +754,18 @@ class Trainer:
                 plt.savefig(os.path.join(self.train_params['attention_path'], self.train_params['save_name'],'attention_map_{}.png'.format(e)))
                 plt.close(fig)
             
-            if self.eval_params['benchmark']:
-                current_primary = total_res['b_global_HR']
-                current_secondary = total_res['b_global_NDCG']
-            elif self.eval_params['test']:
-                current_primary = total_res['t_global_HR']
-                current_secondary = total_res['t_global_MAP']
-            else:
-                current_primary = -train_loss_
-                current_secondary = -train_loss_
+            current_primary, current_secondary = self._select_checkpoint_metrics(total_res, train_loss_)
 
-            if current_primary > best_hr:
-                best_hr, best_ndcg, best_epoch = current_primary, current_secondary, e
-            self.save_checkpoint(e, best_hr, best_ndcg, best_epoch, self.model)
+            if current_primary > best_primary:
+                best_primary, best_secondary, best_epoch = current_primary, current_secondary, e
+            self.save_checkpoint(e, best_primary, best_secondary, best_epoch, self.model)
 
-        self.logger.info("Training Completed. Best epoch {:03d}: GLOBAL_HR = {:.4f}, GLOBAL_NDCG = {:.4f}".format(best_epoch, best_hr, best_ndcg))
+        primary_metric_name, secondary_metric_name = self._get_checkpoint_metric_names()
+        self.logger.info(
+            "Training Completed. Best epoch {:03d}: {} = {:.4f}, {} = {:.4f}".format(
+                best_epoch, primary_metric_name, best_primary, secondary_metric_name, best_secondary
+            )
+        )
 
         mlflow.end_run()
 
