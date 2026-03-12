@@ -1,10 +1,10 @@
 {
-  "phase": "P2",
+  "phase": "P3",
   "primary_metric": "B_NDCG",
-  "baseline": 0.0063,
-  "treatment": 0.0063,
-  "delta": 0.0,
-  "verdict": "FAIL",
-  "reason": "primary metric tied and secondary metric regressed",
-  "notes": "fast-scout history meta scale test"
+  "baseline": 0.0135,
+  "treatment": 0.0137,
+  "delta": 0.00020000000000000052,
+  "verdict": "PASS",
+  "reason": "treatment improved primary metric",
+  "notes": "full history meta scale up validation"
 }
