@@ -588,7 +588,7 @@ class Trainer:
         if use_checkpoint:
             self.logger.info('Continue to train from the last checkpoint : {}'.format(use_checkpoint))
             checkpoint_path = os.path.join(self.train_params['save_path'], self.train_params['save_name'], '{:06d}_epoch.pth'.format(use_checkpoint))
-            cp = torch.load(checkpoint_path)
+            cp = torch.load(checkpoint_path, weights_only=False)
             self.model.load_state_dict(cp['state_dict'])
             best_primary = cp.get('best_primary', cp['best_hr'])
             best_secondary = cp.get('best_secondary', cp['best_ndcg'])
@@ -806,6 +806,44 @@ class Trainer:
 
         mlflow.end_run()
 
+    def evaluate_checkpoint(self, checkpoint_epoch):
+        checkpoint_path = os.path.join(
+            self.train_params['save_path'],
+            self.train_params['save_name'],
+            '{:06d}_epoch.pth'.format(checkpoint_epoch),
+        )
+        cp = torch.load(checkpoint_path, weights_only=False)
+        self.model.load_state_dict(cp['state_dict'])
+        self.model.eval()
+
+        benchmark_res, test_res = {}, {}
+        if self.eval_params['benchmark']:
+            benchmark_res = self.benchmark_process_batch(cur_epoch=checkpoint_epoch)
+        if self.eval_params['test']:
+            test_res = self.test_process_batch(cur_epoch=checkpoint_epoch)
+
+        total_res = {**benchmark_res, **test_res}
+        summary = {
+            "checkpoint_epoch": checkpoint_epoch,
+            "results": total_res,
+            "checkpoint_meta": {
+                "best_epoch": cp.get("best_epoch"),
+                "best_primary_metric": cp.get("best_primary_metric", "UNKNOWN"),
+                "best_secondary_metric": cp.get("best_secondary_metric", "UNKNOWN"),
+                "best_primary": cp.get("best_primary", cp.get("best_hr")),
+                "best_secondary": cp.get("best_secondary", cp.get("best_ndcg")),
+            },
+        }
+
+        save_dir = os.path.join(self.train_params['save_path'], self.train_params['save_name'])
+        os.makedirs(save_dir, exist_ok=True)
+        eval_path = os.path.join(save_dir, 'eval_checkpoint_{:06d}.json'.format(checkpoint_epoch))
+        with open(eval_path, 'w') as f:
+            json.dump(summary, f, indent=4)
+
+        self.logger.info("Checkpoint evaluation summary: {}".format(json.dumps(summary, indent=4)))
+        return summary
+
     def _calculate_similarity(self, matrix):
         normalized_matrix = matrix / (np.linalg.norm(matrix, axis=-1, keepdims=True) + 1e-8)
 
@@ -822,6 +860,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config_path', type=str, default='./configs/config.json', help='Model train configuration file path')
     parser.add_argument('--use_checkpoint', type=int, default=False, help='Continue to train with specified checkpoint number.')
+    parser.add_argument('--eval_checkpoint', type=int, default=-1, help='Evaluate specified checkpoint epoch without training.')
     args = parser.parse_args()
 
     np.set_printoptions(suppress=True)
@@ -836,4 +875,8 @@ if __name__ == '__main__':
     mlflow.log_params(t.config['model_params'])
     mlflow.log_params(t.config['train_params'])
 
-    t.train(use_checkpoint=args.use_checkpoint)
+    if args.eval_checkpoint >= 0:
+        t.evaluate_checkpoint(args.eval_checkpoint)
+        mlflow.end_run()
+    else:
+        t.train(use_checkpoint=args.use_checkpoint)
