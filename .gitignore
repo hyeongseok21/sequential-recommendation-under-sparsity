@@ -209,5 +209,6 @@ hm_refactored/hm_out/checkpoints
 gs_refactored/
 mlruns/
 .DS_Store
+.codex_tmp/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,python,visualstudiocode
