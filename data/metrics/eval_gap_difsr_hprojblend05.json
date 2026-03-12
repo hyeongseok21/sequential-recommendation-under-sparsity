@@ -1,0 +1,33 @@
+{
+  "loss_path": "hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_hprojblend05/loss.txt",
+  "best_benchmark": {
+    "epoch": 2,
+    "b_hr": 0.0268,
+    "b_ndcg": 0.0127,
+    "t_hr": 0.0059,
+    "t_map": 0.0021
+  },
+  "best_test": {
+    "epoch": 1,
+    "b_hr": 0.0214,
+    "b_ndcg": 0.0119,
+    "t_hr": 0.0054,
+    "t_map": 0.0022
+  },
+  "different_epoch": true,
+  "epoch_gap": -1,
+  "benchmark_view_at_test_epoch": {
+    "epoch": 1,
+    "b_hr": 0.0214,
+    "b_ndcg": 0.0119,
+    "t_hr": 0.0054,
+    "t_map": 0.0022
+  },
+  "test_view_at_benchmark_epoch": {
+    "epoch": 2,
+    "b_hr": 0.0268,
+    "b_ndcg": 0.0127,
+    "t_hr": 0.0059,
+    "t_map": 0.0021
+  }
+}
