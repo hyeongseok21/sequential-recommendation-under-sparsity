@@ -57,12 +57,61 @@
 3. `T_MAP`
 4. `T_HR`
 
+## Experiment Axes
+
+### `system`
+
+- 실행 가능성
+- seed / 재현성
+- 평가 안정화
+- checkpoint 정책
+- evaluation-gap
+
+### `architecture`
+
+- backbone (`SASRec`, `meta embedding`, `DIF-SR`)
+- fusion (`sum`, `concat`, `gate`)
+- encoder / scoring / projection
+- history-side interaction
+- target-side interaction
+
+### `optimization`
+
+- `lr`
+- `batch_size`
+- `drop_out`
+- `weight_decay`
+- `clip_grad_ratio`
+- `train_epoch`
+
+### `metadata-input`
+
+- single feature
+- pair feature
+- all feature
+- feature weighting
+- feature-specific scale
+
+### `attention-capacity`
+
+- `n_heads`
+- `n_layers`
+
+### `evaluation-policy`
+
+- `benchmark-best`
+- `test-best`
+- direct checkpoint evaluation
+- dual-best report
+- leaderboard / report policy
+
 ## Mutation Scope
 
 - `P2`에서는 config 위주로 바꾼다.
 - `P3`에서만 모델 코드를 바꾼다.
 - 구조 실험도 한 번에 한 mutation만 허용한다.
 - `P4`에서는 평가, 선택, 리포트, checkpoint 관련 경로만 바꾼다.
+- 모든 실험은 위 taxonomy 중 하나의 `axis family`를 먼저 명시한다.
 
 ## Artifact Rules
 

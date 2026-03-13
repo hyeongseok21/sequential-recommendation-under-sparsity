@@ -9,6 +9,7 @@
 ## Required Inputs Per Experiment
 
 - `phase`
+- `axis_family`
 - `hypothesis`
 - `baseline_config`
 - `treatment_config`
@@ -48,6 +49,23 @@
 - `delta`
 - `verdict`
 - `notes`
+
+## Axis Taxonomy
+
+- `system`
+- `architecture`
+- `optimization`
+- `metadata-input`
+- `attention-capacity`
+- `evaluation-policy`
+
+## Notes Convention
+
+- `notes` 첫 부분에 가능하면 `family=<axis_family>`를 넣는다.
+- 예시:
+  - `family=metadata-input; single feature screening`
+  - `family=attention-capacity; head count fast-scout`
+  - `family=evaluation-policy; direct checkpoint compare`
 
 ## Fast-Scout Protocol
 

@@ -10,6 +10,7 @@
 - `champion_metrics`
 - `phase`
 - `last_failed_axis`
+- `last_failed_axis_family`
 - `experiment_memory`
 
 ## Core Loop
@@ -35,6 +36,14 @@
 
 ## Axis Priority
 
+### axis family
+
+1. `optimization`
+2. `architecture`
+3. `metadata-input`
+4. `attention-capacity`
+5. `evaluation-policy`
+
 ### exploit 우선순위
 
 1. `lr`
@@ -52,6 +61,7 @@
 ## Recursive Learning Rule
 
 - 같은 축에서 2회 연속 FAIL이면 그 축은 한 phase 동안 냉각한다.
+- 같은 `axis family`에서 3회 연속 FAIL이면 다른 family로 이동한다.
 - fast-scout에서 PASS한 축만 full validation으로 올린다.
 - full validation FAIL이면 champion 근처 탐색으로 돌아간다.
 
