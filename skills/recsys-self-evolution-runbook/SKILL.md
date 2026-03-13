@@ -15,6 +15,8 @@ Use this skill when the task is to run or manage recursive recommendation experi
 4. `/Users/conan/projects/personalized-fashion-recommendation/protocol.md`
 5. `/Users/conan/projects/personalized-fashion-recommendation/agents/orchestration.md`
 6. `/Users/conan/projects/personalized-fashion-recommendation/agents/handoff.md`
+7. `/Users/conan/projects/personalized-fashion-recommendation/templates/agent_handoff_template.md`
+8. `/Users/conan/projects/personalized-fashion-recommendation/templates/agent_prompt_template.md`
 
 ## Workflow
 

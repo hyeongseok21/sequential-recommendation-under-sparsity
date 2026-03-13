@@ -14,6 +14,8 @@ REQUIRED = [
     "agents/governor.md",
     "agents/handoff.md",
     "agents/orchestration.md",
+    "templates/agent_handoff_template.md",
+    "templates/agent_prompt_template.md",
     "templates/update_log_template.md",
     "data/metrics/experiment_memory.csv",
 ]

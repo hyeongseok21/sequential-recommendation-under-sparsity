@@ -38,3 +38,9 @@
 - 모든 agent가 동일한 baseline/champion을 본다.
 - 한 루프에서 hypothesis는 하나만 돈다.
 - 커밋은 Governor가 의미 단위 종료를 확인한 뒤 진행한다.
+
+## Prompt Assembly
+
+- 각 agent 프롬프트 초안은 `templates/agent_prompt_template.md`를 기반으로 만든다.
+- 시스템 규칙은 `AGENT.md`, 실행 절차는 `RUNBOOK.md`, 역할 규칙은 `agents/*.md`에서 가져온다.
+- handoff payload는 `templates/agent_handoff_template.md` 형식으로 전달한다.

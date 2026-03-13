@@ -32,3 +32,12 @@
 - handoff는 항상 파일 경로와 metric 수치를 포함한다.
 - “좋아 보인다” 같은 표현만 넘기지 않는다.
 - 실패도 다음 agent에 넘긴다. 실패 로그는 다음 가설 생성에 필요하다.
+- handoff 본문 형식은 `templates/agent_handoff_template.md`를 따른다.
+
+## 권장 handoff 예시
+
+- `Analyst -> Governor`: hypothesis, baseline, phase 적합성, expected win condition
+- `Governor -> Research`: 승인된 mutation axis, 금지 변경, 승격 조건
+- `Research -> Operator`: 코드 변경 요약, treatment config path, runtime 주의사항
+- `Operator -> Analyst`: raw metrics, checkpoint/report path, update log path
+- `Analyst -> Governor`: verdict, bottleneck classification, next hypothesis
