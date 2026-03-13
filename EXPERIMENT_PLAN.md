@@ -43,30 +43,36 @@
 
 ## Immediate Next Experiment
 
-- family: `attention-capacity`
-- hypothesis: `all_features + h4`는 `batch_size 32`에서 runtime과 quality의 균형이 좋아져 full champion에 더 가까워질 수 있다.
+- family: `metadata-input`
+- hypothesis: `product_type_scale = 1.5` champion 위에 `department_scale = 0.5`를 결합하면 benchmark ranking을 추가로 올릴 수 있다.
 - baseline:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json`
+  - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features_product_type15.json`
 - treatment:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs32_seq30_do01_concat_lr2e4_hms15_all_features_h4.json`
+  - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features_product_type15_department05.json`
 - expected gate:
-  - `B_NDCG`가 current champion에 근접하거나 개선
-  - runtime penalty가 `bs16 + h4`보다 완화
+  - `B_NDCG`가 fast-scout baseline `0.0080`을 초과
+  - `B_HR` 하락 없이 유지 또는 개선
 
 ## Latest Result
 
 - family: `attention-capacity`
 - treatment:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs32_seq30_do01_concat_lr2e4_hms15_all_features_h4.json`
+  - `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15_h4.json`
 - verdict: `FAIL`
 - observed:
-  - `[0 epoch] B_HR 0.0220`
-  - `[0 epoch] B_NDCG 0.0092`
-  - `[0 epoch] T_HR 0.0024`
-  - `[0 epoch] T_MAP 0.0005`
+  - fast-scout:
+    - `B_HR 0.0208`
+    - `B_NDCG 0.0088`
+    - `T_HR 0.0018`
+    - `T_MAP 0.0003`
+  - full best epoch `1`:
+    - `B_HR 0.0280`
+    - `B_NDCG 0.0134`
+    - `T_HR 0.0048`
+    - `T_MAP 0.0017`
 - decision:
-  - `bs16 + h4`의 runtime stall은 피했지만 current champion `B_NDCG 0.0137`과 격차가 커서 조기 중단
-  - 다음 실험 축은 `metadata-input`의 feature-specific weighting으로 이동
+  - `h4`는 `product_type15` baseline 위에서 fast-scout 신호는 있었지만 full validation에서 current champion `B_NDCG 0.0139`를 넘지 못함
+  - 다음 실험 축은 `metadata-input` 조합으로 복귀
 
 ## Next Immediate Experiment
 

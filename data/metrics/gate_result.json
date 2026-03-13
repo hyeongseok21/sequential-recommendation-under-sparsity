@@ -1,10 +1,10 @@
 {
-  "phase": "P2",
+  "phase": "P3",
   "primary_metric": "B_NDCG",
-  "baseline": 0.008,
-  "treatment": 0.008,
-  "delta": 0.0,
+  "baseline": 0.0139,
+  "treatment": 0.0134,
+  "delta": -0.0004999999999999987,
   "verdict": "FAIL",
-  "reason": "primary metric tied and secondary metric regressed",
-  "notes": "metadata-input product_type15 plus garment12 tied primary and regressed benchmark hr"
+  "reason": "treatment regressed primary metric",
+  "notes": "full validation for product_type15_h4 against current benchmark champion"
 }
