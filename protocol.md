@@ -20,6 +20,8 @@
 - gate result JSON
 - experiment memory row
 - update log
+- promoted champion일 경우:
+  - dual-best report JSON
 
 ## Gate Result Schema
 
@@ -85,6 +87,8 @@
 
 - best epoch 기준 수치를 update log에 남긴다
 - final epoch보다 best epoch를 우선한다
+- champion 승격 시에는 `benchmark-best`뿐 아니라 `test-best` checkpoint도 같이 기록한다
+- `different_epoch=true`면 dual-best report를 필수 artifact로 본다
 
 ## Doc Policy
 

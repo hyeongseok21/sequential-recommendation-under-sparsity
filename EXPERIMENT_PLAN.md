@@ -70,13 +70,12 @@
 
 ## Next Immediate Experiment
 
-- family: `metadata-input`
-- hypothesis: `product_type`를 강화해 champion이 올라온 만큼, 다음은 `garment_group` 비중을 높여 `product_type + garment_group` 축을 all-features 안에서 더 살릴 수 있다.
+- family: `evaluation-policy`
+- hypothesis: current champion도 `benchmark-best`와 `test-best`가 갈리므로, champion 승격 이후에는 dual-best report를 기본 artifact로 운영하는 것이 맞다.
 - baseline:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features_product_type15.json`
-- candidate directions:
-  - `garment_group_scale > 1.0`
-  - 이후 필요하면 `product_type_scale + garment_group_scale` 동시 조정
+  - single best checkpoint only
+- treatment:
+  - dual-best report + direct checkpoint evaluation
 
 ## Latest Metadata-Input Result
 
@@ -99,4 +98,5 @@
 - interpretation:
   - `department` weighting은 benchmark보다 test 쪽 metric에 더 민감하게 작동하는 경향이 있음
   - `product_type_scale = 1.5`는 full validation까지 PASS해서 새 benchmark champion이 됨
-  - 다음 weighting 실험은 `garment_group` 쪽이 더 타당
+  - `garment_group` 추가 weighting은 `1.5`, `1.2` 모두 champion을 넘지 못함
+  - 다음 우선순위는 `metadata-input` 추가 탐색보다 `evaluation-policy` 정리

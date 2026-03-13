@@ -35,6 +35,17 @@ python hm_refactored/train.py --config_path <CONFIG_PATH> --eval_checkpoint <EPO
 
 - `hm_refactored/hm_out/checkpoints/<save_name>/eval_checkpoint_<epoch>.json`
 
+promoted champion은 기본적으로 `benchmark-best`와 `test-best`를 둘 다 확인한다.
+
+권장 절차:
+
+```bash
+source .venv/bin/activate
+python hm_refactored/train.py --config_path <CONFIG_PATH> --eval_checkpoint <BENCHMARK_BEST_EPOCH>
+python hm_refactored/train.py --config_path <CONFIG_PATH> --eval_checkpoint <TEST_BEST_EPOCH>
+python3 scripts/report_dual_best.py --checkpoint-dir <CHECKPOINT_DIR> --output <OUTPUT_JSON>
+```
+
 ## 자주 쓰는 리포트
 
 정책 비교:
@@ -48,6 +59,11 @@ single run dual-best:
 ```bash
 python3 scripts/report_dual_best.py --checkpoint-dir <CHECKPOINT_DIR>
 ```
+
+운영 기본 규칙:
+
+- champion 승격 직후에는 `single run dual-best`를 항상 생성한다.
+- `benchmark-best`와 `test-best`가 다르면 update log에 둘 다 남긴다.
 
 run set leaderboard:
 
