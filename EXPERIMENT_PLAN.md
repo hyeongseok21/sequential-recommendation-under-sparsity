@@ -105,4 +105,6 @@
   - `department` weighting은 benchmark보다 test 쪽 metric에 더 민감하게 작동하는 경향이 있음
   - `product_type_scale = 1.5`는 full validation까지 PASS해서 새 benchmark champion이 됨
   - `garment_group` 추가 weighting은 `1.5`, `1.2` 모두 champion을 넘지 못함
-  - 다음 우선순위는 `metadata-input` 추가 탐색보다 `evaluation-policy` 정리
+  - `product_type15 + department05`는 fast-scout `PASS`였지만 full best `B_NDCG 0.0108`로 실패
+  - 현재까지 `metadata-input` 축에서 full champion으로 남은 건 `product_type_scale = 1.5` 단일 weighting 뿐
+  - 다음 우선순위는 `product_type_scale` 미세조정 또는 다른 axis로의 이동

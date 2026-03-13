@@ -2,9 +2,9 @@
   "phase": "P3",
   "primary_metric": "B_NDCG",
   "baseline": 0.0139,
-  "treatment": 0.0134,
-  "delta": -0.0004999999999999987,
+  "treatment": 0.0108,
+  "delta": -0.0030999999999999986,
   "verdict": "FAIL",
   "reason": "treatment regressed primary metric",
-  "notes": "full validation for product_type15_h4 against current benchmark champion"
+  "notes": "full validation for product_type15_department05 against current benchmark champion"
 }
