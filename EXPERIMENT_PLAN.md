@@ -71,11 +71,32 @@
 ## Next Immediate Experiment
 
 - family: `metadata-input`
-- hypothesis: `all_features`를 유지한 채 `department` feature 비중만 높이면, subset을 줄이지 않고도 sequence-side metadata quality를 개선할 수 있다.
+- hypothesis: `department`는 single-feature에선 강했지만 all-features 조합에선 과한 비중일 수 있으므로, 다음은 `product_type` 또는 `garment_group` 쪽 weighting이 더 유효할 수 있다.
 - baseline:
   - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features.json`
-- treatment:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features_department15.json`
-- expected gate:
-  - fast-scout `B_NDCG`가 baseline `0.0075`를 초과
-  - `B_HR` 또는 `T_MAP`이 동반 악화되지 않을 것
+- candidate directions:
+  - `product_type_scale > 1.0`
+  - `garment_group_scale > 1.0`
+  - `department_scale < 0.5`는 현재 결과상 우선순위 낮음
+
+## Latest Metadata-Input Result
+
+- `department_scale = 1.5`
+  - fast-scout verdict: `FAIL`
+  - observed:
+    - `B_NDCG 0.0066`
+    - `B_HR 0.0167`
+- `department_scale = 0.5`
+  - fast-scout verdict: `PASS`
+  - fast-scout observed:
+    - `B_NDCG 0.0091`
+    - `B_HR 0.0190`
+  - full verdict: `FAIL`
+  - full observed:
+    - `[0 epoch] B_NDCG 0.0082`
+    - `[0 epoch] B_HR 0.0178`
+    - `[0 epoch] T_HR 0.0036`
+    - `[0 epoch] T_MAP 0.0011`
+- interpretation:
+  - `department` weighting은 benchmark보다 test 쪽 metric에 더 민감하게 작동하는 경향이 있음
+  - 다음 weighting 실험은 `product_type` 또는 `garment_group` 쪽이 더 타당

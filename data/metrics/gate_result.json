@@ -2,9 +2,9 @@
   "phase": "P3",
   "primary_metric": "B_NDCG",
   "baseline": 0.0137,
-  "treatment": 0.0092,
-  "delta": -0.0045000000000000005,
+  "treatment": 0.0082,
+  "delta": -0.0055,
   "verdict": "FAIL",
   "reason": "treatment regressed primary metric",
-  "notes": "attention-capacity candidate bs32 h4 all_features underperformed at epoch0 and was early-stopped"
+  "notes": "metadata-input department_scale=0.5 improved fast-scout but failed full validation at epoch0 and was early-stopped"
 }

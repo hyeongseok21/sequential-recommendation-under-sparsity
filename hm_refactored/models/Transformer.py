@@ -238,6 +238,9 @@ class CustomDIFSR(nn.Module):
         self.history_meta_residual_blend = config.get("history_meta_residual_blend", 0.0)
         self.history_meta_scale = config.get("history_meta_scale", 1.0)
         self.target_meta_scale = config.get("target_meta_scale", 1.0)
+        self.product_type_scale = config.get("product_type_scale", 1.0)
+        self.department_scale = config.get("department_scale", 1.0)
+        self.garment_group_scale = config.get("garment_group_scale", 1.0)
         self.active_metadata_features = set(config.get("metadata_features", ["product_type", "department", "garment_group"]))
 
         self.item_embedding = nn.Embedding(self.num_item, self.embed_size)
@@ -285,7 +288,12 @@ class CustomDIFSR(nn.Module):
 
     def _mask_feature_embedding(self, feature_name, embed):
         if self._is_feature_enabled(feature_name):
-            return embed
+            scale = {
+                "product_type": self.product_type_scale,
+                "department": self.department_scale,
+                "garment_group": self.garment_group_scale,
+            }.get(feature_name, 1.0)
+            return embed * scale
         return torch.zeros_like(embed)
 
     def _init_weight(self):
