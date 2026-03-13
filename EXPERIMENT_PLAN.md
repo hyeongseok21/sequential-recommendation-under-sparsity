@@ -2,19 +2,19 @@
 
 ## Current Champion
 
-- config: `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json`
+- config: `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`
 - primary metric: `B_NDCG`
 - current best full score:
-  - `B_HR 0.0291`
-  - `B_NDCG 0.0137`
-  - `T_HR 0.0054`
-  - `T_MAP 0.0016`
+  - `B_HR 0.0309`
+  - `B_NDCG 0.0139`
+  - `T_HR 0.0042`
+  - `T_MAP 0.0015`
 
 ## Goal
 
-1. `h4`가 full budget에서도 유지되는지 확인
-2. all-features를 줄이는 대신 더 잘 쓰는 방향을 찾기
-3. `benchmark-best`와 `test-best` gap을 줄일 수 있는지 확인
+1. feature weighting으로 all-features champion을 더 밀어 올릴 수 있는지 확인
+2. `benchmark-best`와 `test-best` gap을 줄일 수 있는지 확인
+3. `attention-capacity` 축의 `h4`를 다시 살릴 가치가 있는지 재평가
 
 ## Backlog
 
@@ -26,9 +26,9 @@
 
 ### `metadata-input`
 
-1. `department_scale > 1.0`
-2. `product_type_scale > 1.0`
-3. `garment_group_scale` 약화 또는 유지 비교
+1. `garment_group_scale > 1.0`
+2. `product_type_scale` 추가 미세조정
+3. `department_scale` 재탐색은 우선순위 낮음
 
 ### `architecture`
 
@@ -71,13 +71,12 @@
 ## Next Immediate Experiment
 
 - family: `metadata-input`
-- hypothesis: `department`는 single-feature에선 강했지만 all-features 조합에선 과한 비중일 수 있으므로, 다음은 `product_type` 또는 `garment_group` 쪽 weighting이 더 유효할 수 있다.
+- hypothesis: `product_type`를 강화해 champion이 올라온 만큼, 다음은 `garment_group` 비중을 높여 `product_type + garment_group` 축을 all-features 안에서 더 살릴 수 있다.
 - baseline:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features.json`
+  - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features_product_type15.json`
 - candidate directions:
-  - `product_type_scale > 1.0`
   - `garment_group_scale > 1.0`
-  - `department_scale < 0.5`는 현재 결과상 우선순위 낮음
+  - 이후 필요하면 `product_type_scale + garment_group_scale` 동시 조정
 
 ## Latest Metadata-Input Result
 
@@ -99,4 +98,5 @@
     - `[0 epoch] T_MAP 0.0011`
 - interpretation:
   - `department` weighting은 benchmark보다 test 쪽 metric에 더 민감하게 작동하는 경향이 있음
-  - 다음 weighting 실험은 `product_type` 또는 `garment_group` 쪽이 더 타당
+  - `product_type_scale = 1.5`는 full validation까지 PASS해서 새 benchmark champion이 됨
+  - 다음 weighting 실험은 `garment_group` 쪽이 더 타당

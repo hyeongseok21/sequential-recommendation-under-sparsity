@@ -2,9 +2,9 @@
   "phase": "P3",
   "primary_metric": "B_NDCG",
   "baseline": 0.0137,
-  "treatment": 0.0082,
-  "delta": -0.0055,
-  "verdict": "FAIL",
-  "reason": "treatment regressed primary metric",
-  "notes": "metadata-input department_scale=0.5 improved fast-scout but failed full validation at epoch0 and was early-stopped"
+  "treatment": 0.0139,
+  "delta": 0.0001999999999999988,
+  "verdict": "PASS",
+  "reason": "treatment improved primary metric",
+  "notes": "metadata-input product_type_scale=1.5 full validation improved benchmark ndcg and benchmark hr"
 }
