@@ -1,10 +1,10 @@
 {
-  "phase": "P2",
+  "phase": "P3",
   "primary_metric": "B_NDCG",
-  "baseline": 0.0075,
-  "treatment": 0.0055,
-  "delta": -0.002,
+  "baseline": 0.0137,
+  "treatment": 0.0075,
+  "delta": -0.006200000000000001,
   "verdict": "FAIL",
   "reason": "treatment regressed primary metric",
-  "notes": "fast-scout history projection residual blend 0.25 test"
+  "notes": "metadata feature screening full validation: product_type + garment_group early stop fail"
 }

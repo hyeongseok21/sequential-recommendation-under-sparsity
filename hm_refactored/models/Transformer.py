@@ -238,6 +238,7 @@ class CustomDIFSR(nn.Module):
         self.history_meta_residual_blend = config.get("history_meta_residual_blend", 0.0)
         self.history_meta_scale = config.get("history_meta_scale", 1.0)
         self.target_meta_scale = config.get("target_meta_scale", 1.0)
+        self.active_metadata_features = set(config.get("metadata_features", ["product_type", "department", "garment_group"]))
 
         self.item_embedding = nn.Embedding(self.num_item, self.embed_size)
         self.product_type_embedding = nn.Embedding(num_product_type, self.embed_size)
@@ -279,6 +280,14 @@ class CustomDIFSR(nn.Module):
 
         self._init_weight()
 
+    def _is_feature_enabled(self, feature_name):
+        return feature_name in self.active_metadata_features
+
+    def _mask_feature_embedding(self, feature_name, embed):
+        if self._is_feature_enabled(feature_name):
+            return embed
+        return torch.zeros_like(embed)
+
     def _init_weight(self):
         for m in self.modules():
             if isinstance(m, nn.Linear) or isinstance(m, nn.Embedding):
@@ -288,16 +297,34 @@ class CustomDIFSR(nn.Module):
                     torch.nn.init.xavier_normal_(m.weight)
 
     def _lookup_item_attributes(self, item_ids):
-        product_type = self.product_type_embedding(self.item_product_type_ids[item_ids]).unsqueeze(-2)
-        department = self.department_embedding(self.item_department_ids[item_ids]).unsqueeze(-2)
-        garment_group = self.garment_group_embedding(self.item_garment_group_ids[item_ids]).unsqueeze(-2)
+        product_type = self._mask_feature_embedding(
+            "product_type",
+            self.product_type_embedding(self.item_product_type_ids[item_ids]),
+        ).unsqueeze(-2)
+        department = self._mask_feature_embedding(
+            "department",
+            self.department_embedding(self.item_department_ids[item_ids]),
+        ).unsqueeze(-2)
+        garment_group = self._mask_feature_embedding(
+            "garment_group",
+            self.garment_group_embedding(self.item_garment_group_ids[item_ids]),
+        ).unsqueeze(-2)
         return [product_type, department, garment_group]
 
     def _get_item_representation(self, item_ids, meta_scale=1.0, history_mode=False):
         item_embed = self.item_embedding(item_ids)
-        product_type_embed = self.product_type_embedding(self.item_product_type_ids[item_ids])
-        department_embed = self.department_embedding(self.item_department_ids[item_ids])
-        garment_group_embed = self.garment_group_embedding(self.item_garment_group_ids[item_ids])
+        product_type_embed = self._mask_feature_embedding(
+            "product_type",
+            self.product_type_embedding(self.item_product_type_ids[item_ids]),
+        )
+        department_embed = self._mask_feature_embedding(
+            "department",
+            self.department_embedding(self.item_department_ids[item_ids]),
+        )
+        garment_group_embed = self._mask_feature_embedding(
+            "garment_group",
+            self.garment_group_embedding(self.item_garment_group_ids[item_ids]),
+        )
         meta_embed = torch.cat([product_type_embed, department_embed, garment_group_embed], dim=-1)
         shared_meta_embed = self.meta_project(meta_embed)
         if history_mode and self.use_history_meta_projection:
