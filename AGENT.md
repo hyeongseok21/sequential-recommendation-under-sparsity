@@ -87,3 +87,16 @@
 - update log는 항상 한국어로 쓴다.
 - `idea fail`과 `current implementation fail`은 구분해서 적는다.
 - `benchmark-best`와 `test-best`가 다를 수 있으면 둘 다 남긴다.
+
+## Multi-Agent Policy
+
+- 멀티 에이전트 운영 시에도 champion, phase, gate 기준은 이 문서를 공통 헌장으로 사용한다.
+- 역할 분리는 `execution`, `analysis`, `research`, `governance` 축으로 나눈다.
+- 어떤 agent도 baseline 없이 treatment를 단독 제안하거나 실행하지 않는다.
+- 최종 승격 판단은 항상 `Governor` 역할이 내린다.
+- 상태 공유는 대화가 아니라 파일 기반으로 한다.
+  - `data/metrics/experiment_memory.csv`
+  - `data/metrics/gate_result.json`
+  - `updates/...`
+  - checkpoint metadata/json
+- 세부 역할과 handoff 규약은 `agents/` 아래 문서를 따른다.

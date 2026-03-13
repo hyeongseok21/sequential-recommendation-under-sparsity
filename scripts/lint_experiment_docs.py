@@ -8,6 +8,12 @@ REQUIRED = [
     "RUNBOOK.md",
     "SELF_EVOLUTION_LOOP.md",
     "protocol.md",
+    "agents/operator.md",
+    "agents/analyst.md",
+    "agents/research.md",
+    "agents/governor.md",
+    "agents/handoff.md",
+    "agents/orchestration.md",
     "templates/update_log_template.md",
     "data/metrics/experiment_memory.csv",
 ]
