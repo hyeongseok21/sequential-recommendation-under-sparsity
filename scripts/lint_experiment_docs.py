@@ -4,6 +4,7 @@ import sys
 
 
 REQUIRED = [
+    "AGENT.md",
     "RUNBOOK.md",
     "SELF_EVOLUTION_LOOP.md",
     "protocol.md",

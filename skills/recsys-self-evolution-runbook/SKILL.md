@@ -1,6 +1,6 @@
 ---
 name: recsys-self-evolution-runbook
-description: Runs recommendation experiments in this repository using the local RUNBOOK.md, SELF_EVOLUTION_LOOP.md, and protocol.md. Use when the user asks to operate a recursive experiment loop, define or follow self-evolving baseline-vs-treatment workflows, promote champions, record gate results, or maintain experiment memory.
+description: Runs recommendation experiments in this repository using the local AGENT.md, RUNBOOK.md, SELF_EVOLUTION_LOOP.md, and protocol.md. Use when the user asks to operate a recursive experiment loop, define or follow self-evolving baseline-vs-treatment workflows, promote champions, record gate results, or maintain experiment memory.
 ---
 
 # Recsys Self Evolution Runbook
@@ -9,9 +9,10 @@ Use this skill when the task is to run or manage recursive recommendation experi
 
 ## Always Read First
 
-1. `/Users/conan/projects/personalized-fashion-recommendation/RUNBOOK.md`
-2. `/Users/conan/projects/personalized-fashion-recommendation/SELF_EVOLUTION_LOOP.md`
-3. `/Users/conan/projects/personalized-fashion-recommendation/protocol.md`
+1. `/Users/conan/projects/personalized-fashion-recommendation/AGENT.md`
+2. `/Users/conan/projects/personalized-fashion-recommendation/RUNBOOK.md`
+3. `/Users/conan/projects/personalized-fashion-recommendation/SELF_EVOLUTION_LOOP.md`
+4. `/Users/conan/projects/personalized-fashion-recommendation/protocol.md`
 
 ## Workflow
 
