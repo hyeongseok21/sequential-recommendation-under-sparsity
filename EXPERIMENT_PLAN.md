@@ -43,15 +43,15 @@
 
 ## Immediate Next Experiment
 
-- family: `metadata-input`
-- hypothesis: `product_type_scale = 1.5` champion 위에 `department_scale = 0.5`를 결합하면 benchmark ranking을 추가로 올릴 수 있다.
+- family: `evaluation-policy`
+- hypothesis: `product_type15` champion의 dual-best report를 기준으로 benchmark-best와 test-best를 운영 후보로 분리하는 편이 더 실용적이다.
 - baseline:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features_product_type15.json`
+  - benchmark-best 단일 checkpoint 운용
 - treatment:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15_all_features_product_type15_department05.json`
+  - dual-best report + direct checkpoint evaluation 기반 동시 운용
 - expected gate:
-  - `B_NDCG`가 fast-scout baseline `0.0080`을 초과
-  - `B_HR` 하락 없이 유지 또는 개선
+  - research champion과 test-oriented companion을 명시적으로 분리
+  - 이후 후보 비교 시 dual-best를 기본 artifact로 유지
 
 ## Latest Result
 
@@ -106,5 +106,6 @@
   - `product_type_scale = 1.5`는 full validation까지 PASS해서 새 benchmark champion이 됨
   - `garment_group` 추가 weighting은 `1.5`, `1.2` 모두 champion을 넘지 못함
   - `product_type15 + department05`는 fast-scout `PASS`였지만 full best `B_NDCG 0.0108`로 실패
+  - `product_type17`도 fast-scout `PASS`였지만 full best `B_NDCG 0.0129`로 실패
   - 현재까지 `metadata-input` 축에서 full champion으로 남은 건 `product_type_scale = 1.5` 단일 weighting 뿐
-  - 다음 우선순위는 `product_type_scale` 미세조정 또는 다른 axis로의 이동
+  - 이 축은 당분간 냉각하고 `evaluation-policy`와 `dual-best` 운영 정리로 이동
