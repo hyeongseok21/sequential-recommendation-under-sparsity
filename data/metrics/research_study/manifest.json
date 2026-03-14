@@ -1,0 +1,9 @@
+{
+  "research_summary": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/RESEARCH_SUMMARY.md",
+  "candidate_overlap_summary": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/candidate_overlap_summary.json",
+  "overall_metric_table": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/overall_metric_table.json",
+  "diversity_summary": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/diversity_summary.json",
+  "popularity_exposure_summary": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/popularity_exposure_summary.json",
+  "slice_study": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/slice_study.json",
+  "plots_dir": "/Users/conan/projects/personalized-fashion-recommendation/plots"
+}

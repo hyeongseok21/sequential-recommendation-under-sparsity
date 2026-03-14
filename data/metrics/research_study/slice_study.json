@@ -1,0 +1,162 @@
+[
+  {
+    "model": "SASRec",
+    "slice": "short_history",
+    "num_users": 483,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mean_unique_category_count": 15.594202898550725,
+    "mean_category_entropy": 2.7179990748484775,
+    "tail_share": 0.48592132505175983
+  },
+  {
+    "model": "SASRec + metadata",
+    "slice": "short_history",
+    "num_users": 483,
+    "recall@20": 0.004140786749482402,
+    "ndcg@20": 0.001594695971899213,
+    "mean_unique_category_count": 15.683229813664596,
+    "mean_category_entropy": 2.720557566606437,
+    "tail_share": 0.4634575569358178
+  },
+  {
+    "model": "DIF-SR",
+    "slice": "short_history",
+    "num_users": 483,
+    "recall@20": 0.006211180124223602,
+    "ndcg@20": 0.0024252713507786684,
+    "mean_unique_category_count": 16.25465838509317,
+    "mean_category_entropy": 2.726282321472787,
+    "tail_share": 0.13902691511387164
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "slice": "short_history",
+    "num_users": 483,
+    "recall@20": 0.012422360248447204,
+    "ndcg@20": 0.00522017961463307,
+    "mean_unique_category_count": 4.722567287784679,
+    "mean_category_entropy": 0.9813811340371185,
+    "tail_share": 0.11677018633540374
+  },
+  {
+    "model": "SASRec",
+    "slice": "low_entropy",
+    "num_users": 408,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mean_unique_category_count": 15.654411764705882,
+    "mean_category_entropy": 2.72195341522985,
+    "tail_share": 0.48517156862745103
+  },
+  {
+    "model": "SASRec",
+    "slice": "mid_entropy",
+    "num_users": 166,
+    "recall@20": 0.006024096385542169,
+    "ndcg@20": 0.001680379190669457,
+    "mean_unique_category_count": 15.506024096385541,
+    "mean_category_entropy": 2.7140353020404784,
+    "tail_share": 0.47319277108433744
+  },
+  {
+    "model": "SASRec",
+    "slice": "high_entropy",
+    "num_users": 1107,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mean_unique_category_count": 15.579945799457995,
+    "mean_category_entropy": 2.7153332482915795,
+    "tail_share": 0.47321589882565485
+  },
+  {
+    "model": "SASRec + metadata",
+    "slice": "low_entropy",
+    "num_users": 408,
+    "recall@20": 0.004901960784313725,
+    "ndcg@20": 0.0018878386137924504,
+    "mean_unique_category_count": 15.563725490196079,
+    "mean_category_entropy": 2.7125526084767078,
+    "tail_share": 0.4667892156862746
+  },
+  {
+    "model": "SASRec + metadata",
+    "slice": "mid_entropy",
+    "num_users": 166,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mean_unique_category_count": 15.885542168674698,
+    "mean_category_entropy": 2.7345283844618917,
+    "tail_share": 0.45240963855421684
+  },
+  {
+    "model": "SASRec + metadata",
+    "slice": "high_entropy",
+    "num_users": 1107,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mean_unique_category_count": 15.808491418247517,
+    "mean_category_entropy": 2.7293401739498595,
+    "tail_share": 0.453929539295393
+  },
+  {
+    "model": "DIF-SR",
+    "slice": "low_entropy",
+    "num_users": 408,
+    "recall@20": 0.0024509803921568627,
+    "ndcg@20": 0.000662348417714019,
+    "mean_unique_category_count": 16.208333333333332,
+    "mean_category_entropy": 2.7221964323593877,
+    "tail_share": 0.14080882352941176
+  },
+  {
+    "model": "DIF-SR",
+    "slice": "mid_entropy",
+    "num_users": 166,
+    "recall@20": 0.018072289156626505,
+    "ndcg@20": 0.004614509914489558,
+    "mean_unique_category_count": 16.30722891566265,
+    "mean_category_entropy": 2.7291556896390725,
+    "tail_share": 0.1316265060240964
+  },
+  {
+    "model": "DIF-SR",
+    "slice": "high_entropy",
+    "num_users": 1107,
+    "recall@20": 0.008130081300813009,
+    "ndcg@20": 0.0026758698950749104,
+    "mean_unique_category_count": 16.149051490514903,
+    "mean_category_entropy": 2.7132775792668107,
+    "tail_share": 0.11187895212285456
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "slice": "low_entropy",
+    "num_users": 408,
+    "recall@20": 0.012254901960784314,
+    "ndcg@20": 0.0037287910634014043,
+    "mean_unique_category_count": 4.615196078431373,
+    "mean_category_entropy": 0.9520125358614049,
+    "tail_share": 0.12475490196078433
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "slice": "mid_entropy",
+    "num_users": 166,
+    "recall@20": 0.012048192771084338,
+    "ndcg@20": 0.009824878033562997,
+    "mean_unique_category_count": 4.831325301204819,
+    "mean_category_entropy": 1.00826634469825,
+    "tail_share": 0.10662650602409639
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "slice": "high_entropy",
+    "num_users": 1107,
+    "recall@20": 0.006323396567299007,
+    "ndcg@20": 0.002003460585804611,
+    "mean_unique_category_count": 5.510388437217705,
+    "mean_category_entropy": 1.1724380002932429,
+    "tail_share": 0.10216802168021681
+  }
+]

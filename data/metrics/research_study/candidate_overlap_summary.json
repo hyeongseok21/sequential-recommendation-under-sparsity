@@ -1,0 +1,20 @@
+[
+  {
+    "pair": "DIF-SR vs DIF-SR + metadata",
+    "mean": 0.04606186793575253,
+    "median": 0.04,
+    "std": 0.030160482571469104
+  },
+  {
+    "pair": "SASRec vs DIF-SR",
+    "mean": 0.01092207019631172,
+    "median": 0.01,
+    "std": 0.007754056764634317
+  },
+  {
+    "pair": "SASRec vs DIF-SR + metadata",
+    "mean": 0.010041641879833434,
+    "median": 0.01,
+    "std": 0.007607922115946974
+  }
+]

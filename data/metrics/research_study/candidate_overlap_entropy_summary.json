@@ -1,0 +1,65 @@
+[
+  {
+    "pair": "DIF-SR vs DIF-SR + metadata",
+    "entropy_bucket": "high",
+    "mean": 0.04899728997289973,
+    "median": 0.04,
+    "std": 0.030993588401706247
+  },
+  {
+    "pair": "DIF-SR vs DIF-SR + metadata",
+    "entropy_bucket": "low",
+    "mean": 0.03941176470588235,
+    "median": 0.03,
+    "std": 0.028112990836062928
+  },
+  {
+    "pair": "DIF-SR vs DIF-SR + metadata",
+    "entropy_bucket": "mid",
+    "mean": 0.042831325301204815,
+    "median": 0.04,
+    "std": 0.026202326428998047
+  },
+  {
+    "pair": "SASRec vs DIF-SR",
+    "entropy_bucket": "high",
+    "mean": 0.011255645889792233,
+    "median": 0.01,
+    "std": 0.007660044990869168
+  },
+  {
+    "pair": "SASRec vs DIF-SR",
+    "entropy_bucket": "low",
+    "mean": 0.01,
+    "median": 0.01,
+    "std": 0.007796429549831781
+  },
+  {
+    "pair": "SASRec vs DIF-SR",
+    "entropy_bucket": "mid",
+    "mean": 0.010963855421686748,
+    "median": 0.01,
+    "std": 0.008083071382033498
+  },
+  {
+    "pair": "SASRec vs DIF-SR + metadata",
+    "entropy_bucket": "high",
+    "mean": 0.01009936766034327,
+    "median": 0.01,
+    "std": 0.007525270258518418
+  },
+  {
+    "pair": "SASRec vs DIF-SR + metadata",
+    "entropy_bucket": "low",
+    "mean": 0.009485294117647059,
+    "median": 0.01,
+    "std": 0.0075718635137169196
+  },
+  {
+    "pair": "SASRec vs DIF-SR + metadata",
+    "entropy_bucket": "mid",
+    "mean": 0.01102409638554217,
+    "median": 0.01,
+    "std": 0.008112872270203539
+  }
+]

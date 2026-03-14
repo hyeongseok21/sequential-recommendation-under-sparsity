@@ -1,0 +1,26 @@
+[
+  {
+    "model": "SASRec",
+    "head_share": 0.23325401546698396,
+    "mid_share": 0.2906305770374777,
+    "tail_share": 0.4761154074955384
+  },
+  {
+    "model": "SASRec + metadata",
+    "head_share": 0.2519631171921475,
+    "mid_share": 0.29113622843545506,
+    "tail_share": 0.4569006543723974
+  },
+  {
+    "model": "DIF-SR",
+    "head_share": 0.7507138607971444,
+    "mid_share": 0.12843545508625817,
+    "tail_share": 0.12085068411659727
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "head_share": 0.6837894110648425,
+    "mid_share": 0.20812016656751936,
+    "tail_share": 0.10809042236763831
+  }
+]

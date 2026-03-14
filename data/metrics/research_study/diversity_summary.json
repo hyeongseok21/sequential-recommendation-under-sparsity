@@ -1,0 +1,26 @@
+[
+  {
+    "model": "SASRec",
+    "mean_unique_category_count": 15.59071980963712,
+    "mean_category_entropy": 2.7168118735343705,
+    "global_category_coverage_rate": 0.9753521126760564
+  },
+  {
+    "model": "SASRec + metadata",
+    "mean_unique_category_count": 15.75669244497323,
+    "mean_category_entropy": 2.7257779587398367,
+    "global_category_coverage_rate": 0.954225352112676
+  },
+  {
+    "model": "DIF-SR",
+    "mean_unique_category_count": 16.17906008328376,
+    "mean_category_entropy": 2.71701027312973,
+    "global_category_coverage_rate": 0.8274647887323944
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "mean_unique_category_count": 5.226055919095776,
+    "mean_category_entropy": 1.1027258739892818,
+    "global_category_coverage_rate": 0.7852112676056338
+  }
+]
