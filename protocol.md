@@ -14,6 +14,10 @@
 - `baseline_config`
 - `treatment_config`
 - `primary_metric`
+- `decision_mode`
+  - `research`
+  - `serving`
+  - `hybrid`
 
 ## Required Outputs Per Experiment
 
@@ -22,6 +26,9 @@
 - update log
 - promoted champion일 경우:
   - dual-best report JSON
+- serving candidate를 다룰 경우:
+  - serving note / companion summary
+  - slice metric summary (있으면)
 
 ## Gate Result Schema
 
@@ -60,14 +67,19 @@
 - `metadata-input`
 - `attention-capacity`
 - `evaluation-policy`
+- `serving-proxy`
+- `retrieval`
+- `slice-analysis`
 
 ## Notes Convention
 
 - `notes` 첫 부분에 가능하면 `family=<axis_family>`를 넣는다.
+- 가능하면 `mode=<research|serving|hybrid>`도 함께 넣는다.
 - 예시:
-  - `family=metadata-input; single feature screening`
-  - `family=attention-capacity; head count fast-scout`
-  - `family=evaluation-policy; direct checkpoint compare`
+  - `family=metadata-input; mode=research; single feature screening`
+  - `family=attention-capacity; mode=research; head count fast-scout`
+  - `family=evaluation-policy; mode=serving; direct checkpoint compare`
+  - `family=slice-analysis; mode=serving; sparse-history user report`
 
 ## Fast-Scout Protocol
 
@@ -89,6 +101,16 @@
 - final epoch보다 best epoch를 우선한다
 - champion 승격 시에는 `benchmark-best`뿐 아니라 `test-best` checkpoint도 같이 기록한다
 - `different_epoch=true`면 dual-best report를 필수 artifact로 본다
+- `serving companion`을 유지하는 경우, update log에 benchmark champion과 구분해서 적는다
+- 실무형 phase에서는 `benchmark-best only`를 최종 단일 truth로 보지 않는다
+
+## Slice Evaluation Policy
+
+- 실제 추천 가정의 phase에서는 overall metric만으로 결론내리지 않는다.
+- 가능한 경우 다음 slice를 기본 대상으로 본다.
+  - `sparse-history user`
+  - `multi-interest user`
+- slice metric은 overall metric과 함께 해석해야 하며, slice 이득만 있는 후보는 `serving companion` 후보가 될 수 있다.
 
 ## Doc Policy
 

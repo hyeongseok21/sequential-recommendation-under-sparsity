@@ -21,13 +21,15 @@
 
 ## 현재 저장소에 맞는 운용 방식
 
-- `P0`~`P2`: `Operator + Analyst + Governor`
-- `P3`: `Operator + Analyst + Research + Governor`
-- `P4`~`P5`: `Operator + Analyst + Governor`
+- `P0`~`P1`: `Operator + Analyst + Governor`
+- `P2`~`P3`: `Operator + Analyst + Research + Governor`
+- `P4`: `Operator + Analyst + Governor`
+- `serving-oriented phase`: `Operator + Analyst + Governor`를 기본으로 하고, 구조 실험이 다시 커질 때만 `Research`를 재투입한다
 
 ## 파일 기반 공유 상태
 
 - champion config path
+- serving companion checkpoint / summary
 - `experiment_memory.csv`
 - `gate_result.json`
 - `updates/...`
@@ -38,6 +40,7 @@
 - 모든 agent가 동일한 baseline/champion을 본다.
 - 한 루프에서 hypothesis는 하나만 돈다.
 - 커밋은 Governor가 의미 단위 종료를 확인한 뒤 진행한다.
+- research champion과 serving companion이 다를 경우, 둘 다 같은 handoff payload 안에 명시한다.
 
 ## Prompt Assembly
 

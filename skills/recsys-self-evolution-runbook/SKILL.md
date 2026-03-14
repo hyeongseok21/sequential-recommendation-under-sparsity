@@ -6,6 +6,7 @@ description: Runs recommendation experiments in this repository using the local 
 # Recsys Self Evolution Runbook
 
 Use this skill when the task is to run or manage recursive recommendation experiments in this repository.
+Prefer serving-oriented decision loops over benchmark-only tuning when the docs indicate `P4` or `evaluation-policy` is active.
 
 ## Always Read First
 
@@ -23,23 +24,29 @@ Use this skill when the task is to run or manage recursive recommendation experi
 ## Workflow
 
 1. Identify the current `phase`.
-2. Write one-sentence `hypothesis`.
-3. Fix the `baseline` as the current champion.
-4. Apply one `treatment` mutation only.
-5. Run baseline/treatment with the canonical command from `RUNBOOK.md`.
-6. Evaluate the gate:
+2. Identify the current `decision_mode`:
+   - `research`
+   - `serving`
+   - `hybrid`
+3. Write one-sentence `hypothesis`.
+4. Fix the `baseline` as the current champion.
+5. Apply one `treatment` mutation only.
+6. Run baseline/treatment with the canonical command from `RUNBOOK.md`.
+7. Evaluate the gate:
    - use `python3 scripts/evaluate_gate.py`
-7. Update memory:
+8. Update memory:
    - use `python3 scripts/update_experiment_memory.py`
-8. Validate docs if files were added:
+9. Validate docs if files were added:
    - use `python3 scripts/lint_experiment_docs.py`
-9. Write update log from `templates/update_log_template.md`.
+10. Write update log from `templates/update_log_template.md`.
+11. If `serving` or `hybrid`, preserve both `research champion` and `serving companion` when they differ.
 
 ## Hard Rules
 
 - One hypothesis per loop.
 - Do not mix unrelated refactors into experiment loops.
-- Use `B_NDCG` as the primary metric unless the runbook explicitly says otherwise.
+- Use `B_NDCG` as the primary metric for research loops unless the runbook explicitly says otherwise.
+- In serving-oriented loops, interpret `T_MAP`, `T_HR`, and `dual-best` together with `B_NDCG`.
 - Fast-scout PASS is not enough for champion promotion.
 - Distinguish `concept failed` from `current implementation failed`.
 
