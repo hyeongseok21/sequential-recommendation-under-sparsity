@@ -74,6 +74,9 @@
 3. `DIF-SR`
 4. `DIF-SR + metadata`
 
+- canonical config manifest:
+  - [`/Users/conan/projects/personalized-fashion-recommendation/CLOSURE_MODELS.md`](/Users/conan/projects/personalized-fashion-recommendation/CLOSURE_MODELS.md)
+
 - 현재 strongest metadata candidate:
   - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json)
 
