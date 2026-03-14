@@ -1,0 +1,66 @@
+[
+  {
+    "model": "SASRec",
+    "slice": "sparse-history",
+    "num_users": 483,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec",
+    "slice": "multi-interest",
+    "num_users": 1136,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec + metadata",
+    "slice": "sparse-history",
+    "num_users": 483,
+    "recall@20": 0.004140786749482402,
+    "ndcg@20": 0.001594695971899213,
+    "mrr@20": 0.0008626639061421669
+  },
+  {
+    "model": "SASRec + metadata",
+    "slice": "multi-interest",
+    "num_users": 1136,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "DIF-SR",
+    "slice": "sparse-history",
+    "num_users": 483,
+    "recall@20": 0.006211180124223602,
+    "ndcg@20": 0.0024252713507786684,
+    "mrr@20": 0.0013802622498274672
+  },
+  {
+    "model": "DIF-SR",
+    "slice": "multi-interest",
+    "num_users": 1136,
+    "recall@20": 0.007922535211267605,
+    "ndcg@20": 0.0026075598361337375,
+    "mrr@20": 0.001174703133329894
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "slice": "sparse-history",
+    "num_users": 483,
+    "recall@20": 0.012422360248447204,
+    "ndcg@20": 0.00522017961463307,
+    "mrr@20": 0.003322270937360451
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "slice": "multi-interest",
+    "num_users": 1136,
+    "recall@20": 0.007042253521126761,
+    "ndcg@20": 0.0025077118151911634,
+    "mrr@20": 0.0013025148439657554
+  }
+]
