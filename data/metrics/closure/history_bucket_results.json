@@ -1,0 +1,130 @@
+[
+  {
+    "model": "SASRec",
+    "history_bucket": "21+",
+    "num_users": 395,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec",
+    "history_bucket": "6-10",
+    "num_users": 395,
+    "recall@20": 0.002531645569620253,
+    "ndcg@20": 0.000706184672534506,
+    "mrr@20": 0.00023014959723820485
+  },
+  {
+    "model": "SASRec",
+    "history_bucket": "11-20",
+    "num_users": 408,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec",
+    "history_bucket": "1-5",
+    "num_users": 483,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec + metadata",
+    "history_bucket": "21+",
+    "num_users": 395,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec + metadata",
+    "history_bucket": "6-10",
+    "num_users": 395,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec + metadata",
+    "history_bucket": "11-20",
+    "num_users": 408,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec + metadata",
+    "history_bucket": "1-5",
+    "num_users": 483,
+    "recall@20": 0.004140786749482402,
+    "ndcg@20": 0.001594695971899213,
+    "mrr@20": 0.0008626639061421669
+  },
+  {
+    "model": "DIF-SR",
+    "history_bucket": "21+",
+    "num_users": 395,
+    "recall@20": 0.005063291139240506,
+    "ndcg@20": 0.0015607465125309112,
+    "mrr@20": 0.0005977496483825597
+  },
+  {
+    "model": "DIF-SR",
+    "history_bucket": "6-10",
+    "num_users": 395,
+    "recall@20": 0.015189873417721518,
+    "ndcg@20": 0.004298441276373448,
+    "mrr@20": 0.001481048115448711
+  },
+  {
+    "model": "DIF-SR",
+    "history_bucket": "11-20",
+    "num_users": 408,
+    "recall@20": 0.004901960784313725,
+    "ndcg@20": 0.001256493958424494,
+    "mrr@20": 0.0003519356460532931
+  },
+  {
+    "model": "DIF-SR",
+    "history_bucket": "1-5",
+    "num_users": 483,
+    "recall@20": 0.006211180124223602,
+    "ndcg@20": 0.0024252713507786684,
+    "mrr@20": 0.0013802622498274672
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "history_bucket": "21+",
+    "num_users": 395,
+    "recall@20": 0.007594936708860759,
+    "ndcg@20": 0.0030153042341149678,
+    "mrr@20": 0.001740506329113924
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "history_bucket": "6-10",
+    "num_users": 395,
+    "recall@20": 0.007594936708860759,
+    "ndcg@20": 0.002780791060345676,
+    "mrr@20": 0.00154132539091586
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "history_bucket": "11-20",
+    "num_users": 408,
+    "recall@20": 0.004901960784313725,
+    "ndcg@20": 0.0013708406390813914,
+    "mrr@20": 0.0004493464052287582
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "history_bucket": "1-5",
+    "num_users": 483,
+    "recall@20": 0.012422360248447204,
+    "ndcg@20": 0.00522017961463307,
+    "mrr@20": 0.003322270937360451
+  }
+]

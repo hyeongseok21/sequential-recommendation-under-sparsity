@@ -1,0 +1,98 @@
+[
+  {
+    "model": "SASRec",
+    "category_entropy_bucket": "high",
+    "num_users": 1107,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec",
+    "category_entropy_bucket": "low",
+    "num_users": 408,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec",
+    "category_entropy_bucket": "mid",
+    "num_users": 166,
+    "recall@20": 0.006024096385542169,
+    "ndcg@20": 0.001680379190669457,
+    "mrr@20": 0.000547645125958379
+  },
+  {
+    "model": "SASRec + metadata",
+    "category_entropy_bucket": "high",
+    "num_users": 1107,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "SASRec + metadata",
+    "category_entropy_bucket": "low",
+    "num_users": 408,
+    "recall@20": 0.004901960784313725,
+    "ndcg@20": 0.0018878386137924504,
+    "mrr@20": 0.0010212418300653593
+  },
+  {
+    "model": "SASRec + metadata",
+    "category_entropy_bucket": "mid",
+    "num_users": 166,
+    "recall@20": 0.0,
+    "ndcg@20": 0.0,
+    "mrr@20": 0.0
+  },
+  {
+    "model": "DIF-SR",
+    "category_entropy_bucket": "high",
+    "num_users": 1107,
+    "recall@20": 0.008130081300813009,
+    "ndcg@20": 0.0026758698950749104,
+    "mrr@20": 0.0012054767474821678
+  },
+  {
+    "model": "DIF-SR",
+    "category_entropy_bucket": "low",
+    "num_users": 408,
+    "recall@20": 0.0024509803921568627,
+    "ndcg@20": 0.000662348417714019,
+    "mrr@20": 0.00020424836601307187
+  },
+  {
+    "model": "DIF-SR",
+    "category_entropy_bucket": "mid",
+    "num_users": 166,
+    "recall@20": 0.018072289156626505,
+    "ndcg@20": 0.004614509914489558,
+    "mrr@20": 0.0012866592420100569
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "category_entropy_bucket": "high",
+    "num_users": 1107,
+    "recall@20": 0.006323396567299007,
+    "ndcg@20": 0.002003460585804611,
+    "mrr@20": 0.0008849655490018953
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "category_entropy_bucket": "low",
+    "num_users": 408,
+    "recall@20": 0.012254901960784314,
+    "ndcg@20": 0.0037287910634014043,
+    "mrr@20": 0.0014820021145713186
+  },
+  {
+    "model": "DIF-SR + metadata",
+    "category_entropy_bucket": "mid",
+    "num_users": 166,
+    "recall@20": 0.012048192771084338,
+    "ndcg@20": 0.009824878033562997,
+    "mrr@20": 0.009036144578313253
+  }
+]

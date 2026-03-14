@@ -2,6 +2,7 @@
 import argparse
 import csv
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -34,15 +35,49 @@ def load_best_benchmark_epoch(checkpoint_dir: Path) -> int:
     return int(payload["best_benchmark"]["epoch"])
 
 
-def build_slice_flags(data_dict, sparse_threshold: int, recent_window: int):
+def assign_history_bucket(history_len: int) -> str:
+    if history_len <= 5:
+        return "1-5"
+    if history_len <= 10:
+        return "6-10"
+    if history_len <= 20:
+        return "11-20"
+    return "21+"
+
+
+def compute_entropy(values) -> float:
+    if not values:
+        return 0.0
+    counts = {}
+    for value in values:
+        counts[value] = counts.get(value, 0) + 1
+    total = len(values)
+    entropy = 0.0
+    for count in counts.values():
+        prob = count / total
+        entropy -= prob * math.log(prob)
+    return float(entropy)
+
+
+def assign_entropy_bucket(entropy: float) -> str:
+    if entropy < 0.5:
+        return "low"
+    if entropy < 1.0:
+        return "mid"
+    return "high"
+
+
+def build_user_descriptors(data_dict, sparse_threshold: int, recent_window: int):
     history_len = {int(user): len(items) for user, items in data_dict["user_train_dict"].items()}
     sparse_users = {user for user, length in history_len.items() if length <= sparse_threshold}
 
     train_df = data_dict["train_df"][["user_id", "timestamp", "department_no"]].copy()
     train_df = train_df.sort_values(["user_id", "timestamp"])
     multi_interest_users = set()
+    recent_department_history = {}
     for user_id, group in train_df.groupby("user_id"):
         recent_departments = group["department_no"].tolist()[-recent_window:]
+        recent_department_history[int(user_id)] = recent_departments
         if not recent_departments:
             continue
         unique_departments = len(set(recent_departments))
@@ -52,10 +87,20 @@ def build_slice_flags(data_dict, sparse_threshold: int, recent_window: int):
         if unique_departments >= 3 or transitions >= 4:
             multi_interest_users.add(int(user_id))
 
-    return {
-        "sparse-history": sparse_users,
-        "multi-interest": multi_interest_users,
-    }
+    user_descriptors = {}
+    for user, length in history_len.items():
+        recent_departments = recent_department_history.get(int(user), [])
+        category_entropy = compute_entropy(recent_departments)
+        user_descriptors[int(user)] = {
+            "history_len": int(length),
+            "history_bucket": assign_history_bucket(int(length)),
+            "category_entropy": float(category_entropy),
+            "category_entropy_bucket": assign_entropy_bucket(category_entropy),
+            "is_sparse_history": int(int(user) in sparse_users),
+            "is_multi_interest": int(int(user) in multi_interest_users),
+        }
+
+    return user_descriptors
 
 
 def evaluate_test_checkpoint(trainer: Trainer, checkpoint_epoch: int, sparse_threshold: int, recent_window: int):
@@ -68,7 +113,11 @@ def evaluate_test_checkpoint(trainer: Trainer, checkpoint_epoch: int, sparse_thr
     trainer.model.load_state_dict(checkpoint["state_dict"])
     trainer.model.eval()
 
-    slice_flags = build_slice_flags(trainer.data_dict, sparse_threshold=sparse_threshold, recent_window=recent_window)
+    user_descriptors = build_user_descriptors(
+        trainer.data_dict,
+        sparse_threshold=sparse_threshold,
+        recent_window=recent_window,
+    )
     rows = []
     top_k = int(trainer.train_params["top_k"])
 
@@ -88,6 +137,19 @@ def evaluate_test_checkpoint(trainer: Trainer, checkpoint_epoch: int, sparse_thr
             source_user_id = trainer.data_dict["idx2user"][int(user_idx)]
             gt_items = [trainer.data_dict["item2idx"].get(i, -1) for i in trainer.data_dict["user_last_test_dict"][source_user_id]]
             recs = recommends[batch_idx].tolist()
+            user_descriptor = user_descriptors.get(
+                int(user_idx),
+                {
+                    "history_len": len(trainer.data_dict["user_train_dict"].get(int(user_idx), [])),
+                    "history_bucket": assign_history_bucket(
+                        len(trainer.data_dict["user_train_dict"].get(int(user_idx), []))
+                    ),
+                    "category_entropy": 0.0,
+                    "category_entropy_bucket": "low",
+                    "is_sparse_history": 0,
+                    "is_multi_interest": 0,
+                },
+            )
 
             recall20 = hit([gt_items], [recs], batch=True)[0]
             ndcg20 = ndcg([gt_items], [recs], batch=True)[0]
@@ -97,12 +159,15 @@ def evaluate_test_checkpoint(trainer: Trainer, checkpoint_epoch: int, sparse_thr
                 {
                     "user_idx": int(user_idx),
                     "source_user_id": str(source_user_id),
-                    "history_len": len(trainer.data_dict["user_train_dict"].get(int(user_idx), [])),
+                    "history_len": int(user_descriptor["history_len"]),
+                    "history_bucket": user_descriptor["history_bucket"],
+                    "category_entropy": float(user_descriptor["category_entropy"]),
+                    "category_entropy_bucket": user_descriptor["category_entropy_bucket"],
                     "recall@20": float(recall20),
                     "ndcg@20": float(ndcg20),
                     "mrr@20": float(mrr20),
-                    "is_sparse_history": int(int(user_idx) in slice_flags["sparse-history"]),
-                    "is_multi_interest": int(int(user_idx) in slice_flags["multi-interest"]),
+                    "is_sparse_history": int(user_descriptor["is_sparse_history"]),
+                    "is_multi_interest": int(user_descriptor["is_multi_interest"]),
                 }
             )
 
@@ -174,6 +239,39 @@ def render_slice_chart(slice_rows, output_path: Path):
     axes[0].set_ylabel("Metric")
     axes[0].legend()
     fig.suptitle("Slice Comparison")
+    fig.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path)
+    plt.close(fig)
+
+
+def render_bucket_chart(bucket_rows, output_path: Path, bucket_key: str, title: str):
+    bucket_order = []
+    for row in bucket_rows:
+        if row[bucket_key] not in bucket_order:
+            bucket_order.append(row[bucket_key])
+    models = sorted({row["model"] for row in bucket_rows})
+
+    fig, axes = plt.subplots(1, len(bucket_order), figsize=(5 * len(bucket_order), 4), sharey=True)
+    if len(bucket_order) == 1:
+        axes = [axes]
+
+    x = np.arange(len(models))
+    width = 0.35
+    for ax, bucket_name in zip(axes, bucket_order):
+        current = [row for row in bucket_rows if row[bucket_key] == bucket_name]
+        current = sorted(current, key=lambda row: models.index(row["model"]))
+        recalls = [row["recall@20"] for row in current]
+        ndcgs = [row["ndcg@20"] for row in current]
+        ax.bar(x - width / 2, recalls, width, label="Recall@20")
+        ax.bar(x + width / 2, ndcgs, width, label="NDCG@20")
+        ax.set_xticks(x)
+        ax.set_xticklabels(models, rotation=15, ha="right")
+        ax.set_title(bucket_name)
+
+    axes[0].set_ylabel("Metric")
+    axes[0].legend()
+    fig.suptitle(title)
     fig.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path)
@@ -259,6 +357,70 @@ def build_results_markdown(overall_rows, slice_rows):
     return "\n".join(lines) + "\n"
 
 
+def summarize_by_field(rows, field_name):
+    values = []
+    seen = set()
+    for row in rows:
+        value = row[field_name]
+        if value not in seen:
+            values.append(value)
+            seen.add(value)
+    return values
+
+
+def build_bucket_rows(model_name, user_rows, field_name):
+    rows = []
+    for bucket_name in summarize_by_field(user_rows, field_name):
+        summary = summarize_rows(user_rows, predicate=lambda row, name=bucket_name: row[field_name] == name)
+        rows.append(
+            {
+                "model": model_name,
+                field_name: bucket_name,
+                **summary,
+            }
+        )
+    return rows
+
+
+def extend_results_markdown(results_markdown: str, history_bucket_rows, entropy_bucket_rows):
+    lines = [results_markdown.rstrip(), "", "## History Length Buckets", ""]
+    lines.extend(
+        [
+            "| History Bucket | Model | Users | Recall@20 | NDCG@20 | MRR@20 |",
+            "| --- | --- | ---: | ---: | ---: | ---: |",
+        ]
+    )
+    for row in history_bucket_rows:
+        lines.append(
+            f"| {row['history_bucket']} | {row['model']} | {row['num_users']} | "
+            f"{row['recall@20']:.4f} | {row['ndcg@20']:.4f} | {row['mrr@20']:.4f} |"
+        )
+
+    lines.extend(["", "## Category Entropy Buckets", ""])
+    lines.extend(
+        [
+            "| Entropy Bucket | Model | Users | Recall@20 | NDCG@20 | MRR@20 |",
+            "| --- | --- | ---: | ---: | ---: | ---: |",
+        ]
+    )
+    for row in entropy_bucket_rows:
+        lines.append(
+            f"| {row['category_entropy_bucket']} | {row['model']} | {row['num_users']} | "
+            f"{row['recall@20']:.4f} | {row['ndcg@20']:.4f} | {row['mrr@20']:.4f} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Bucket Definitions",
+            "",
+            "- History buckets: `1-5`, `6-10`, `11-20`, `21+` based on train history length.",
+            "- Category entropy uses recent `department` history with Shannon entropy.",
+            "- Entropy buckets: `low < 0.5`, `mid < 1.0`, `high >= 1.0`.",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", default=str(REPO_ROOT / "data/metrics/closure"))
@@ -274,6 +436,8 @@ def main():
 
     overall_rows = []
     slice_rows = []
+    history_bucket_rows = []
+    entropy_bucket_rows = []
 
     for model_name, config_path in CANONICAL_MODELS:
         trainer = Trainer(str(config_path))
@@ -303,27 +467,52 @@ def main():
                 {"model": model_name, "slice": "multi-interest", **multi_summary},
             ]
         )
+        history_bucket_rows.extend(build_bucket_rows(model_name, user_rows, "history_bucket"))
+        entropy_bucket_rows.extend(build_bucket_rows(model_name, user_rows, "category_entropy_bucket"))
 
         user_path = output_dir / f"{trainer.train_params['save_name']}_user_metrics.json"
         user_path.write_text(json.dumps(user_rows, indent=2) + "\n")
 
     (output_dir / "overall_results.json").write_text(json.dumps(overall_rows, indent=2) + "\n")
     (output_dir / "slice_results.json").write_text(json.dumps(slice_rows, indent=2) + "\n")
+    (output_dir / "history_bucket_results.json").write_text(json.dumps(history_bucket_rows, indent=2) + "\n")
+    (output_dir / "category_entropy_results.json").write_text(json.dumps(entropy_bucket_rows, indent=2) + "\n")
     write_csv(output_dir / "overall_results.csv", overall_rows)
     write_csv(output_dir / "slice_results.csv", slice_rows)
+    write_csv(output_dir / "history_bucket_results.csv", history_bucket_rows)
+    write_csv(output_dir / "category_entropy_results.csv", entropy_bucket_rows)
 
     render_overall_chart(overall_rows, plots_dir / "model_comparison.png")
     render_slice_chart(slice_rows, plots_dir / "slice_comparison.png")
+    render_bucket_chart(
+        history_bucket_rows,
+        plots_dir / "history_bucket_comparison.png",
+        bucket_key="history_bucket",
+        title="History Length Bucket Comparison",
+    )
+    render_bucket_chart(
+        entropy_bucket_rows,
+        plots_dir / "category_entropy_comparison.png",
+        bucket_key="category_entropy_bucket",
+        title="Category Entropy Bucket Comparison",
+    )
     (output_dir / "README_summary.md").write_text(build_readme_summary(overall_rows, slice_rows))
-    (output_dir / "RESULTS.md").write_text(build_results_markdown(overall_rows, slice_rows))
+    results_markdown = build_results_markdown(overall_rows, slice_rows)
+    (output_dir / "RESULTS.md").write_text(
+        extend_results_markdown(results_markdown, history_bucket_rows, entropy_bucket_rows)
+    )
 
     print(
         json.dumps(
             {
                 "overall_results": str(output_dir / "overall_results.json"),
                 "slice_results": str(output_dir / "slice_results.json"),
+                "history_bucket_results": str(output_dir / "history_bucket_results.json"),
+                "category_entropy_results": str(output_dir / "category_entropy_results.json"),
                 "overall_chart": str(plots_dir / "model_comparison.png"),
                 "slice_chart": str(plots_dir / "slice_comparison.png"),
+                "history_bucket_chart": str(plots_dir / "history_bucket_comparison.png"),
+                "category_entropy_chart": str(plots_dir / "category_entropy_comparison.png"),
                 "readme_summary": str(output_dir / "README_summary.md"),
                 "results_markdown": str(output_dir / "RESULTS.md"),
             },
