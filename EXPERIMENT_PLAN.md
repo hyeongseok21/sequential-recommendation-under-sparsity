@@ -63,6 +63,12 @@
 2. `T_MAP`, `T_HR` 개선이 있으나 `B_NDCG`가 근소 열세인 후보를 companion으로 둘지 규칙화
 3. candidate export / summary report를 serving 관점으로 정리
 
+### `slice-analysis`
+
+1. current champion에 대해 `sparse-history user`, `multi-interest user` slice report를 기본 산출물로 추가
+2. overall에서는 근소 차이지만 특정 slice에서 일관된 이득이 있는 후보를 `serving companion` 후보로 해석
+3. retrieval 실험으로 넘어가기 전, slice 정의를 먼저 고정
+
 ### `architecture`
 
 1. `dual-best gap`을 줄일 수 있는 구조 실험
@@ -77,15 +83,15 @@
 
 ## Immediate Next Experiment
 
-- family: `evaluation-policy`
-- hypothesis: `product_type15` champion의 `test-best` checkpoint를 serving companion으로 명시하면 운영 의사결정이 더 명확해진다.
+- family: `slice-analysis`
+- hypothesis: current champion에 slice report를 붙이면 serving candidate 판단이 더 명확해진다.
 - baseline:
-  - benchmark-best 단일 checkpoint 운용
+  - overall metric + dual-best report만 있는 상태
 - treatment:
-  - benchmark-best + test-best dual-best 동시 운용
+  - dual-best + `sparse-history user` + `multi-interest user` slice report 동시 운용
 - expected gate:
-  - research champion과 serving companion을 명시적으로 분리
-  - 이후 모든 후보는 dual-best 기준으로 비교
+  - research champion / serving companion 해석에 slice 근거 추가
+  - 이후 retrieval, metadata 확장 실험에서 slice를 기본 축으로 사용
 
 ## Latest Result
 

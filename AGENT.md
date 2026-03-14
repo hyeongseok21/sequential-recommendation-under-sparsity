@@ -116,12 +116,27 @@
 - dual-best report
 - leaderboard / report policy
 
+### `serving-proxy`
+
+- `serving companion`
+- dual-best 운영
+- overall vs slice trade-off
+- checkpoint 안정성 / runtime
+
+### `slice-analysis`
+
+- `sparse-history user`
+- `multi-interest user`
+- slice별 metric
+- slice instability / slice-specific gain
+
 ## Mutation Scope
 
 - `P2`에서는 config 위주로 바꾼다.
 - `P3`에서만 모델 코드를 바꾼다.
 - 구조 실험도 한 번에 한 mutation만 허용한다.
 - `P4`에서는 평가, 선택, 리포트, checkpoint 관련 경로만 바꾼다.
+- `slice-analysis`는 serving phase의 기본 해석 축으로 취급한다.
 - 모든 실험은 위 taxonomy 중 하나의 `axis family`를 먼저 명시한다.
 
 ## Artifact Rules
@@ -151,6 +166,7 @@
 - `benchmark-best`와 `test-best`가 다를 수 있으면 둘 다 남긴다.
 - champion 승격 이후에는 `dual-best`를 기본 산출물로 만든다.
 - 실험 방향 전환 시에는 benchmark 목표와 serving 목표를 분리해서 적는다.
+- serving phase에서는 가능하면 `sparse-history user`, `multi-interest user` slice 해석을 함께 적는다.
 
 ## Multi-Agent Policy
 

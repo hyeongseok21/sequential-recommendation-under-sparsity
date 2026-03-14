@@ -6,6 +6,7 @@ import sys
 REQUIRED = [
     "AGENT.md",
     "EXPERIMENT_PHASES.md",
+    "SLICE_EVALUATION.md",
     "RUNBOOK.md",
     "SELF_EVOLUTION_LOOP.md",
     "protocol.md",

@@ -29,6 +29,9 @@
 - serving candidate를 다룰 경우:
   - serving note / companion summary
   - slice metric summary (있으면)
+- slice-analysis 실험일 경우:
+  - slice definition note
+  - slice threshold / rule summary
 
 ## Gate Result Schema
 
@@ -111,6 +114,12 @@
   - `sparse-history user`
   - `multi-interest user`
 - slice metric은 overall metric과 함께 해석해야 하며, slice 이득만 있는 후보는 `serving companion` 후보가 될 수 있다.
+- 기본 초기 정의는 [`SLICE_EVALUATION.md`](/Users/conan/projects/personalized-fashion-recommendation/SLICE_EVALUATION.md)를 따른다.
+- multi-interest 정의는 category transition backbone을 우선한다.
+  - `product_type`
+  - `department`
+  - `section` 또는 `index_group`
+- style feature는 slice backbone이 고정된 뒤에 추가한다.
 
 ## Doc Policy
 

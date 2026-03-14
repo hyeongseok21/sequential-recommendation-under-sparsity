@@ -50,12 +50,12 @@
 ### axis family
 
 1. `evaluation-policy`
-2. `serving-proxy`
-3. `architecture`
-4. `metadata-input`
-5. `attention-capacity`
-6. `retrieval`
-7. `slice-analysis`
+2. `slice-analysis`
+3. `serving-proxy`
+4. `architecture`
+5. `metadata-input`
+6. `attention-capacity`
+7. `retrieval`
 
 ### research exploit 우선순위
 
@@ -110,3 +110,4 @@
 
 - 최근 5개 loop 중 4개 이상 FAIL이면, tuning 대신 구조/평가 설계를 재점검한다.
 - 최근 4개 loop 중 3개 이상이 `fast PASS / full FAIL`이면, benchmark-only 탐색을 멈추고 phase를 `P4` 또는 `slice-analysis`로 전환한다.
+- serving phase로 pivot한 뒤에는, 신규 architecture 탐색 전에 기본 slice 정의를 먼저 고정한다.

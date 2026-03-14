@@ -14,12 +14,13 @@ Prefer serving-oriented decision loops over benchmark-only tuning when the docs 
 2. `/Users/conan/projects/personalized-fashion-recommendation/RUNBOOK.md`
 3. `/Users/conan/projects/personalized-fashion-recommendation/SELF_EVOLUTION_LOOP.md`
 4. `/Users/conan/projects/personalized-fashion-recommendation/protocol.md`
-5. `/Users/conan/projects/personalized-fashion-recommendation/agents/orchestration.md`
-6. `/Users/conan/projects/personalized-fashion-recommendation/agents/handoff.md`
-7. `/Users/conan/projects/personalized-fashion-recommendation/agents/automation.md`
-8. `/Users/conan/projects/personalized-fashion-recommendation/templates/agent_handoff_template.md`
-9. `/Users/conan/projects/personalized-fashion-recommendation/templates/agent_prompt_template.md`
-10. `/Users/conan/projects/personalized-fashion-recommendation/templates/automation_prompt_bundle_template.md`
+5. `/Users/conan/projects/personalized-fashion-recommendation/SLICE_EVALUATION.md`
+6. `/Users/conan/projects/personalized-fashion-recommendation/agents/orchestration.md`
+7. `/Users/conan/projects/personalized-fashion-recommendation/agents/handoff.md`
+8. `/Users/conan/projects/personalized-fashion-recommendation/agents/automation.md`
+9. `/Users/conan/projects/personalized-fashion-recommendation/templates/agent_handoff_template.md`
+10. `/Users/conan/projects/personalized-fashion-recommendation/templates/agent_prompt_template.md`
+11. `/Users/conan/projects/personalized-fashion-recommendation/templates/automation_prompt_bundle_template.md`
 
 ## Workflow
 
@@ -40,6 +41,7 @@ Prefer serving-oriented decision loops over benchmark-only tuning when the docs 
    - use `python3 scripts/lint_experiment_docs.py`
 10. Write update log from `templates/update_log_template.md`.
 11. If `serving` or `hybrid`, preserve both `research champion` and `serving companion` when they differ.
+12. If the active family is `slice-analysis`, ground the hypothesis and interpretation in `sparse-history user` or `multi-interest user`.
 
 ## Hard Rules
 

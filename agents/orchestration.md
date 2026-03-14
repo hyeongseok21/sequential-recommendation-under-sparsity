@@ -24,6 +24,7 @@
 - `P0`~`P1`: `Operator + Analyst + Governor`
 - `P2`~`P3`: `Operator + Analyst + Research + Governor`
 - `P4`: `Operator + Analyst + Governor`
+- `P5`: `Analyst + Governor`를 기본으로 하고, slice 산출물이 필요할 때만 `Operator`
 - `serving-oriented phase`: `Operator + Analyst + Governor`를 기본으로 하고, 구조 실험이 다시 커질 때만 `Research`를 재투입한다
 
 ## 파일 기반 공유 상태
@@ -34,6 +35,7 @@
 - `gate_result.json`
 - `updates/...`
 - checkpoint report json
+- slice summary/json
 
 ## 성공 조건
 
@@ -41,6 +43,7 @@
 - 한 루프에서 hypothesis는 하나만 돈다.
 - 커밋은 Governor가 의미 단위 종료를 확인한 뒤 진행한다.
 - research champion과 serving companion이 다를 경우, 둘 다 같은 handoff payload 안에 명시한다.
+- slice-analysis phase에서는 overall conclusion과 slice conclusion을 함께 넘긴다.
 
 ## Prompt Assembly
 

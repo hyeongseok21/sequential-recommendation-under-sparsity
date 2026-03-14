@@ -18,6 +18,10 @@
 - [`RUNBOOK.md`](/Users/conan/projects/personalized-fashion-recommendation/RUNBOOK.md)
   - 실제 실행 명령
   - checkpoint / report 절차
+- [`SLICE_EVALUATION.md`](/Users/conan/projects/personalized-fashion-recommendation/SLICE_EVALUATION.md)
+  - slice 정의
+  - slice metric 해석
+  - serving phase 기준 slice report 정책
 - [`EXPERIMENT_PLAN.md`](/Users/conan/projects/personalized-fashion-recommendation/EXPERIMENT_PLAN.md)
   - 현재 backlog
   - immediate next experiment
@@ -97,12 +101,28 @@
   - dual-best report
   - eval-gap leaderboard
   - research champion / serving companion 분리
+  - 기본 slice report 정의
 - entry:
   - `P3`에서 evaluation-gap이 반복되거나, champion 후보가 비슷한 성능으로 갈릴 때
 - exit:
   - checkpoint/report 정책이 고정됨
 
-### `P5` Finalization
+### `P5` Slice / Serving Finalization
+
+- 목적:
+  - serving 관점에서 overall + slice 해석을 고정한다
+- 주요 작업:
+  - `sparse-history user`
+  - `multi-interest user`
+  - slice companion 해석
+  - retrieval phase 진입 전 slice backbone 고정
+- entry:
+  - `P4`에서 dual-best, checkpoint policy가 정리됨
+- exit:
+  - slice 정의와 해석 규칙이 고정됨
+  - retrieval 또는 다음 서비스 실험으로 handoff 가능
+
+### `P6` Finalization
 
 - 목적:
   - champion 고정
@@ -124,7 +144,7 @@
   - `P4`
 - 이유:
   - current `metadata-input`과 `attention-capacity` 축은 여러 번 fast-scout PASS 후 full FAIL을 반복했다
-  - 이제는 단순 tuning보다 `benchmark-best`와 `test-best`를 실제 추천 운영 관점에서 어떻게 쓸지 정리하는 편이 더 중요하다
+  - 이제는 단순 tuning보다 `benchmark-best`와 `test-best`, 그리고 slice별 관찰을 실제 추천 운영 관점에서 어떻게 쓸지 정리하는 편이 더 중요하다
 - 참고 champion:
   - [`hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json)
 
@@ -143,14 +163,19 @@
 6. `P4 -> P2/P3`
    - 평가 정책이 정리되면 다시 모델 실험으로 복귀
 7. `P4 -> P5`
-   - champion과 selection policy가 모두 고정되면 이동
+   - dual-best와 serving companion 정책이 정리되면 slice 해석 phase로 이동
+8. `P5 -> P2/P3`
+   - slice 정의가 고정되면 다시 모델 실험으로 복귀
+9. `P5 -> P6`
+   - champion과 selection policy, slice 해석이 모두 고정되면 이동
 
 ## Current Priority
 
 1. `evaluation-policy`
-2. `serving-proxy`
-3. `architecture`
-4. `metadata-input`
+2. `slice-analysis`
+3. `serving-proxy`
+4. `architecture`
+5. `metadata-input`
 
 ## Naming Rule
 
