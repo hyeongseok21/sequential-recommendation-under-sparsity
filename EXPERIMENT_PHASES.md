@@ -96,6 +96,7 @@
   - direct checkpoint evaluation
   - dual-best report
   - eval-gap leaderboard
+  - research champion / serving companion 분리
 - entry:
   - `P3`에서 evaluation-gap이 반복되거나, champion 후보가 비슷한 성능으로 갈릴 때
 - exit:
@@ -120,12 +121,12 @@
 ## Active Phase
 
 - 현재 active phase:
-  - `P2` + `P3`
+  - `P4`
 - 이유:
-  - current champion 주변에서 `metadata-input`, `attention-capacity`를 fast-scout으로 스크리닝하고
-  - 살아남은 후보만 full validation으로 올리고 있음
+  - current `metadata-input`과 `attention-capacity` 축은 여러 번 fast-scout PASS 후 full FAIL을 반복했다
+  - 이제는 단순 tuning보다 `benchmark-best`와 `test-best`를 실제 추천 운영 관점에서 어떻게 쓸지 정리하는 편이 더 중요하다
 - 참고 champion:
-  - [`hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json)
+  - [`hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json)
 
 ## Phase Transition Rules
 
@@ -146,10 +147,10 @@
 
 ## Current Priority
 
-1. `metadata-input`
-2. `attention-capacity`
+1. `evaluation-policy`
+2. `serving-proxy`
 3. `architecture`
-4. `evaluation-policy`
+4. `metadata-input`
 
 ## Naming Rule
 

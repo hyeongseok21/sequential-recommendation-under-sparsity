@@ -1,87 +1,112 @@
 # Experiment Plan
 
-## Current Champion
+## Current Serving Candidate
 
 - config: `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`
-- primary metric: `B_NDCG`
-- current best full score:
+- benchmark-best epoch: `2`
+- test-best epoch: `1`
+- current benchmark-best full score:
   - `B_HR 0.0309`
   - `B_NDCG 0.0139`
   - `T_HR 0.0042`
   - `T_MAP 0.0015`
+- current test-best companion score:
+  - `B_HR 0.0286`
+  - `B_NDCG 0.0136`
+  - `T_HR 0.0059`
+  - `T_MAP 0.0021`
 
-## Goal
+## Product Goal
 
-1. feature weighting으로 all-features champion을 더 밀어 올릴 수 있는지 확인
-2. `benchmark-best`와 `test-best` gap을 줄일 수 있는지 확인
-3. `attention-capacity` 축의 `h4`를 다시 살릴 가치가 있는지 재평가
+- 단순 benchmark 최고점보다, 실제 추천 시스템에 가까운 의사결정을 만드는 것이 우선이다.
+- 모델 선택은 `benchmark-best`만으로 끝내지 않고, `test-best`, 안정성, 운영 복잡도까지 함께 본다.
+- 새 실험은 “실서비스 후보로 채택할 가치가 있는가”를 기준으로 평가한다.
+
+## Decision Policy
+
+1. 연구 champion:
+   - 1순위는 `B_NDCG`
+   - 논문/모델 비교, 구조 실험 판단에 사용
+2. serving candidate:
+   - `dual-best` 기준으로 본다
+   - `benchmark-best`와 `test-best`를 동시에 유지
+   - `T_MAP`, `T_HR`, checkpoint 안정성을 운영 지표로 본다
+3. mutation acceptance:
+   - fast-scout PASS만으로는 채택하지 않는다
+   - full validation에서 benchmark 또는 serving 관점 이득이 있어야 한다
+
+## Success Metrics
+
+### Research
+
+1. `B_NDCG`
+2. `B_HR`
+
+### Serving Proxy
+
+1. `T_MAP`
+2. `T_HR`
+3. `dual-best gap` 크기
+4. runtime / checkpoint 운용 복잡도
 
 ## Backlog
 
-### `attention-capacity`
+### `evaluation-policy`
 
-1. `all_features + h4 + batch_size 32`
-2. `all_features + h4 + drop_out 0.05`
-3. 앞선 후보가 PASS할 때만 `all_features + h4 + batch_size 32 + drop_out 0.05`
+1. `benchmark-best` / `test-best` 요약을 기본 serving artifact로 고정
+2. champion 승격 시 dual-best report, direct checkpoint evaluation, serving note를 항상 생성
+3. evaluation-gap이 큰 후보는 연구 champion과 serving candidate를 분리해서 관리
 
-### `metadata-input`
+### `serving-proxy`
 
-1. `garment_group_scale > 1.0`
-2. `product_type_scale` 추가 미세조정
-3. `department_scale` 재탐색은 우선순위 낮음
+1. current champion의 `test-best` checkpoint를 운영 후보로 명시
+2. `T_MAP`, `T_HR` 개선이 있으나 `B_NDCG`가 근소 열세인 후보를 companion으로 둘지 규칙화
+3. candidate export / summary report를 serving 관점으로 정리
 
 ### `architecture`
 
-1. feature-specific history projection
-2. feature-specific metadata weighting
-3. attention input / item representation 분리 경로 정교화
+1. `dual-best gap`을 줄일 수 있는 구조 실험
+2. history-side metadata interaction 개선
+3. checkpoint마다 benchmark/test가 크게 갈리지 않는 구조 우선
 
-### `evaluation-policy`
+### `metadata-input`
 
-1. dual-best 기준 유지
-2. 새 후보는 항상 direct checkpoint evaluation 같이 수행
+1. 현재 축은 냉각
+2. 새 metadata source를 추가할 때만 재개
+3. 단순 scale 추가 탐색은 우선순위 낮음
 
 ## Immediate Next Experiment
 
 - family: `evaluation-policy`
-- hypothesis: `product_type15` champion의 dual-best report를 기준으로 benchmark-best와 test-best를 운영 후보로 분리하는 편이 더 실용적이다.
+- hypothesis: `product_type15` champion의 `test-best` checkpoint를 serving companion으로 명시하면 운영 의사결정이 더 명확해진다.
 - baseline:
   - benchmark-best 단일 checkpoint 운용
 - treatment:
-  - dual-best report + direct checkpoint evaluation 기반 동시 운용
+  - benchmark-best + test-best dual-best 동시 운용
 - expected gate:
-  - research champion과 test-oriented companion을 명시적으로 분리
-  - 이후 후보 비교 시 dual-best를 기본 artifact로 유지
+  - research champion과 serving companion을 명시적으로 분리
+  - 이후 모든 후보는 dual-best 기준으로 비교
 
 ## Latest Result
 
-- family: `attention-capacity`
+- family: `metadata-input`
 - treatment:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15_h4.json`
+  - `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type17.json`
 - verdict: `FAIL`
 - observed:
   - fast-scout:
-    - `B_HR 0.0208`
-    - `B_NDCG 0.0088`
-    - `T_HR 0.0018`
-    - `T_MAP 0.0003`
+    - `B_HR 0.0226`
+    - `B_NDCG 0.0095`
+    - `T_HR 0.0024`
+    - `T_MAP 0.0004`
   - full best epoch `1`:
-    - `B_HR 0.0280`
-    - `B_NDCG 0.0134`
-    - `T_HR 0.0048`
+    - `B_HR 0.0274`
+    - `B_NDCG 0.0129`
+    - `T_HR 0.0054`
     - `T_MAP 0.0017`
 - decision:
-  - `h4`는 `product_type15` baseline 위에서 fast-scout 신호는 있었지만 full validation에서 current champion `B_NDCG 0.0139`를 넘지 못함
-  - 다음 실험 축은 `metadata-input` 조합으로 복귀
-
-## Next Immediate Experiment
-
-- family: `evaluation-policy`
-- hypothesis: current champion도 `benchmark-best`와 `test-best`가 갈리므로, champion 승격 이후에는 dual-best report를 기본 artifact로 운영하는 것이 맞다.
-- baseline:
-  - single best checkpoint only
-- treatment:
-  - dual-best report + direct checkpoint evaluation
+  - `product_type` 가중치를 더 올리면 fast-scout은 좋아 보이지만 full에서는 current champion을 넘지 못함
+  - `metadata-input` scale 탐색은 여기서 일단 닫고 운영 관점 정리로 이동
 
 ## Latest Metadata-Input Result
 
