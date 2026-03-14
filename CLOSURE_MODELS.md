@@ -20,11 +20,12 @@
 
 - top-k는 모두 `20`
 - seed는 모두 `42`
-- 동일한 local userhash32 split 사용
+- 동일한 metadata-preprocessed `userhash32` split 사용
 - closure 주간에는 이 4개 config만 사용한다
 
 ## 주의사항
 
+- `SASRec` baseline도 metadata-preprocessed pickle을 읽지만, metadata injection은 사용하지 않는다.
 - `DIF-SR` baseline은 metadata-preprocessed split을 그대로 사용하되, `metadata_features=[]`로 metadata signal을 끈다.
 - 이는 새 architecture가 아니라 동일한 backbone에서 metadata injection만 제거한 비교 설정이다.
 

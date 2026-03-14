@@ -3,7 +3,7 @@
         "orig_path": "datasets/hm/local",
         "dataset_path": "datasets/hm/local/prep",
         "target_week": 27,
-        "save_name": "hm_local_userhash32_week27",
+        "save_name": "hm_local_meta_userhash32_week27",
         "reset": false,
         "train_data_name": "purchase_user_item_local_userhash32.csv",
         "test_data_name": "purchase_user_item_local_userhash32.csv",
