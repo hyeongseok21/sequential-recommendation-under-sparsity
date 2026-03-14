@@ -73,6 +73,15 @@ run set leaderboard:
 python3 scripts/report_eval_gap_leaderboard.py --root hm_refactored/hm_out/checkpoints --pattern difsr --output-json <JSON_PATH> --output-csv <CSV_PATH>
 ```
 
+## Closure Week 기본 절차
+
+1. 최종 비교 대상 모델 4개를 고정한다.
+2. 같은 데이터, 같은 seed, 같은 `top_k=20`으로 재실행한다.
+3. overall metric을 `Recall@20`, `NDCG@20`, `MRR@20` 이름으로 정리한다.
+4. `sparse-history user`, `multi-interest user` slice 결과를 따로 정리한다.
+5. 결과 표와 그래프를 만든다.
+6. README summary와 limitations를 작성한다.
+
 ## 문서 검사
 
 ```bash

@@ -15,6 +15,22 @@
 5. 운영용 판단에서는 `T_MAP`, `T_HR`, `dual-best gap`도 함께 본다.
 6. seed는 항상 `42`로 고정한다.
 7. champion은 하나만 두지 않고, 필요하면 `research champion`과 `serving companion`을 함께 둔다.
+8. closure week에는 completion을 optimization보다 우선한다.
+
+## Closure Mode
+
+- 목적:
+  - 남은 1주 안에 포트폴리오 프로젝트를 설명 가능한 결과물로 닫는다.
+- 허용:
+  - baseline/metadata 모델 재실행
+  - slice evaluation
+  - result table / graph / README summary
+- 금지:
+  - 새 architecture
+  - 새 metadata feature
+  - 새 fusion 전략
+  - 새 데이터셋
+  - 추가 exploratory tuning
 
 ## Phase
 
@@ -48,25 +64,29 @@
 - 허용 변경: inference path, best-epoch selection, candidate scoring path, reporting path
 - pass 기준: 품질 유지 또는 개선 + latency/risk 감소
 
-### `P5` Finalization
+### `P5` Slice / Serving Finalization
 
-- 목표: champion 고정, 결과 요약, 재실행 절차 확정
+- 목표: overall + slice 해석을 serving 관점에서 고정
+
+### `P6` Portfolio Closure
+
+- 목표: 결과 표, 그래프, README summary까지 만들어 프로젝트를 닫는다.
 
 ## Metric Priority
 
 ### Research Priority
 
-1. `B_NDCG`
-2. `B_HR`
-3. `T_MAP`
-4. `T_HR`
+1. `NDCG@20`
+2. `Recall@20`
+3. `MRR@20`
 
 ### Serving Proxy Priority
 
-1. `T_MAP`
-2. `T_HR`
-3. `dual-best gap`
-4. checkpoint 안정성 / runtime
+1. slice `NDCG@20`
+2. slice `Recall@20`
+3. `MRR@20`
+4. `dual-best gap`
+5. checkpoint 안정성 / runtime
 
 ## Experiment Axes
 
@@ -130,12 +150,20 @@
 - slice별 metric
 - slice instability / slice-specific gain
 
+### `portfolio-closure`
+
+- overall result table
+- slice result table
+- comparison chart
+- README-ready summary
+
 ## Mutation Scope
 
 - `P2`에서는 config 위주로 바꾼다.
 - `P3`에서만 모델 코드를 바꾼다.
 - 구조 실험도 한 번에 한 mutation만 허용한다.
 - `P4`에서는 평가, 선택, 리포트, checkpoint 관련 경로만 바꾼다.
+- `P6`에서는 결과 표, 그래프, README summary 경로만 바꾼다.
 - `slice-analysis`는 serving phase의 기본 해석 축으로 취급한다.
 - 모든 실험은 위 taxonomy 중 하나의 `axis family`를 먼저 명시한다.
 
@@ -145,6 +173,7 @@
 - 결과는 `updates/` 아래 phase 폴더에 남긴다.
 - gate 결과는 `data/metrics/gate_result.json`
 - memory는 `data/metrics/experiment_memory.csv`
+- closure phase에서는 최종 표/그래프/README summary를 별도 산출물로 남긴다.
 
 ## Stop Rules
 
@@ -158,6 +187,7 @@
 - 구조가 복잡해졌는데 gain이 작으면 champion 유지
 - 필요하면 `benchmark-best`는 연구 champion으로, `test-best`는 serving companion으로 분리한다.
 - `serving companion`은 benchmark champion을 대체하지 않지만 운영 가정의 기본 후보가 될 수 있다.
+- portfolio closure에서는 연구 champion과 serving companion을 둘 다 표에 반영할 수 있다.
 
 ## Reporting Policy
 
@@ -167,6 +197,7 @@
 - champion 승격 이후에는 `dual-best`를 기본 산출물로 만든다.
 - 실험 방향 전환 시에는 benchmark 목표와 serving 목표를 분리해서 적는다.
 - serving phase에서는 가능하면 `sparse-history user`, `multi-interest user` slice 해석을 함께 적는다.
+- closure phase에서는 metric 이름을 `Recall@20`, `NDCG@20`, `MRR@20` 기준으로 정리한다.
 
 ## Multi-Agent Policy
 

@@ -1,142 +1,140 @@
 # Experiment Plan
 
-## Current Serving Candidate
+## Closure Plan
 
-- config: `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`
-- benchmark-best epoch: `2`
-- test-best epoch: `1`
-- current benchmark-best full score:
-  - `B_HR 0.0309`
-  - `B_NDCG 0.0139`
-  - `T_HR 0.0042`
-  - `T_MAP 0.0015`
-- current test-best companion score:
-  - `B_HR 0.0286`
-  - `B_NDCG 0.0136`
-  - `T_HR 0.0059`
-  - `T_MAP 0.0021`
+- 목표:
+  - 일주일 안에 sequential recommendation 포트폴리오 프로젝트를 완결한다.
+- 핵심 질문:
+  1. item metadata가 sequential recommendation 성능을 개선하는가
+  2. 어떤 user segment가 metadata의 이득을 가장 크게 받는가
+- 데이터/태스크:
+  - H&M purchase sequence
+  - next-item prediction
+  - 동일 chronological split 유지
+- closure 원칙:
+  - completion을 optimization보다 우선한다
+  - comparative evidence를 먼저 확보한다
+  - 결과 표, slice 표, 그래프, README summary까지 닫는다
+- freeze rules:
+  - 새 모델 금지
+  - 새 metadata feature 금지
+  - 새 fusion 전략 금지
+  - 새 데이터셋 금지
+  - exploratory tuning 재개 금지
 
-## Product Goal
+## Experiment Queue
 
-- 단순 benchmark 최고점보다, 실제 추천 시스템에 가까운 의사결정을 만드는 것이 우선이다.
-- 모델 선택은 `benchmark-best`만으로 끝내지 않고, `test-best`, 안정성, 운영 복잡도까지 함께 본다.
-- 새 실험은 “실서비스 후보로 채택할 가치가 있는가”를 기준으로 평가한다.
+### MUST
 
-## Decision Policy
+1. final comparison model set 4개 고정
+   - `SASRec`
+   - `SASRec + metadata`
+   - `DIF-SR`
+   - `DIF-SR + metadata`
+2. 같은 split / 같은 seed / 같은 `top_k=20`으로 final run artifact 정리
+3. overall metric 표 생성
+   - `Recall@20`
+   - `NDCG@20`
+   - `MRR@20`
+4. user slice metric 표 생성
+   - `sparse-history user`
+   - `multi-interest user`
+   - 각 slice별 `Recall@20`, `NDCG@20`
+5. 그래프 2개 생성
+   - model comparison bar chart
+   - slice comparison chart
+6. final write-up 작성
+   - concise findings
+   - interpretation
+   - limitations
+   - README-ready summary
 
-1. 연구 champion:
-   - 1순위는 `B_NDCG`
-   - 논문/모델 비교, 구조 실험 판단에 사용
-2. serving candidate:
-   - `dual-best` 기준으로 본다
-   - `benchmark-best`와 `test-best`를 동시에 유지
-   - `T_MAP`, `T_HR`, checkpoint 안정성을 운영 지표로 본다
-3. mutation acceptance:
-   - fast-scout PASS만으로는 채택하지 않는다
-   - full validation에서 benchmark 또는 serving 관점 이득이 있어야 한다
+### NICE-TO-HAVE
 
-## Success Metrics
+1. `MRR@20` slice report
+2. metadata representation 또는 attention visualization 1개
+3. appendix 성격의 dual-best companion summary
+4. optional metadata ablation chart
 
-### Research
+### OUT-OF-SCOPE
 
-1. `B_NDCG`
-2. `B_HR`
+1. retrieval / two-tower
+2. 새 metadata source 탐색
+3. 새 architecture mutation
+4. 새 hyperparameter sweep
+5. serving policy 추가 확장
 
-### Serving Proxy
+## Standardized Model Set
 
-1. `T_MAP`
-2. `T_HR`
-3. `dual-best gap` 크기
-4. runtime / checkpoint 운용 복잡도
+- metadata feature set은 현재 고정값을 유지한다.
+- final comparison에는 아래 4개만 포함한다.
 
-## Backlog
+1. `SASRec`
+2. `SASRec + metadata`
+3. `DIF-SR`
+4. `DIF-SR + metadata`
 
-### `evaluation-policy`
+- 현재 strongest metadata candidate:
+  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json)
 
-1. `benchmark-best` / `test-best` 요약을 기본 serving artifact로 고정
-2. champion 승격 시 dual-best report, direct checkpoint evaluation, serving note를 항상 생성
-3. evaluation-gap이 큰 후보는 연구 champion과 serving candidate를 분리해서 관리
+## Metric Convention
 
-### `serving-proxy`
+- reporting top-k는 `20`으로 통일한다.
+- 기존 코드/로그의 `HR`는 closure 문서에서 `Recall@20`으로 표기한다.
+- `NDCG`는 `NDCG@20`으로 표기한다.
+- `MRR@20`은 closure report에서 secondary metric으로 추가 계산한다.
 
-1. current champion의 `test-best` checkpoint를 운영 후보로 명시
-2. `T_MAP`, `T_HR` 개선이 있으나 `B_NDCG`가 근소 열세인 후보를 companion으로 둘지 규칙화
-3. candidate export / summary report를 serving 관점으로 정리
+## Slice Definition
 
-### `slice-analysis`
+### `sparse-history user`
 
-1. current champion에 대해 `sparse-history user`, `multi-interest user` slice report를 기본 산출물로 추가
-2. overall에서는 근소 차이지만 특정 slice에서 일관된 이득이 있는 후보를 `serving companion` 후보로 해석
-3. retrieval 실험으로 넘어가기 전, slice 정의를 먼저 고정
+- 초기 기준:
+  - train history length `<= 5`
 
-### `architecture`
+### `multi-interest user`
 
-1. `dual-best gap`을 줄일 수 있는 구조 실험
-2. history-side metadata interaction 개선
-3. checkpoint마다 benchmark/test가 크게 갈리지 않는 구조 우선
+- 초기 기준:
+  - 최근 `10`개 구매 기준
+  - `department` unique count `>= 3` 또는 adjacent transition count `>= 4`
 
-### `metadata-input`
+## Execution Order
 
-1. 현재 축은 냉각
-2. 새 metadata source를 추가할 때만 재개
-3. 단순 scale 추가 탐색은 우선순위 낮음
+1. closure용 canonical config 4개 확정
+2. final overall metric 재실행
+3. slice metric 산출
+4. result table 작성
+5. graph 작성
+6. findings / limitations / README summary 작성
 
-## Immediate Next Experiment
+## Results Summary
 
-- family: `slice-analysis`
-- hypothesis: current champion에 slice report를 붙이면 serving candidate 판단이 더 명확해진다.
-- baseline:
-  - overall metric + dual-best report만 있는 상태
-- treatment:
-  - dual-best + `sparse-history user` + `multi-interest user` slice report 동시 운용
-- expected gate:
-  - research champion / serving companion 해석에 slice 근거 추가
-  - 이후 retrieval, metadata 확장 실험에서 slice를 기본 축으로 사용
+- current strongest metadata run:
+  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json)
+- benchmark-best epoch `2`:
+  - `Recall@20` 대응값: `0.0309`
+  - `NDCG@20`: `0.0139`
+- test-best companion epoch `1`:
+  - `T_HR` 대응값: `0.0059`
+  - `MAP` 기준 strongest companion
+- current interpretation:
+  - metadata는 일부 설정에서 유효했다
+  - 추가 weighting 탐색은 대부분 full validation에서 유지되지 않았다
+  - 이제는 exploration보다 comparative closure가 우선이다
 
-## Latest Result
+## Remaining Risks
 
-- family: `metadata-input`
-- treatment:
-  - `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type17.json`
-- verdict: `FAIL`
-- observed:
-  - fast-scout:
-    - `B_HR 0.0226`
-    - `B_NDCG 0.0095`
-    - `T_HR 0.0024`
-    - `T_MAP 0.0004`
-  - full best epoch `1`:
-    - `B_HR 0.0274`
-    - `B_NDCG 0.0129`
-    - `T_HR 0.0054`
-    - `T_MAP 0.0017`
-- decision:
-  - `product_type` 가중치를 더 올리면 fast-scout은 좋아 보이지만 full에서는 current champion을 넘지 못함
-  - `metadata-input` scale 탐색은 여기서 일단 닫고 운영 관점 정리로 이동
+1. `SASRec + metadata`가 현재 same-format closure artifact로 아직 정리되지 않았을 수 있다.
+2. `MRR@20`은 현재 코드 기본 산출물이 아니라 closure report 단계에서 추가 계산이 필요하다.
+3. slice threshold는 once fixed 후 closure 주간에는 바꾸지 않는다.
+4. benchmark-best와 test-best가 달라 본문/appendix를 분리해 설명해야 한다.
 
-## Latest Metadata-Input Result
+## Packaging Outputs
 
-- `department_scale = 1.5`
-  - fast-scout verdict: `FAIL`
-  - observed:
-    - `B_NDCG 0.0066`
-    - `B_HR 0.0167`
-- `department_scale = 0.5`
-  - fast-scout verdict: `PASS`
-  - fast-scout observed:
-    - `B_NDCG 0.0091`
-    - `B_HR 0.0190`
-  - full verdict: `FAIL`
-  - full observed:
-    - `[0 epoch] B_NDCG 0.0082`
-    - `[0 epoch] B_HR 0.0178`
-    - `[0 epoch] T_HR 0.0036`
-    - `[0 epoch] T_MAP 0.0011`
-- interpretation:
-  - `department` weighting은 benchmark보다 test 쪽 metric에 더 민감하게 작동하는 경향이 있음
-  - `product_type_scale = 1.5`는 full validation까지 PASS해서 새 benchmark champion이 됨
-  - `garment_group` 추가 weighting은 `1.5`, `1.2` 모두 champion을 넘지 못함
-  - `product_type15 + department05`는 fast-scout `PASS`였지만 full best `B_NDCG 0.0108`로 실패
-  - `product_type17`도 fast-scout `PASS`였지만 full best `B_NDCG 0.0129`로 실패
-  - 현재까지 `metadata-input` 축에서 full champion으로 남은 건 `product_type_scale = 1.5` 단일 weighting 뿐
-  - 이 축은 당분간 냉각하고 `evaluation-policy`와 `dual-best` 운영 정리로 이동
+1. overall results table
+2. sparse-history results table
+3. multi-interest results table
+4. model comparison bar chart
+5. slice comparison chart
+6. concise findings
+7. limitations
+8. README-ready summary

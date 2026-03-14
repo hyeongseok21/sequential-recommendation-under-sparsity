@@ -4,6 +4,7 @@
 
 - 추천 실험을 단발성 trial이 아니라, champion을 기준으로 스스로 다음 가설을 생성하고 검증하는 반복 루프로 관리한다.
 - 현재 루프의 목적은 단순 benchmark 최고점이 아니라, 실제 추천 시스템에 가까운 `serving-safe decision loop`를 만드는 것이다.
+- closure week에는 loop를 확장하지 않고, 이미 확보한 결과를 comparative package로 닫는 것을 우선한다.
 
 ## Loop State
 
@@ -33,6 +34,7 @@
 ## Recursion Policy
 
 - 기본은 `serving exploit 2회 : research exploit 1회 : explore 1회`
+- closure mode에서는 exploit/explore를 중단하고 `must-run closure queue`만 수행한다.
 - serving exploit:
   - `dual-best`
   - checkpoint policy
@@ -56,6 +58,13 @@
 5. `metadata-input`
 6. `attention-capacity`
 7. `retrieval`
+
+### closure priority
+
+1. overall table completion
+2. slice table completion
+3. graph packaging
+4. README summary
 
 ### research exploit 우선순위
 
@@ -111,3 +120,4 @@
 - 최근 5개 loop 중 4개 이상 FAIL이면, tuning 대신 구조/평가 설계를 재점검한다.
 - 최근 4개 loop 중 3개 이상이 `fast PASS / full FAIL`이면, benchmark-only 탐색을 멈추고 phase를 `P4` 또는 `slice-analysis`로 전환한다.
 - serving phase로 pivot한 뒤에는, 신규 architecture 탐색 전에 기본 slice 정의를 먼저 고정한다.
+- closure week에는 새 explore branch를 열지 않는다.

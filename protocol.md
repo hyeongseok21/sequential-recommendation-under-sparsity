@@ -18,6 +18,7 @@
   - `research`
   - `serving`
   - `hybrid`
+  - `closure`
 
 ## Required Outputs Per Experiment
 
@@ -32,6 +33,11 @@
 - slice-analysis 실험일 경우:
   - slice definition note
   - slice threshold / rule summary
+- closure phase일 경우:
+  - overall result table
+  - slice result table
+  - graph artifact list
+  - README summary
 
 ## Gate Result Schema
 
@@ -73,6 +79,7 @@
 - `serving-proxy`
 - `retrieval`
 - `slice-analysis`
+- `portfolio-closure`
 
 ## Notes Convention
 
@@ -92,6 +99,7 @@
   - 필요 시 더 큰 `batch_size`
 - 규칙:
   - PASS여도 full run 전에는 champion 교체 금지
+  - closure mode에서는 새로운 fast-scout를 열지 않는다.
 
 ## Early Stop Heuristic
 
@@ -107,6 +115,13 @@
 - `serving companion`을 유지하는 경우, update log에 benchmark champion과 구분해서 적는다
 - 실무형 phase에서는 `benchmark-best only`를 최종 단일 truth로 보지 않는다
 
+## Metric Naming Policy
+
+- top-k reporting은 `20`으로 통일한다.
+- 기존 코드/로그의 `HR`는 closure 문서에서 `Recall@20`으로 표기한다.
+- `NDCG`는 `NDCG@20`으로 표기한다.
+- `MRR@20`은 closure report에서 secondary metric으로 추가 계산한다.
+
 ## Slice Evaluation Policy
 
 - 실제 추천 가정의 phase에서는 overall metric만으로 결론내리지 않는다.
@@ -120,6 +135,19 @@
   - `department`
   - `section` 또는 `index_group`
 - style feature는 slice backbone이 고정된 뒤에 추가한다.
+
+## Closure Policy
+
+- closure week에는 scope를 동결한다.
+- 허용:
+  - baseline 재실행
+  - slice report
+  - result table / graph / README summary
+- 금지:
+  - 새 모델
+  - 새 feature
+  - 새 fusion
+  - 새 데이터셋
 
 ## Doc Policy
 

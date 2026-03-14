@@ -122,29 +122,30 @@
   - slice 정의와 해석 규칙이 고정됨
   - retrieval 또는 다음 서비스 실험으로 handoff 가능
 
-### `P6` Finalization
+### `P6` Portfolio Closure
 
 - 목적:
-  - champion 고정
-  - 결과 요약
-  - 재실행 및 handoff 준비
+  - 포트폴리오 제출 가능한 결과물을 완성한다
 - 주요 작업:
-  - summary log
-  - final report
-  - agent handoff
-  - automation wiring
+  - overall 결과 표
+  - slice 결과 표
+  - 그래프 2~4개
+  - concise findings
+  - limitations
+  - README-ready summary
 - entry:
-  - champion과 운영 정책이 모두 고정
+  - champion, 운영 정책, slice 정의가 모두 고정
 - exit:
-  - 다음 phase 또는 다음 프로젝트로 handoff 가능
+  - 포트폴리오 패키지 완료
 
 ## Active Phase
 
 - 현재 active phase:
-  - `P4`
+  - `P6`
 - 이유:
-  - current `metadata-input`과 `attention-capacity` 축은 여러 번 fast-scout PASS 후 full FAIL을 반복했다
-  - 이제는 단순 tuning보다 `benchmark-best`와 `test-best`, 그리고 slice별 관찰을 실제 추천 운영 관점에서 어떻게 쓸지 정리하는 편이 더 중요하다
+  - 남은 시간이 1주라서 추가 탐색보다 closure가 중요하다
+  - baseline, metadata champion, dual-best 정책은 이미 확보했다
+  - 이제는 overall/slice 결과 표와 README summary를 만드는 것이 핵심이다
 - 참고 champion:
   - [`hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json)
 
@@ -171,11 +172,11 @@
 
 ## Current Priority
 
-1. `evaluation-policy`
+1. `portfolio-closure`
 2. `slice-analysis`
 3. `serving-proxy`
-4. `architecture`
-5. `metadata-input`
+4. `evaluation-policy`
+5. `architecture`
 
 ## Naming Rule
 

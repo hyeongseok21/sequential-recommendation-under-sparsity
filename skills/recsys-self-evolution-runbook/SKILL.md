@@ -7,6 +7,7 @@ description: Runs recommendation experiments in this repository using the local 
 
 Use this skill when the task is to run or manage recursive recommendation experiments in this repository.
 Prefer serving-oriented decision loops over benchmark-only tuning when the docs indicate `P4` or `evaluation-policy` is active.
+If the docs indicate `P6` or `closure`, prefer completion artifacts over new exploration.
 
 ## Always Read First
 
@@ -29,6 +30,7 @@ Prefer serving-oriented decision loops over benchmark-only tuning when the docs 
    - `research`
    - `serving`
    - `hybrid`
+   - `closure`
 3. Write one-sentence `hypothesis`.
 4. Fix the `baseline` as the current champion.
 5. Apply one `treatment` mutation only.
@@ -42,6 +44,7 @@ Prefer serving-oriented decision loops over benchmark-only tuning when the docs 
 10. Write update log from `templates/update_log_template.md`.
 11. If `serving` or `hybrid`, preserve both `research champion` and `serving companion` when they differ.
 12. If the active family is `slice-analysis`, ground the hypothesis and interpretation in `sparse-history user` or `multi-interest user`.
+13. If `closure`, run only the MUST queue and avoid new exploratory branches.
 
 ## Hard Rules
 
@@ -51,6 +54,7 @@ Prefer serving-oriented decision loops over benchmark-only tuning when the docs 
 - In serving-oriented loops, interpret `T_MAP`, `T_HR`, and `dual-best` together with `B_NDCG`.
 - Fast-scout PASS is not enough for champion promotion.
 - Distinguish `concept failed` from `current implementation failed`.
+- In closure mode, prioritize overall table, slice table, graph, and README artifacts over further tuning.
 
 ## Output Contract
 
