@@ -75,6 +75,12 @@ python3 scripts/report_eval_gap_leaderboard.py --root hm_refactored/hm_out/check
 
 ## Closure Week 기본 절차
 
+0. preflight를 먼저 통과시킨다.
+
+```bash
+python3 scripts/check_closure_readiness.py
+```
+
 1. 최종 비교 대상 모델 4개를 고정한다.
 2. 같은 데이터, 같은 seed, 같은 `top_k=20`으로 재실행한다.
 3. overall metric을 `Recall@20`, `NDCG@20`, `MRR@20` 이름으로 정리한다.

@@ -5,6 +5,8 @@ import sys
 
 REQUIRED = [
     "AGENT.md",
+    "CLOSURE_MODELS.md",
+    "CLOSURE_PREFLIGHT.md",
     "EXPERIMENT_PHASES.md",
     "SLICE_EVALUATION.md",
     "RUNBOOK.md",
@@ -25,6 +27,7 @@ REQUIRED = [
     "templates/agent_prompt_template.md",
     "templates/automation_prompt_bundle_template.md",
     "templates/update_log_template.md",
+    "scripts/check_closure_readiness.py",
     "data/metrics/experiment_memory.csv",
 ]
 

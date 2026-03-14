@@ -27,3 +27,12 @@
 
 - `DIF-SR` baseline은 metadata-preprocessed split을 그대로 사용하되, `metadata_features=[]`로 metadata signal을 끈다.
 - 이는 새 architecture가 아니라 동일한 backbone에서 metadata injection만 제거한 비교 설정이다.
+
+## Preflight
+
+- final run 전에는 반드시 [`/Users/conan/projects/personalized-fashion-recommendation/CLOSURE_PREFLIGHT.md`](/Users/conan/projects/personalized-fashion-recommendation/CLOSURE_PREFLIGHT.md)를 확인한다.
+- 자동 점검:
+
+```bash
+python3 /Users/conan/projects/personalized-fashion-recommendation/scripts/check_closure_readiness.py
+```
