@@ -50,6 +50,7 @@ It does not replace the main project README; it helps locate experiment policy, 
 1. [`README.md`](README.md)
 2. [`configs/README.md`](configs/README.md)
 3. [`reports/README.md`](reports/README.md)
+4. [`scripts/run_phase_agent.py`](scripts/run_phase_agent.py)
 
 ### Audit the experiment process
 

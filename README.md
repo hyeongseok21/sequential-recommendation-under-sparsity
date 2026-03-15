@@ -483,6 +483,12 @@ source .venv/bin/activate
 python experiments/run_evaluation.py
 ```
 
+Run the phase-aware automation entrypoint:
+
+```bash
+python scripts/run_phase_agent.py
+```
+
 Generate the service-style supplementary evaluation report:
 
 ```bash
@@ -504,6 +510,7 @@ Key artifacts:
 - service-style report: [`reports/service_style_evaluation.md`](reports/service_style_evaluation.md)
 - portfolio summary: [`reports/research_summary.md`](reports/research_summary.md)
 - repository guide: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
+- latest phase-agent log: [`updates/6.portfolio-closure/2026-03-15-2155-phase-agent-run.md`](updates/6.portfolio-closure/2026-03-15-2155-phase-agent-run.md)
 
 ## Project Structure
 
