@@ -41,12 +41,12 @@
 
 ## prompt 구성
 
-- 공통 규칙은 `AGENT.md`
-- 실행 절차는 `RUNBOOK.md`
-- loop 정책은 `SELF_EVOLUTION_LOOP.md`
-- 역할 규칙은 `agents/*.md`
-- handoff 형식은 `templates/agent_handoff_template.md`
-- prompt 골격은 `templates/agent_prompt_template.md`
+- 공통 규칙은 `../framework/AGENT.md`
+- 실행 절차는 `../framework/RUNBOOK.md`
+- loop 정책은 `../framework/SELF_EVOLUTION_LOOP.md`
+- 역할 규칙은 `../agents/*.md`
+- handoff 형식은 `../templates/agent_handoff_template.md`
+- prompt 골격은 `../templates/agent_prompt_template.md`
 
 ## 보조 도구
 

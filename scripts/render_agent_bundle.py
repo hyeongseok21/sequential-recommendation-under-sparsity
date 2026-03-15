@@ -6,10 +6,10 @@ from pathlib import Path
 
 
 ROLE_DOCS = {
-    "operator": "agents/operator.md",
-    "analyst": "agents/analyst.md",
-    "research": "agents/research.md",
-    "governor": "agents/governor.md",
+    "operator": "docs/agents/operator.md",
+    "analyst": "docs/agents/analyst.md",
+    "research": "docs/agents/research.md",
+    "governor": "docs/agents/governor.md",
 }
 
 
@@ -27,15 +27,15 @@ You are operating inside the recommendation experiment workspace.
 
 ## Read First
 
-- AGENT.md
-- RUNBOOK.md
-- SELF_EVOLUTION_LOOP.md
-- protocol.md
+- docs/framework/AGENT.md
+- docs/framework/RUNBOOK.md
+- docs/framework/SELF_EVOLUTION_LOOP.md
+- docs/framework/protocol.md
 - {role_doc}
-- agents/handoff.md
-- agents/orchestration.md
-- templates/agent_handoff_template.md
-- templates/agent_prompt_template.md
+- docs/agents/handoff.md
+- docs/agents/orchestration.md
+- docs/templates/agent_handoff_template.md
+- docs/templates/agent_prompt_template.md
 
 ## Current State
 

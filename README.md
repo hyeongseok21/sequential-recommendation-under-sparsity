@@ -189,10 +189,10 @@ Experiments were executed with a structured, agent-driven experimentation framew
 
 Key framework documents:
 
-- policy: [`AGENT.md`](AGENT.md)
-- run procedure: [`RUNBOOK.md`](RUNBOOK.md)
-- iterative loop: [`SELF_EVOLUTION_LOOP.md`](SELF_EVOLUTION_LOOP.md)
-- protocol: [`protocol.md`](protocol.md)
+- policy: [`docs/framework/AGENT.md`](docs/framework/AGENT.md)
+- run procedure: [`docs/framework/RUNBOOK.md`](docs/framework/RUNBOOK.md)
+- iterative loop: [`docs/framework/SELF_EVOLUTION_LOOP.md`](docs/framework/SELF_EVOLUTION_LOOP.md)
+- protocol: [`docs/framework/protocol.md`](docs/framework/protocol.md)
 
 ### Skills
 

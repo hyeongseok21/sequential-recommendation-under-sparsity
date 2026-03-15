@@ -4,13 +4,13 @@
 
 ## Read First
 
-- `AGENT.md`
-- `RUNBOOK.md`
-- `SELF_EVOLUTION_LOOP.md`
-- `protocol.md`
-- `agents/analyst.md`
-- `agents/handoff.md`
-- `agents/orchestration.md`
+- `../framework/AGENT.md`
+- `../framework/RUNBOOK.md`
+- `../framework/SELF_EVOLUTION_LOOP.md`
+- `../framework/protocol.md`
+- `../agents/analyst.md`
+- `../agents/handoff.md`
+- `../agents/orchestration.md`
 
 ## Current State
 

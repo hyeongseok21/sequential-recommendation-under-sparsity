@@ -2,11 +2,11 @@
 
 ## Shared Reads
 
-- `AGENT.md`
-- `RUNBOOK.md`
-- `SELF_EVOLUTION_LOOP.md`
-- `protocol.md`
-- role-specific doc under `agents/`
+- `../framework/AGENT.md`
+- `../framework/RUNBOOK.md`
+- `../framework/SELF_EVOLUTION_LOOP.md`
+- `../framework/protocol.md`
+- role-specific doc under `../agents/`
 
 ## Runtime Inputs
 

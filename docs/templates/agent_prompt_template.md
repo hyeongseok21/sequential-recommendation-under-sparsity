@@ -7,11 +7,11 @@
 
 ## Shared Context
 
-- read `AGENT.md`
-- read `RUNBOOK.md`
-- read `SELF_EVOLUTION_LOOP.md`
-- read `protocol.md`
-- read agent-specific doc under `agents/`
+- read `../framework/AGENT.md`
+- read `../framework/RUNBOOK.md`
+- read `../framework/SELF_EVOLUTION_LOOP.md`
+- read `../framework/protocol.md`
+- read agent-specific doc under `../agents/`
 
 ## Current State
 

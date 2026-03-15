@@ -11,10 +11,10 @@
 
 ## 공통 입력 파일
 
-- `AGENT.md`
-- `RUNBOOK.md`
-- `SELF_EVOLUTION_LOOP.md`
-- `protocol.md`
+- `../framework/AGENT.md`
+- `../framework/RUNBOOK.md`
+- `../framework/SELF_EVOLUTION_LOOP.md`
+- `../framework/protocol.md`
 - `data/metrics/experiment_memory.csv`
 - `data/metrics/gate_result.json`
 
@@ -32,7 +32,7 @@
 - handoff는 항상 파일 경로와 metric 수치를 포함한다.
 - “좋아 보인다” 같은 표현만 넘기지 않는다.
 - 실패도 다음 agent에 넘긴다. 실패 로그는 다음 가설 생성에 필요하다.
-- handoff 본문 형식은 `templates/agent_handoff_template.md`를 따른다.
+- handoff 본문 형식은 `../templates/agent_handoff_template.md`를 따른다.
 
 ## 권장 handoff 예시
 

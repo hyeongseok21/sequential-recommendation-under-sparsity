@@ -47,6 +47,6 @@
 
 ## Prompt Assembly
 
-- 각 agent 프롬프트 초안은 `templates/agent_prompt_template.md`를 기반으로 만든다.
-- 시스템 규칙은 `AGENT.md`, 실행 절차는 `RUNBOOK.md`, 역할 규칙은 `agents/*.md`에서 가져온다.
-- handoff payload는 `templates/agent_handoff_template.md` 형식으로 전달한다.
+- 각 agent 프롬프트 초안은 `../templates/agent_prompt_template.md`를 기반으로 만든다.
+- 시스템 규칙은 `../framework/AGENT.md`, 실행 절차는 `../framework/RUNBOOK.md`, 역할 규칙은 `../agents/*.md`에서 가져온다.
+- handoff payload는 `../templates/agent_handoff_template.md` 형식으로 전달한다.

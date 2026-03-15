@@ -11,10 +11,10 @@ It does not replace the main project README; it helps locate experiment policy, 
 
 ## Top-Level Research / Experiment Docs
 
-- Experiment governance: [`AGENT.md`](AGENT.md)
-- Run procedure: [`RUNBOOK.md`](RUNBOOK.md)
-- Self-evolution loop: [`SELF_EVOLUTION_LOOP.md`](SELF_EVOLUTION_LOOP.md)
-- Experiment protocol: [`protocol.md`](protocol.md)
+- Experiment governance: [`docs/framework/AGENT.md`](docs/framework/AGENT.md)
+- Run procedure: [`docs/framework/RUNBOOK.md`](docs/framework/RUNBOOK.md)
+- Self-evolution loop: [`docs/framework/SELF_EVOLUTION_LOOP.md`](docs/framework/SELF_EVOLUTION_LOOP.md)
+- Experiment protocol: [`docs/framework/protocol.md`](docs/framework/protocol.md)
 - Phase definitions: [`docs/EXPERIMENT_PHASES.md`](docs/EXPERIMENT_PHASES.md)
 - Closure plan: [`docs/EXPERIMENT_PLAN.md`](docs/EXPERIMENT_PLAN.md)
 - Closure model set: [`docs/CLOSURE_MODELS.md`](docs/CLOSURE_MODELS.md)
@@ -55,6 +55,6 @@ It does not replace the main project README; it helps locate experiment policy, 
 
 1. [`docs/EXPERIMENT_PHASES.md`](docs/EXPERIMENT_PHASES.md)
 2. [`docs/EXPERIMENT_PLAN.md`](docs/EXPERIMENT_PLAN.md)
-3. [`RUNBOOK.md`](RUNBOOK.md)
-4. [`SELF_EVOLUTION_LOOP.md`](SELF_EVOLUTION_LOOP.md)
+3. [`docs/framework/RUNBOOK.md`](docs/framework/RUNBOOK.md)
+4. [`docs/framework/SELF_EVOLUTION_LOOP.md`](docs/framework/SELF_EVOLUTION_LOOP.md)
 5. [`updates/`](updates)

@@ -7,15 +7,15 @@
 
 ## 문서 역할 분리
 
-- [`../AGENT.md`](../AGENT.md)
+- [`framework/AGENT.md`](framework/AGENT.md)
   - 공통 헌장
   - gate 기준
   - champion 정책
-- [`../SELF_EVOLUTION_LOOP.md`](../SELF_EVOLUTION_LOOP.md)
+- [`framework/SELF_EVOLUTION_LOOP.md`](framework/SELF_EVOLUTION_LOOP.md)
   - recursion rule
   - exploit / explore 순서
   - 축 이동 규칙
-- [`../RUNBOOK.md`](../RUNBOOK.md)
+- [`framework/RUNBOOK.md`](framework/RUNBOOK.md)
   - 실제 실행 명령
   - checkpoint / report 절차
 - [`../SLICE_EVALUATION.md`](../SLICE_EVALUATION.md)

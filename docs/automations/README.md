@@ -12,7 +12,7 @@
 
 ## 공통 규칙
 
-- `AGENT.md`, `RUNBOOK.md`, `SELF_EVOLUTION_LOOP.md`, `protocol.md`를 먼저 읽는다.
+- `../framework/AGENT.md`, `../framework/RUNBOOK.md`, `../framework/SELF_EVOLUTION_LOOP.md`, `../framework/protocol.md`를 먼저 읽는다.
 - 현재 champion은 `hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json`으로 본다.
 - 1순위 metric은 `B_NDCG`다.
 - update log와 metric artifact를 반드시 남긴다.
