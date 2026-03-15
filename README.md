@@ -503,6 +503,7 @@ Key artifacts:
 ```text
 datasets/
 configs/
+docs/
 experiments/
 analysis/
 plots/

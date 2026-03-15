@@ -5,9 +5,10 @@ import sys
 
 REQUIRED = [
     "AGENT.md",
-    "CLOSURE_MODELS.md",
-    "CLOSURE_PREFLIGHT.md",
-    "EXPERIMENT_PHASES.md",
+    "docs/CLOSURE_MODELS.md",
+    "docs/CLOSURE_PREFLIGHT.md",
+    "docs/EXPERIMENT_PHASES.md",
+    "docs/EXPERIMENT_PLAN.md",
     "SLICE_EVALUATION.md",
     "RUNBOOK.md",
     "SELF_EVOLUTION_LOOP.md",

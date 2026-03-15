@@ -15,10 +15,10 @@ It does not replace the main project README; it helps locate experiment policy, 
 - Run procedure: [`RUNBOOK.md`](RUNBOOK.md)
 - Self-evolution loop: [`SELF_EVOLUTION_LOOP.md`](SELF_EVOLUTION_LOOP.md)
 - Experiment protocol: [`protocol.md`](protocol.md)
-- Phase definitions: [`EXPERIMENT_PHASES.md`](EXPERIMENT_PHASES.md)
-- Closure plan: [`EXPERIMENT_PLAN.md`](EXPERIMENT_PLAN.md)
-- Closure model set: [`CLOSURE_MODELS.md`](CLOSURE_MODELS.md)
-- Closure preflight checklist: [`CLOSURE_PREFLIGHT.md`](CLOSURE_PREFLIGHT.md)
+- Phase definitions: [`docs/EXPERIMENT_PHASES.md`](docs/EXPERIMENT_PHASES.md)
+- Closure plan: [`docs/EXPERIMENT_PLAN.md`](docs/EXPERIMENT_PLAN.md)
+- Closure model set: [`docs/CLOSURE_MODELS.md`](docs/CLOSURE_MODELS.md)
+- Closure preflight checklist: [`docs/CLOSURE_PREFLIGHT.md`](docs/CLOSURE_PREFLIGHT.md)
 - Slice definition note: [`SLICE_EVALUATION.md`](SLICE_EVALUATION.md)
 - SASRec baseline sanity note: [`SASREC_SANITY_FIX.md`](SASREC_SANITY_FIX.md)
 
@@ -53,8 +53,8 @@ It does not replace the main project README; it helps locate experiment policy, 
 
 ### Audit the experiment process
 
-1. [`EXPERIMENT_PHASES.md`](EXPERIMENT_PHASES.md)
-2. [`EXPERIMENT_PLAN.md`](EXPERIMENT_PLAN.md)
+1. [`docs/EXPERIMENT_PHASES.md`](docs/EXPERIMENT_PHASES.md)
+2. [`docs/EXPERIMENT_PLAN.md`](docs/EXPERIMENT_PLAN.md)
 3. [`RUNBOOK.md`](RUNBOOK.md)
 4. [`SELF_EVOLUTION_LOOP.md`](SELF_EVOLUTION_LOOP.md)
 5. [`updates/`](updates)

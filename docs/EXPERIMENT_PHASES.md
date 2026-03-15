@@ -7,18 +7,18 @@
 
 ## 문서 역할 분리
 
-- [`AGENT.md`](AGENT.md)
+- [`../AGENT.md`](../AGENT.md)
   - 공통 헌장
   - gate 기준
   - champion 정책
-- [`SELF_EVOLUTION_LOOP.md`](SELF_EVOLUTION_LOOP.md)
+- [`../SELF_EVOLUTION_LOOP.md`](../SELF_EVOLUTION_LOOP.md)
   - recursion rule
   - exploit / explore 순서
   - 축 이동 규칙
-- [`RUNBOOK.md`](RUNBOOK.md)
+- [`../RUNBOOK.md`](../RUNBOOK.md)
   - 실제 실행 명령
   - checkpoint / report 절차
-- [`SLICE_EVALUATION.md`](SLICE_EVALUATION.md)
+- [`../SLICE_EVALUATION.md`](../SLICE_EVALUATION.md)
   - slice 정의
   - slice metric 해석
   - serving phase 기준 slice report 정책
@@ -147,7 +147,7 @@
   - baseline, metadata champion, dual-best 정책은 이미 확보했다
   - 이제는 overall/slice 결과 표와 README summary를 만드는 것이 핵심이다
 - 참고 champion:
-  - [`hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`](hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json)
+  - [`../hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json`](../hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15_all_features_product_type15.json)
 
 ## Phase Transition Rules
 
