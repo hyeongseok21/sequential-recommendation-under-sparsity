@@ -1,0 +1,12 @@
+{
+  "config_path": "/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.fair_sasrec_meta.json",
+  "checkpoint_epoch": 4,
+  "num_users": 1681,
+  "Recall@20": 0.010113027959547887,
+  "Recall@50": 0.01784651992861392,
+  "Recall@100": 0.027364663890541343,
+  "NDCG@20": 0.0033891122007515045,
+  "NDCG@50": 0.004943103345612551,
+  "NDCG@100": 0.006489623829416666,
+  "MRR@20": 0.0015343194945672462
+}
