@@ -496,6 +496,7 @@ Key artifacts:
 - canonical report: [`reports/canonical_evaluation.md`](reports/canonical_evaluation.md)
 - service-style report: [`reports/service_style_evaluation.md`](reports/service_style_evaluation.md)
 - portfolio summary: [`reports/research_summary.md`](reports/research_summary.md)
+- repository guide: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
 
 ## Project Structure
 

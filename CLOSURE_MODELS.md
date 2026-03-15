@@ -8,13 +8,13 @@
 ## Canonical Model Set
 
 1. `SASRec`
-   - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.closure_sasrec.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.closure_sasrec.json)
+   - [`hm_refactored/configs/config.closure_sasrec.json`](hm_refactored/configs/config.closure_sasrec.json)
 2. `SASRec + metadata`
-   - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.closure_sasrec_meta.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.closure_sasrec_meta.json)
+   - [`hm_refactored/configs/config.closure_sasrec_meta.json`](hm_refactored/configs/config.closure_sasrec_meta.json)
 3. `DIF-SR`
-   - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.closure_difsr.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.closure_difsr.json)
+   - [`hm_refactored/configs/config.closure_difsr.json`](hm_refactored/configs/config.closure_difsr.json)
 4. `DIF-SR + metadata`
-   - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.closure_difsr_meta.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.closure_difsr_meta.json)
+   - [`hm_refactored/configs/config.closure_difsr_meta.json`](hm_refactored/configs/config.closure_difsr_meta.json)
 
 ## 비교 원칙
 
@@ -31,9 +31,9 @@
 
 ## Preflight
 
-- final run 전에는 반드시 [`/Users/conan/projects/personalized-fashion-recommendation/CLOSURE_PREFLIGHT.md`](/Users/conan/projects/personalized-fashion-recommendation/CLOSURE_PREFLIGHT.md)를 확인한다.
+- final run 전에는 반드시 [`CLOSURE_PREFLIGHT.md`](CLOSURE_PREFLIGHT.md)를 확인한다.
 - 자동 점검:
 
 ```bash
-python3 /Users/conan/projects/personalized-fashion-recommendation/scripts/check_closure_readiness.py
+python3 scripts/check_closure_readiness.py
 ```

@@ -8,7 +8,7 @@
 ## 필수 점검 항목
 
 1. canonical model set이 고정됐는가
-   - [`/Users/conan/projects/personalized-fashion-recommendation/CLOSURE_MODELS.md`](/Users/conan/projects/personalized-fashion-recommendation/CLOSURE_MODELS.md)
+   - [`CLOSURE_MODELS.md`](CLOSURE_MODELS.md)
 2. 4개 config가 모두 존재하는가
 3. seed가 모두 `42`인가
 4. `top_k`가 모두 `20`인가
