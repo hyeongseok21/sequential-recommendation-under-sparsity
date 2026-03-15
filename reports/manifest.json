@@ -1,0 +1,8 @@
+{
+  "canonical_report": "/Users/conan/projects/personalized-fashion-recommendation/reports/canonical_evaluation.md",
+  "service_report": "/Users/conan/projects/personalized-fashion-recommendation/reports/service_style_evaluation.md",
+  "portfolio_summary": "/Users/conan/projects/personalized-fashion-recommendation/reports/research_summary.md",
+  "plot_model_comparison": "/Users/conan/projects/personalized-fashion-recommendation/plots/final_model_comparison.png",
+  "plot_canonical_vs_service": "/Users/conan/projects/personalized-fashion-recommendation/plots/canonical_vs_service_comparison.png",
+  "plot_slice_analysis": "/Users/conan/projects/personalized-fashion-recommendation/plots/final_slice_analysis.png"
+}

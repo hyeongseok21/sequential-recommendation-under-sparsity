@@ -1,0 +1,12 @@
+{
+  "config_path": "/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.fair_difsr_meta.json",
+  "checkpoint_epoch": 3,
+  "num_users": 1681,
+  "Recall@20": 0.018441403926234383,
+  "Recall@50": 0.03331350386674598,
+  "Recall@100": 0.057108863771564544,
+  "NDCG@20": 0.00746455723324926,
+  "NDCG@50": 0.010318944550878409,
+  "NDCG@100": 0.014157564550330974,
+  "MRR@20": 0.0044660301408689426
+}

@@ -1,0 +1,12 @@
+{
+  "config_path": "/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.sanity_sasrec_fixed.json",
+  "checkpoint_epoch": 2,
+  "num_users": 1681,
+  "Recall@20": 0.011302795954788817,
+  "Recall@50": 0.02379535990481856,
+  "Recall@100": 0.03866745984533016,
+  "NDCG@20": 0.004005284843736078,
+  "NDCG@50": 0.006467132851926572,
+  "NDCG@100": 0.008865672031341736,
+  "MRR@20": 0.00197104157622646
+}

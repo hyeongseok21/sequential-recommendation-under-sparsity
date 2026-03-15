@@ -5,5 +5,9 @@
   "diversity_summary": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/diversity_summary.json",
   "popularity_exposure_summary": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/popularity_exposure_summary.json",
   "slice_study": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/slice_study.json",
-  "plots_dir": "/Users/conan/projects/personalized-fashion-recommendation/plots"
+  "plots_dir": "/Users/conan/projects/personalized-fashion-recommendation/plots",
+  "canonical_baseline_table": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/canonical_baseline_table.json",
+  "baseline_sanity_check": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/baseline_sanity_check.json",
+  "slice_study_corrected_baseline": "/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/slice_study_corrected_baseline.json",
+  "portfolio_reports": "/Users/conan/projects/personalized-fashion-recommendation/reports/manifest.json"
 }

@@ -1,0 +1,34 @@
+[
+  {
+    "model": "TopPopular",
+    "checkpoint": "n/a",
+    "Recall@20": 0.028,
+    "NDCG@20": 0.0102,
+    "MRR@20": 0.0055,
+    "interpretation": "strong non-personalized baseline"
+  },
+  {
+    "model": "Corrected SASRec",
+    "checkpoint": "epoch 2",
+    "Recall@20": 0.011302795954788817,
+    "NDCG@20": 0.004005284843736078,
+    "MRR@20": 0.00197104157622646,
+    "interpretation": "minimally credible sequential baseline"
+  },
+  {
+    "model": "DIF-SR",
+    "checkpoint": "epoch 0",
+    "Recall@20": 0.015466983938132063,
+    "NDCG@20": 0.006131597096174511,
+    "MRR@20": 0.0036000785305295925,
+    "interpretation": "stronger than corrected SASRec under aligned conditions"
+  },
+  {
+    "model": "DIF-SR + Metadata",
+    "checkpoint": "epoch 3",
+    "Recall@20": 0.018441403926234383,
+    "NDCG@20": 0.00746455723324926,
+    "MRR@20": 0.0044660301408689426,
+    "interpretation": "strongest personalized model in the canonical aligned comparison"
+  }
+]

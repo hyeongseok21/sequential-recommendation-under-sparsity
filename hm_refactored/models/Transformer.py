@@ -186,7 +186,8 @@ class CustomSASRec(nn.Module):
         mask_2 = mask.unsqueeze(2).repeat(1, 1, sequence_len)
         sequence_mask = (mask_1 * mask_2).unsqueeze(1).to(device)
 
-        # sequence_mask = torch.tril(sequence_mask)
+        # SASRec requires a causal mask so each position only attends to itself and prior tokens.
+        sequence_mask = torch.tril(sequence_mask)
         # sequence_mask를 dim=1에서 n_heads개 만큼 쌓음
         attention_mask = torch.cat([sequence_mask for _ in range(n_heads)], dim=1)
 

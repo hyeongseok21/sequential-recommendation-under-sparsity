@@ -1,0 +1,16 @@
+[
+  {
+    "model": "SASRec (initial)",
+    "Recall@20": 0.000594883997620464,
+    "NDCG@20": 0.00016593869461697196,
+    "MRR@20": 5.4080363420042185e-05,
+    "note": "unreliable baseline with missing causal mask and undertraining"
+  },
+  {
+    "model": "SASRec (corrected)",
+    "Recall@20": 0.011302795954788817,
+    "NDCG@20": 0.004005284843736078,
+    "MRR@20": 0.00197104157622646,
+    "note": "causal mask restored; literature-style sanity configuration"
+  }
+]

@@ -1,0 +1,3 @@
+model,Recall@20,NDCG@20,MRR@20,note
+SASRec (initial),0.000594883997620464,0.00016593869461697196,5.4080363420042185e-05,unreliable baseline with missing causal mask and undertraining
+SASRec (corrected),0.011302795954788817,0.004005284843736078,0.00197104157622646,causal mask restored; literature-style sanity configuration

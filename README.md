@@ -1,186 +1,189 @@
-# Sequential Recommendation With Metadata on H&M Purchase Sequences
+# Sequential Recommendation Under Sparse Behavioral Signal
 
-This repository packages a research-style sequential recommendation study on sparse H&M purchase histories.
-The central question is whether item metadata improves next-item prediction, and which user segments benefit most.
+This repository packages a completed sequential recommendation study on sparse H&M purchase sequences. The artifact is organized as a portfolio-quality research report rather than an open-ended experiment workspace.
 
-## Problem
+## 1. Problem
 
-Fashion purchase histories are sparse and users often switch across categories.
-This makes next-item prediction difficult for:
+Sequential recommendation is difficult when user histories are short, item space is large, and popularity dominates interactions. This project studies whether metadata helps next-item prediction under that regime and whether a multi-interest backbone remains useful after baseline verification.
 
-- short-history users with weak sequence evidence
-- multi-interest users whose recent category transitions are frequent
+## 2. Dataset
 
-We study whether item metadata can compensate for this sparsity, and whether a multi-interest backbone such as DIF-SR is more robust than SASRec.
+Primary dataset: H&M local `userhash32` purchase sequences.
 
-## Dataset
-
-- Dataset: H&M local `userhash32` purchase sequences
-- Users: 22,258
-- Items: 29,785
-- Interactions: 135,412
-- Average sequence length: 9.35
-- Sparsity: 99.98%
+- Users: `22,258`
+- Items: `29,785`
+- Interactions: `135,412`
+- Average sequence length: `9.35`
+- Median sequence length: `6`
+- Sparsity: `99.98%`
 - Metadata:
   - `product_type`
   - `department`
   - `garment_group`
 
-Evaluation is next-item prediction with the benchmark-best checkpoint from each canonical closure run.
+Two evaluation regimes are included.
 
-## Models
+Canonical evaluation:
+- cold users removed
+- cold items removed
+- zero-history users removed
+- repeat purchases removed
 
-- `SASRec`
-- `SASRec + Metadata`
+Service-style supplementary evaluation:
+- cold-like users allowed
+- zero-history users allowed
+- repeat purchases allowed
+
+The canonical evaluation remains the primary result. The service-style setting is a robustness analysis.
+
+## 3. Baseline Verification
+
+The original SASRec baseline was not reliable. Two issues were found:
+
+1. the attention mask was not causal because `torch.tril(...)` was disabled in [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/models/Transformer.py`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/models/Transformer.py)
+2. the original training recipe severely undertrained SASRec:
+   - `lr=1e-4`
+   - `batch_size=16`
+   - `train_epoch=3`
+   - `embed_size=32`
+   - `n_layers=1`
+   - `seq_len=30`
+
+After restoring causal masking and rerunning a single stronger sanity configuration, SASRec improved from:
+
+- `Recall@20 0.0006 -> 0.0113`
+- `NDCG@20 0.0002 -> 0.0040`
+- `MRR@20 0.0001 -> 0.0020`
+
+That corrected run is the canonical SASRec baseline used in the final artifact.
+
+Detailed note:
+- [`/Users/conan/projects/personalized-fashion-recommendation/SASREC_SANITY_FIX.md`](/Users/conan/projects/personalized-fashion-recommendation/SASREC_SANITY_FIX.md)
+
+## 4. Models
+
+- `TopPopular`
+- `Corrected SASRec`
 - `DIF-SR`
 - `DIF-SR + Metadata`
 
-Metadata injection is frozen for closure mode; no new features or fusion variants are introduced in the final study.
+The final comparison uses aligned experimental conditions where possible:
+- same split
+- same seed
+- same seen-item masking
+- same leave-one-out evaluation
+- `seq_len=50`
+- `lr=1e-3`
+- `embed_size=64`
+- `n_heads=2`
+- `n_layers=2`
+- `dropout=0.2`
+- `batch_size=64`
 
-## Experimental Setup
+## 5. Canonical Results
 
-Primary metrics:
+Canonical aligned comparison:
 
-- `Recall@20`
-- `Recall@50`
-- `Recall@100`
-- `NDCG@20`
-- `NDCG@50`
-- `NDCG@100`
+| Model | Recall@20 | NDCG@20 | MRR@20 |
+| --- | ---: | ---: | ---: |
+| TopPopular | 0.0280 | 0.0102 | 0.0055 |
+| Corrected SASRec | 0.0113 | 0.0040 | 0.0020 |
+| DIF-SR | 0.0155 | 0.0061 | 0.0036 |
+| DIF-SR + Metadata | 0.0184 | 0.0075 | 0.0045 |
 
-Secondary metric:
+Interpretation:
+- `TopPopular` remains the strongest model, which confirms strong popularity dominance.
+- `DIF-SR + Metadata` is the strongest personalized model.
+- `DIF-SR` is stronger than corrected `SASRec` under aligned conditions.
 
-- `MRR@20`
+Reference report:
+- [`/Users/conan/projects/personalized-fashion-recommendation/reports/canonical_evaluation.md`](/Users/conan/projects/personalized-fashion-recommendation/reports/canonical_evaluation.md)
 
-User analysis slices:
+## 6. Supplementary Service-Style Evaluation
 
-- sequence length:
-  - short history `<= 5`
-  - medium history `6-15`
-  - long history `> 15`
-- category entropy:
-  - low entropy `< 0.5`
-  - medium entropy `< 1.0`
-  - high entropy `>= 1.0`
+The service-style evaluation asks a different question: what changes when production-like conditions are allowed?
 
-Additional analyses:
+Service-style results:
 
-- top-100 candidate overlap
-- top-20 recommendation diversity
-- popularity bias / long-tail exposure
+| Model | Recall@20 | NDCG@20 | MRR@20 |
+| --- | ---: | ---: | ---: |
+| TopPopular | 0.0293 | 0.0111 | 0.0061 |
+| Corrected SASRec | 0.0147 | 0.0099 | 0.0085 |
+| DIF-SR | 0.0169 | 0.0086 | 0.0063 |
+| DIF-SR + Metadata | 0.0202 | 0.0093 | 0.0063 |
 
-## Main Results
+Interpretation:
+- aggregate metrics rise because repeat purchases make the task easier
+- `DIF-SR + Metadata` is still the strongest personalized model on overall Recall@20
+- `Corrected SASRec` becomes unusually strong in repeat-purchase cases
 
-| Model | Recall@20 | Recall@50 | Recall@100 | NDCG@20 | NDCG@50 | NDCG@100 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| SASRec | 0.0006 | 0.0018 | 0.0036 | 0.0002 | 0.0004 | 0.0007 |
-| SASRec + Metadata | 0.0012 | 0.0048 | 0.0071 | 0.0005 | 0.0012 | 0.0015 |
-| DIF-SR | 0.0077 | 0.0119 | 0.0190 | 0.0024 | 0.0032 | 0.0043 |
-| DIF-SR + Metadata | 0.0083 | 0.0190 | 0.0321 | 0.0032 | 0.0053 | 0.0074 |
+Reference report:
+- [`/Users/conan/projects/personalized-fashion-recommendation/reports/service_style_evaluation.md`](/Users/conan/projects/personalized-fashion-recommendation/reports/service_style_evaluation.md)
 
-The best overall model is `DIF-SR + Metadata`.
+## 7. Slice Analysis
 
-## Slice Findings
+Service-style slices were used to surface behavior under realistic conditions.
 
-### Cold-start / Short History
+Cold-like users:
+- best model: `DIF-SR + Metadata`
+- `Recall@20 0.0233`
+- `NDCG@20 0.0116`
 
-`DIF-SR + Metadata` is best for short-history users:
+Short-history users (`<=5`):
+- best model: `DIF-SR + Metadata`
+- `Recall@20 0.0239`
+- `NDCG@20 0.0107`
 
-- `Recall@20 = 0.0124`
-- `NDCG@20 = 0.0052`
+Repeat purchase cases:
+- best model: `Corrected SASRec`
+- `Recall@20 0.3194`
+- `NDCG@20 0.2640`
 
-This is the clearest evidence that metadata helps when sequence evidence is weak.
+This suggests metadata is most useful when behavioral signal is weak, while repeat-heavy behavior rewards memorization more directly.
 
-### Multi-interest / High Entropy
+## 8. Key Insights
 
-For high-entropy users:
+- Strong popularity dominance remains the central property of the dataset.
+- Baseline verification materially changed the interpretation of the project.
+- Metadata is useful under sparse behavioral signal, but most clearly when paired with `DIF-SR`.
+- Research-style clean evaluation and service-style realistic evaluation tell different stories; both are useful.
+- The most defensible conclusion is not “diffusion always wins,” but that after baseline correction and aligned comparison, `DIF-SR + Metadata` is the strongest personalized model in a sparse, popularity-heavy environment.
 
-- `DIF-SR`: `Recall@20 = 0.0081`, `NDCG@20 = 0.0027`
-- `DIF-SR + Metadata`: `Recall@20 = 0.0063`, `NDCG@20 = 0.0020`
+## 9. Reproducibility
 
-This suggests multi-interest robustness comes primarily from the `DIF-SR` backbone, while metadata improves relevance more consistently in short-history settings than in high-entropy settings.
+Generate the final portfolio plots and curated reports from existing results:
 
-## Frontier, Diversity, and Popularity
+```bash
+source .venv/bin/activate
+python experiments/package_portfolio_artifact.py
+```
 
-### Candidate Frontier Change
-
-Top-100 candidate overlap is very low between SASRec and DIF-SR family models:
-
-- `SASRec vs DIF-SR`: mean overlap `0.0109`
-- `SASRec vs DIF-SR + Metadata`: mean overlap `0.0100`
-- `DIF-SR vs DIF-SR + Metadata`: mean overlap `0.0461`
-
-This indicates DIF-SR changes the candidate frontier rather than merely reranking SASRec outputs.
-
-### Recommendation Diversity
-
-`DIF-SR + Metadata` improves accuracy but produces more concentrated recommendation lists:
-
-- mean category entropy
-  - `DIF-SR`: `2.7170`
-  - `DIF-SR + Metadata`: `1.1027`
-
-So metadata acts as a relevance sharpener in this setting, not a diversity enhancer.
-
-### Popularity Bias
-
-Top-20 exposure is strongly head-biased for DIF-SR family models:
-
-- tail share
-  - `SASRec`: `0.4761`
-  - `SASRec + Metadata`: `0.4569`
-  - `DIF-SR`: `0.1209`
-  - `DIF-SR + Metadata`: `0.1081`
-
-Metadata slightly improves DIF-SR accuracy, but does not reduce popularity bias.
-
-## Key Insights
-
-1. Metadata improves overall next-item prediction for both backbones, but the gain is much larger on top of DIF-SR.
-2. Metadata is most useful for short-history users, where semantic item signals compensate for weak sequence evidence.
-3. DIF-SR captures multi-interest behavior better than SASRec; SASRec family models are nearly non-functional on the high-entropy slice.
-4. DIF-SR family models change the recommendation frontier substantially, but at the cost of stronger concentration on head items.
-5. In this setting, better relevance and better diversity do not move together.
-
-## Reproducibility
-
-Run the full research evaluation pipeline with:
+Regenerate the broader research analysis package:
 
 ```bash
 source .venv/bin/activate
 python experiments/run_evaluation.py
 ```
 
-Artifacts produced by the study:
+Primary artifact locations:
+- configs index: [`/Users/conan/projects/personalized-fashion-recommendation/configs/README.md`](/Users/conan/projects/personalized-fashion-recommendation/configs/README.md)
+- canonical report: [`/Users/conan/projects/personalized-fashion-recommendation/reports/canonical_evaluation.md`](/Users/conan/projects/personalized-fashion-recommendation/reports/canonical_evaluation.md)
+- service-style report: [`/Users/conan/projects/personalized-fashion-recommendation/reports/service_style_evaluation.md`](/Users/conan/projects/personalized-fashion-recommendation/reports/service_style_evaluation.md)
+- portfolio summary: [`/Users/conan/projects/personalized-fashion-recommendation/reports/research_summary.md`](/Users/conan/projects/personalized-fashion-recommendation/reports/research_summary.md)
 
-- research metrics: [`data/metrics/research_study`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study)
-- plots: [`plots`](/Users/conan/projects/personalized-fashion-recommendation/plots)
-- closure comparison tables: [`data/metrics/closure/RESULTS.md`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/RESULTS.md)
-
-Generated figures:
-
-- ![overall metrics](/Users/conan/projects/personalized-fashion-recommendation/plots/overall_metric_comparison.png)
-- ![candidate overlap](/Users/conan/projects/personalized-fashion-recommendation/plots/candidate_overlap_histogram.png)
-- ![diversity](/Users/conan/projects/personalized-fashion-recommendation/plots/diversity_comparison.png)
-- ![popularity exposure](/Users/conan/projects/personalized-fashion-recommendation/plots/popularity_exposure.png)
-- ![slice analysis](/Users/conan/projects/personalized-fashion-recommendation/plots/slice_analysis.png)
+Final plots:
+- ![model comparison](/Users/conan/projects/personalized-fashion-recommendation/plots/final_model_comparison.png)
+- ![canonical vs service](/Users/conan/projects/personalized-fashion-recommendation/plots/canonical_vs_service_comparison.png)
+- ![service slice analysis](/Users/conan/projects/personalized-fashion-recommendation/plots/final_slice_analysis.png)
 
 ## Project Structure
 
 ```text
-analysis/
-  candidate_overlap.py
-  diversity_analysis.py
-  popularity_bias.py
-  overall_metrics.py
-  slice_analysis.py
-  common.py
+datasets/
+configs/
 experiments/
-  run_evaluation.py
-models/
-  sasrec.py
-  dif_sr.py
+analysis/
 plots/
-data/metrics/research_study/
-hm_refactored/
+reports/
+README.md
 ```

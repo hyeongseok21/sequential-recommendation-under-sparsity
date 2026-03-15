@@ -1,0 +1,5 @@
+model,checkpoint,Recall@20,NDCG@20,MRR@20,interpretation
+TopPopular,n/a,0.0280,0.0102,0.0055,strong non-personalized baseline
+Corrected SASRec,epoch 2,0.011302795954788817,0.004005284843736078,0.00197104157622646,minimally credible sequential baseline
+DIF-SR,epoch 0,0.015466983938132063,0.006131597096174511,0.0036000785305295925,stronger than corrected SASRec under aligned conditions
+DIF-SR + Metadata,epoch 3,0.018441403926234383,0.00746455723324926,0.0044660301408689426,strongest personalized model in the canonical aligned comparison
