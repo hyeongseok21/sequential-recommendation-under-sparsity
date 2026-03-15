@@ -18,6 +18,13 @@ The final artifact is organized as a research-style experiment package including
 - slice analysis across user regimes
 - dataset regime interpretation
 
+## Quick Navigation
+
+- main reports: [`reports/README.md`](reports/README.md)
+- final config index: [`configs/README.md`](configs/README.md)
+- repository guide: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
+- framework docs: [`docs/framework/`](docs/framework)
+
 ## TL;DR
 
 Key observations from the final experiments:
