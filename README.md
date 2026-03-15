@@ -160,6 +160,11 @@ timeline
 
 The dataset is derived from a local H&M transaction file containing anonymized purchase events.
 
+Data availability note:
+
+- Raw transaction data and derived local dataset files are not included in this public repository.
+- This repository publishes code, configs, reports, and analysis artifacts needed to inspect the experiment design and regenerate the portfolio package from saved outputs.
+
 ### Dataset Statistics
 
 - Users: `22,258`
@@ -475,6 +480,9 @@ This connects naturally to marketplace recommendation systems, where sparsity an
 5. Different regimes favor different models.
 
 ## Reproducibility
+
+This public repository supports artifact regeneration and report packaging from saved experiment outputs.
+It does not provide full end-to-end reproduction from the original local transaction data, because the raw source dataset is not distributed here.
 
 Run the main research analysis:
 
