@@ -8,13 +8,13 @@
 ## Canonical Model Set
 
 1. `SASRec`
-   - [`hm_refactored/configs/config.closure_sasrec.json`](hm_refactored/configs/config.closure_sasrec.json)
+   - [`hm_refactored/configs/config.closure_sasrec.json`](../hm_refactored/configs/config.closure_sasrec.json)
 2. `SASRec + metadata`
-   - [`hm_refactored/configs/config.closure_sasrec_meta.json`](hm_refactored/configs/config.closure_sasrec_meta.json)
+   - [`hm_refactored/configs/config.closure_sasrec_meta.json`](../hm_refactored/configs/config.closure_sasrec_meta.json)
 3. `DIF-SR`
-   - [`hm_refactored/configs/config.closure_difsr.json`](hm_refactored/configs/config.closure_difsr.json)
+   - [`hm_refactored/configs/config.closure_difsr.json`](../hm_refactored/configs/config.closure_difsr.json)
 4. `DIF-SR + metadata`
-   - [`hm_refactored/configs/config.closure_difsr_meta.json`](hm_refactored/configs/config.closure_difsr_meta.json)
+   - [`hm_refactored/configs/config.closure_difsr_meta.json`](../hm_refactored/configs/config.closure_difsr_meta.json)
 
 ## 비교 원칙
 

@@ -9,6 +9,6 @@ Main conclusions:
 - metadata is most useful when behavioral signal is weak, especially in cold-like and short-history service slices
 
 Primary entry points:
-- canonical summary: [canonical_evaluation.md](/Users/conan/projects/personalized-fashion-recommendation/reports/canonical_evaluation.md)
-- service-style summary: [service_style_evaluation.md](/Users/conan/projects/personalized-fashion-recommendation/reports/service_style_evaluation.md)
-- baseline sanity check: [SASREC_SANITY_FIX.md](/Users/conan/projects/personalized-fashion-recommendation/SASREC_SANITY_FIX.md)
+- canonical summary: [canonical_evaluation.md](canonical_evaluation.md)
+- service-style summary: [service_style_evaluation.md](service_style_evaluation.md)
+- baseline sanity check: [SASREC_SANITY_FIX.md](../SASREC_SANITY_FIX.md)

@@ -33,7 +33,7 @@ Execution order:
   - `NDCG@100 0.0089`
   - `MRR@20 0.0020`
 - training time: `~4m 12s` to early stop observation window (`epoch 0-4`), best at epoch 2
-- config path: [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.sanity_sasrec_fixed.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.sanity_sasrec_fixed.json)
+- config path: [`hm_refactored/configs/config.sanity_sasrec_fixed.json`](../hm_refactored/configs/config.sanity_sasrec_fixed.json)
 
 ### 2. DIF-SR
 
@@ -47,7 +47,7 @@ Execution order:
   - `NDCG@100 0.0117`
   - `MRR@20 0.0036`
 - training time: `~22m 56s`
-- config path: [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.fair_difsr.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.fair_difsr.json)
+- config path: [`hm_refactored/configs/config.fair_difsr.json`](../hm_refactored/configs/config.fair_difsr.json)
 
 ### 3. SASRec + Metadata
 
@@ -61,7 +61,7 @@ Execution order:
   - `NDCG@100 0.0065`
   - `MRR@20 0.0015`
 - training time: `~22m 02s`
-- config path: [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.fair_sasrec_meta.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.fair_sasrec_meta.json)
+- config path: [`hm_refactored/configs/config.fair_sasrec_meta.json`](../hm_refactored/configs/config.fair_sasrec_meta.json)
 
 ### 4. DIF-SR + Metadata
 
@@ -75,4 +75,4 @@ Execution order:
   - `NDCG@100 0.0142`
   - `MRR@20 0.0045`
 - training time: `~23m 29s` to best-epoch confirmation window (`epoch 0-6`), benchmark peaked at epoch 3 and degraded afterward
-- config path: [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.fair_difsr_meta.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.fair_difsr_meta.json)
+- config path: [`hm_refactored/configs/config.fair_difsr_meta.json`](../hm_refactored/configs/config.fair_difsr_meta.json)

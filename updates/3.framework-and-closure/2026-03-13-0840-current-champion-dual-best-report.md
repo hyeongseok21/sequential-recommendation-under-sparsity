@@ -7,9 +7,9 @@
 ## 대상
 
 - checkpoint dir:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15)
+  - [`hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15`](../../hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15)
 - report:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/dual_best_report_difsr_hms15.json`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/dual_best_report_difsr_hms15.json)
+  - [`data/metrics/dual_best_report_difsr_hms15.json`](../../data/metrics/dual_best_report_difsr_hms15.json)
 
 ## 요약
 

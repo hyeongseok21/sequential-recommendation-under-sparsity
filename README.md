@@ -511,7 +511,7 @@ Key artifacts:
 - portfolio summary: [`reports/research_summary.md`](reports/research_summary.md)
 - repository guide: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
 - update log index: [`updates/README.md`](updates/README.md)
-- phase-agent logs: [`updates/6.portfolio-closure/`](updates/6.portfolio-closure)
+- phase-agent logs: [`updates/4.portfolio-closure/`](updates/4.portfolio-closure)
 
 ## Project Structure
 

@@ -63,9 +63,9 @@ benchmark-best checkpoint 기준 test metric:
 
 ## 산출물
 
-- overall table: [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/overall_results.json`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/overall_results.json)
-- slice table: [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/slice_results.json`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/slice_results.json)
-- markdown summary: [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/RESULTS.md`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/RESULTS.md)
-- README summary: [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/README_summary.md`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/README_summary.md)
-- overall chart: [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/plots/model_comparison.png`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/plots/model_comparison.png)
-- slice chart: [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/plots/slice_comparison.png`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/plots/slice_comparison.png)
+- overall table: [`data/metrics/closure/overall_results.json`](../../data/metrics/closure/overall_results.json)
+- slice table: [`data/metrics/closure/slice_results.json`](../../data/metrics/closure/slice_results.json)
+- markdown summary: [`data/metrics/closure/RESULTS.md`](../../data/metrics/closure/RESULTS.md)
+- README summary: [`data/metrics/closure/README_summary.md`](../../data/metrics/closure/README_summary.md)
+- overall chart: [`data/metrics/closure/plots/model_comparison.png`](../../data/metrics/closure/plots/model_comparison.png)
+- slice chart: [`data/metrics/closure/plots/slice_comparison.png`](../../data/metrics/closure/plots/slice_comparison.png)

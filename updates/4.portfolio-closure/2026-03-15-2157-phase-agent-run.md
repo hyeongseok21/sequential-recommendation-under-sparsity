@@ -108,7 +108,7 @@ Num Negatives : 100
 ## Current Verdict
 
 - overall verdict: `PASS`
-- update log path: `updates/6.portfolio-closure/2026-03-15-2157-phase-agent-run.md`
+- update log path: `updates/4.portfolio-closure/2026-03-15-2157-phase-agent-run.md`
 
 ## Notes
 

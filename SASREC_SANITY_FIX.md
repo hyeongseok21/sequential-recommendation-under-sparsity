@@ -2,8 +2,8 @@
 
 ## Corrected SASRec code change summary
 
-- Restored proper causal masking in [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/models/Transformer.py`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/models/Transformer.py) by applying `torch.tril(...)` inside `CustomSASRec._get_sequence_mask`.
-- Added one literature-style sanity config at [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.sanity_sasrec_fixed.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.sanity_sasrec_fixed.json):
+- Restored proper causal masking in [`hm_refactored/models/Transformer.py`](hm_refactored/models/Transformer.py) by applying `torch.tril(...)` inside `CustomSASRec._get_sequence_mask`.
+- Added one literature-style sanity config at [`hm_refactored/configs/config.sanity_sasrec_fixed.json`](hm_refactored/configs/config.sanity_sasrec_fixed.json):
   - `seq_len=50`
   - `train_epoch=20` nominal target
   - `lr=1e-3`

@@ -65,7 +65,7 @@ python3 scripts/report_dual_best.py --checkpoint-dir <CHECKPOINT_DIR>
 - champion 승격 직후에는 `single run dual-best`를 항상 생성한다.
 - `benchmark-best`와 `test-best`가 다르면 update log에 둘 다 남긴다.
 - serving phase에서는 가능하면 slice report를 함께 남긴다.
-- slice 정의와 해석 기준은 [`SLICE_EVALUATION.md`](/Users/conan/projects/personalized-fashion-recommendation/SLICE_EVALUATION.md)를 따른다.
+- slice 정의와 해석 기준은 [`SLICE_EVALUATION.md`](../../SLICE_EVALUATION.md)를 따른다.
 
 run set leaderboard:
 

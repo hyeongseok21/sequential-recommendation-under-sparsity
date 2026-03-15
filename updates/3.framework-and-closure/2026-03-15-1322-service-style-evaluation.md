@@ -13,15 +13,15 @@ Relaxed filters:
 ## Added Artifacts
 
 - service preprocessing entry:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_preprocess_service_eval.py`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_preprocess_service_eval.py)
+  - [`hm_refactored/hm_preprocess_service_eval.py`](../../hm_refactored/hm_preprocess_service_eval.py)
 - service dataset:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/datasets/hm/local/prep/hm_local_meta_userhash32_week27_service_eval.pkl`](/Users/conan/projects/personalized-fashion-recommendation/datasets/hm/local/prep/hm_local_meta_userhash32_week27_service_eval.pkl)
+  - [`datasets/hm/local/prep/hm_local_meta_userhash32_week27_service_eval.pkl`](../../datasets/hm/local/prep/hm_local_meta_userhash32_week27_service_eval.pkl)
 - service configs:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.service_eval_sasrec.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.service_eval_sasrec.json)
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.service_eval_difsr.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.service_eval_difsr.json)
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.service_eval_difsr_meta.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.service_eval_difsr_meta.json)
+  - [`hm_refactored/configs/config.service_eval_sasrec.json`](../../hm_refactored/configs/config.service_eval_sasrec.json)
+  - [`hm_refactored/configs/config.service_eval_difsr.json`](../../hm_refactored/configs/config.service_eval_difsr.json)
+  - [`hm_refactored/configs/config.service_eval_difsr_meta.json`](../../hm_refactored/configs/config.service_eval_difsr_meta.json)
 - supplementary report:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/results/service_style_eval.md`](/Users/conan/projects/personalized-fashion-recommendation/results/service_style_eval.md)
+  - [`results/service_style_eval.md`](../../results/service_style_eval.md)
 
 ## Service-Style Results
 

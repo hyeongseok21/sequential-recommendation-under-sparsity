@@ -60,7 +60,7 @@
 
 ### meta 내부 champion
 
-- [`hm_refactored/configs/config.m1_local_meta_transformer_hash_benchmark_bs16_seq30_do01.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_transformer_hash_benchmark_bs16_seq30_do01.json)
+- [`hm_refactored/configs/config.m1_local_meta_transformer_hash_benchmark_bs16_seq30_do01.json`](../../hm_refactored/configs/config.m1_local_meta_transformer_hash_benchmark_bs16_seq30_do01.json)
 - 핵심 설정
   - `embed_metadata=true`
   - `batch_size=16`

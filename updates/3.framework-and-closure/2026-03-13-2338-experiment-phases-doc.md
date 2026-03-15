@@ -6,7 +6,7 @@
 
 ## 추가 문서
 
-- [`EXPERIMENT_PHASES.md`](/Users/conan/projects/personalized-fashion-recommendation/EXPERIMENT_PHASES.md)
+- [`EXPERIMENT_PHASES.md`](EXPERIMENT_PHASES.md)
 
 ## 역할
 

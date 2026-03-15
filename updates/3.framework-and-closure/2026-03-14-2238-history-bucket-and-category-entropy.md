@@ -27,12 +27,12 @@
 
 ## Artifacts
 
-- [`data/metrics/closure/history_bucket_results.json`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/history_bucket_results.json)
-- [`data/metrics/closure/history_bucket_results.csv`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/history_bucket_results.csv)
-- [`data/metrics/closure/category_entropy_results.json`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/category_entropy_results.json)
-- [`data/metrics/closure/category_entropy_results.csv`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/category_entropy_results.csv)
-- [`data/metrics/closure/plots/history_bucket_comparison.png`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/plots/history_bucket_comparison.png)
-- [`data/metrics/closure/plots/category_entropy_comparison.png`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/closure/plots/category_entropy_comparison.png)
+- [`data/metrics/closure/history_bucket_results.json`](../../data/metrics/closure/history_bucket_results.json)
+- [`data/metrics/closure/history_bucket_results.csv`](../../data/metrics/closure/history_bucket_results.csv)
+- [`data/metrics/closure/category_entropy_results.json`](../../data/metrics/closure/category_entropy_results.json)
+- [`data/metrics/closure/category_entropy_results.csv`](../../data/metrics/closure/category_entropy_results.csv)
+- [`data/metrics/closure/plots/history_bucket_comparison.png`](../../data/metrics/closure/plots/history_bucket_comparison.png)
+- [`data/metrics/closure/plots/category_entropy_comparison.png`](../../data/metrics/closure/plots/category_entropy_comparison.png)
 
 ## Quick Read
 

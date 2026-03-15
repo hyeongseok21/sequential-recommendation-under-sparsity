@@ -6,7 +6,7 @@
 
 ## 사용 스크립트
 
-- [`/Users/conan/projects/personalized-fashion-recommendation/scripts/report_eval_gap.py`](/Users/conan/projects/personalized-fashion-recommendation/scripts/report_eval_gap.py)
+- [`scripts/report_eval_gap.py`](../../scripts/report_eval_gap.py)
 
 ## 분석 대상
 
@@ -20,7 +20,7 @@
 ### Current champion
 
 - artifact:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/eval_gap_difsr_hms15.json`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/eval_gap_difsr_hms15.json)
+  - [`data/metrics/eval_gap_difsr_hms15.json`](../../data/metrics/eval_gap_difsr_hms15.json)
 - `benchmark-best`:
   - epoch `1`
   - `B_NDCG 0.0137`
@@ -38,7 +38,7 @@
 ### Residual blend failed variant
 
 - artifact:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/eval_gap_difsr_hprojblend05.json`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/eval_gap_difsr_hprojblend05.json)
+  - [`data/metrics/eval_gap_difsr_hprojblend05.json`](../../data/metrics/eval_gap_difsr_hprojblend05.json)
 - `benchmark-best`:
   - epoch `2`
   - `B_NDCG 0.0127`

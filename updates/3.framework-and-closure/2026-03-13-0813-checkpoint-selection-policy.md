@@ -6,16 +6,16 @@
 
 ## 변경 내용
 
-- [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/train.py`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/train.py)
+- [`hm_refactored/train.py`](../../hm_refactored/train.py)
   - `checkpoint_primary_metric`, `checkpoint_secondary_metric` 지원 추가
   - 기본 selection policy를 `benchmark_ndcg -> benchmark_hr`로 정렬
   - checkpoint metadata를 `best_primary`, `best_secondary`로 저장하고, 기존 `best_hr`, `best_ndcg`도 backward compatibility용으로 유지
   - final log 문구를 실제 metric label 기준으로 출력하도록 수정
 - current champion config에 policy 명시
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json)
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15.json)
+  - [`hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json`](../../hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json)
+  - [`hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15.json`](../../hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15.json)
 - offline 비교 스크립트 추가
-  - [`/Users/conan/projects/personalized-fashion-recommendation/scripts/report_checkpoint_policy.py`](/Users/conan/projects/personalized-fashion-recommendation/scripts/report_checkpoint_policy.py)
+  - [`scripts/report_checkpoint_policy.py`](../../scripts/report_checkpoint_policy.py)
 
 ## Offline 비교 결과
 

@@ -31,7 +31,7 @@ PHASE_UPDATE_DIR = {
     "P3": "3.architecture-validation",
     "P4": "4.inference-policy",
     "P5": "5.slice-serving-finalization",
-    "P6": "6.portfolio-closure",
+    "P6": "4.portfolio-closure",
 }
 
 

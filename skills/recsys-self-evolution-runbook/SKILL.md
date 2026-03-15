@@ -11,17 +11,17 @@ If the docs indicate `P6` or `closure`, prefer completion artifacts over new exp
 
 ## Always Read First
 
-1. `/Users/conan/projects/personalized-fashion-recommendation/docs/framework/AGENT.md`
-2. `/Users/conan/projects/personalized-fashion-recommendation/docs/framework/RUNBOOK.md`
-3. `/Users/conan/projects/personalized-fashion-recommendation/docs/framework/SELF_EVOLUTION_LOOP.md`
-4. `/Users/conan/projects/personalized-fashion-recommendation/docs/framework/protocol.md`
-5. `/Users/conan/projects/personalized-fashion-recommendation/SLICE_EVALUATION.md`
-6. `/Users/conan/projects/personalized-fashion-recommendation/docs/agents/orchestration.md`
-7. `/Users/conan/projects/personalized-fashion-recommendation/docs/agents/handoff.md`
-8. `/Users/conan/projects/personalized-fashion-recommendation/docs/agents/automation.md`
-9. `/Users/conan/projects/personalized-fashion-recommendation/docs/templates/agent_handoff_template.md`
-10. `/Users/conan/projects/personalized-fashion-recommendation/docs/templates/agent_prompt_template.md`
-11. `/Users/conan/projects/personalized-fashion-recommendation/docs/templates/automation_prompt_bundle_template.md`
+1. `docs/framework/AGENT.md`
+2. `docs/framework/RUNBOOK.md`
+3. `docs/framework/SELF_EVOLUTION_LOOP.md`
+4. `docs/framework/protocol.md`
+5. `SLICE_EVALUATION.md`
+6. `docs/agents/orchestration.md`
+7. `docs/agents/handoff.md`
+8. `docs/agents/automation.md`
+9. `docs/templates/agent_handoff_template.md`
+10. `docs/templates/agent_prompt_template.md`
+11. `docs/templates/automation_prompt_bundle_template.md`
 
 ## Workflow
 

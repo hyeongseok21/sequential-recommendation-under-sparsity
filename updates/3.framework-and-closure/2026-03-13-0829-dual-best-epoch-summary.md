@@ -6,7 +6,7 @@
 
 ## 변경 내용
 
-- [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/train.py`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/train.py)
+- [`hm_refactored/train.py`](../../hm_refactored/train.py)
   - `epoch_summary.json` 저장 추가
   - 저장 항목:
     - checkpoint policy 기준 best epoch
@@ -16,9 +16,9 @@
 ## 검증
 
 - config:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15.json)
+  - [`hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15.json`](../../hm_refactored/configs/config.m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15.json)
 - output:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15/epoch_summary.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15/epoch_summary.json)
+  - [`hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15/epoch_summary.json`](../../hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs64_seq30_do01_concat_fast_lr2e4_hms15/epoch_summary.json)
 
 ## 해석
 

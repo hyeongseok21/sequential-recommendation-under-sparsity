@@ -6,7 +6,7 @@
 
 ## 변경 내용
 
-- [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/train.py`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/train.py)
+- [`hm_refactored/train.py`](../../hm_refactored/train.py)
   - `--eval_checkpoint` 추가
   - 지정한 epoch checkpoint를 로드해 benchmark/test만 실행
   - 결과를 `eval_checkpoint_<epoch>.json`으로 저장
@@ -15,7 +15,7 @@
 ## 검증 대상
 
 - config:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json)
+  - [`hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json`](../../hm_refactored/configs/config.m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15.json)
 - 비교 checkpoint:
   - epoch `1`
   - epoch `2`
@@ -25,7 +25,7 @@
 ### checkpoint 1
 
 - artifact:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/eval_checkpoint_000001.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/eval_checkpoint_000001.json)
+  - [`hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/eval_checkpoint_000001.json`](../../hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/eval_checkpoint_000001.json)
 - `B_HR 0.0291`
 - `B_NDCG 0.0137`
 - `T_HR 0.0054`
@@ -34,7 +34,7 @@
 ### checkpoint 2
 
 - artifact:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/eval_checkpoint_000002.json`](/Users/conan/projects/personalized-fashion-recommendation/hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/eval_checkpoint_000002.json)
+  - [`hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/eval_checkpoint_000002.json`](../../hm_refactored/hm_out/checkpoints/hm_m1_local_meta_difsr_bs16_seq30_do01_concat_lr2e4_hms15/eval_checkpoint_000002.json)
 - `B_HR 0.0250`
 - `B_NDCG 0.0120`
 - `T_HR 0.0042`

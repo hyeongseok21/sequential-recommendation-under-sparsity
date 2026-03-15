@@ -12,7 +12,7 @@ This directory stores chronological experiment and packaging notes.
   - DIF-SR implementation, metadata fusion, and backbone-level modeling experiments
 - `3.framework-and-closure/`
   - checkpoint policy, evaluation policy, framework documentation, and closure packaging work
-- `6.portfolio-closure/`
+- `4.portfolio-closure/`
   - final phase-agent closure runs and packaging execution logs
 
 ## Reading Order
@@ -22,4 +22,4 @@ If you want the shortest route:
 1. `1.sasrec-vs-meta-embedding/`
 2. `2.sasrec-vs-meta-embedding-vs-difsr/`
 3. `3.framework-and-closure/`
-4. `6.portfolio-closure/`
+4. `4.portfolio-closure/`

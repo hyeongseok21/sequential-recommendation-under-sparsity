@@ -8,27 +8,27 @@
 ## Added
 
 - reproducible evaluation entrypoint
-  - [`experiments/run_evaluation.py`](/Users/conan/projects/personalized-fashion-recommendation/experiments/run_evaluation.py)
+  - [`experiments/run_evaluation.py`](../../experiments/run_evaluation.py)
 - analysis scripts
-  - [`analysis/candidate_overlap.py`](/Users/conan/projects/personalized-fashion-recommendation/analysis/candidate_overlap.py)
-  - [`analysis/diversity_analysis.py`](/Users/conan/projects/personalized-fashion-recommendation/analysis/diversity_analysis.py)
-  - [`analysis/popularity_bias.py`](/Users/conan/projects/personalized-fashion-recommendation/analysis/popularity_bias.py)
-  - [`analysis/overall_metrics.py`](/Users/conan/projects/personalized-fashion-recommendation/analysis/overall_metrics.py)
-  - [`analysis/slice_analysis.py`](/Users/conan/projects/personalized-fashion-recommendation/analysis/slice_analysis.py)
-  - [`analysis/common.py`](/Users/conan/projects/personalized-fashion-recommendation/analysis/common.py)
+  - [`analysis/candidate_overlap.py`](../../analysis/candidate_overlap.py)
+  - [`analysis/diversity_analysis.py`](../../analysis/diversity_analysis.py)
+  - [`analysis/popularity_bias.py`](../../analysis/popularity_bias.py)
+  - [`analysis/overall_metrics.py`](../../analysis/overall_metrics.py)
+  - [`analysis/slice_analysis.py`](../../analysis/slice_analysis.py)
+  - [`analysis/common.py`](../../analysis/common.py)
 - model spec wrappers
-  - [`models/sasrec.py`](/Users/conan/projects/personalized-fashion-recommendation/models/sasrec.py)
-  - [`models/dif_sr.py`](/Users/conan/projects/personalized-fashion-recommendation/models/dif_sr.py)
+  - [`models/sasrec.py`](../../models/sasrec.py)
+  - [`models/dif_sr.py`](../../models/dif_sr.py)
 - plots
-  - [`plots/overall_metric_comparison.png`](/Users/conan/projects/personalized-fashion-recommendation/plots/overall_metric_comparison.png)
-  - [`plots/candidate_overlap_histogram.png`](/Users/conan/projects/personalized-fashion-recommendation/plots/candidate_overlap_histogram.png)
-  - [`plots/diversity_comparison.png`](/Users/conan/projects/personalized-fashion-recommendation/plots/diversity_comparison.png)
-  - [`plots/popularity_exposure.png`](/Users/conan/projects/personalized-fashion-recommendation/plots/popularity_exposure.png)
-  - [`plots/slice_analysis.png`](/Users/conan/projects/personalized-fashion-recommendation/plots/slice_analysis.png)
+  - [`plots/overall_metric_comparison.png`](../../plots/overall_metric_comparison.png)
+  - [`plots/candidate_overlap_histogram.png`](../../plots/candidate_overlap_histogram.png)
+  - [`plots/diversity_comparison.png`](../../plots/diversity_comparison.png)
+  - [`plots/popularity_exposure.png`](../../plots/popularity_exposure.png)
+  - [`plots/slice_analysis.png`](../../plots/slice_analysis.png)
 - research summary
-  - [`data/metrics/research_study/RESEARCH_SUMMARY.md`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/research_study/RESEARCH_SUMMARY.md)
+  - [`data/metrics/research_study/RESEARCH_SUMMARY.md`](../../data/metrics/research_study/RESEARCH_SUMMARY.md)
 - root README research rewrite
-  - [`README.md`](/Users/conan/projects/personalized-fashion-recommendation/README.md)
+  - [`README.md`](../../README.md)
 
 ## Main Findings
 

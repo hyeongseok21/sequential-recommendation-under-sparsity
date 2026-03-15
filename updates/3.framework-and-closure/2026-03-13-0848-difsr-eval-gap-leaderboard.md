@@ -7,9 +7,9 @@
 ## 산출물
 
 - JSON:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/eval_gap_leaderboard_difsr.json`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/eval_gap_leaderboard_difsr.json)
+  - [`data/metrics/eval_gap_leaderboard_difsr.json`](../../data/metrics/eval_gap_leaderboard_difsr.json)
 - CSV:
-  - [`/Users/conan/projects/personalized-fashion-recommendation/data/metrics/eval_gap_leaderboard_difsr.csv`](/Users/conan/projects/personalized-fashion-recommendation/data/metrics/eval_gap_leaderboard_difsr.csv)
+  - [`data/metrics/eval_gap_leaderboard_difsr.csv`](../../data/metrics/eval_gap_leaderboard_difsr.csv)
 
 ## 핵심 결과
 
