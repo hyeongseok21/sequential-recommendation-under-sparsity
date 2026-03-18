@@ -89,6 +89,8 @@ Sanity check 이후 causal masking을 복구하고, epoch 수, sequence length, 
 
 ## Models
 
+최종 비교는 non-personalized baseline, sequential baseline, intent-aware backbone, metadata-enhanced variant를 함께 놓고 해석하는 방식으로 구성했습니다.
+
 | Model | Role | Description |
 | --- | --- | --- |
 | `TopPopular` | Non-personalized baseline | global popularity recommender |
@@ -97,6 +99,8 @@ Sanity check 이후 causal masking을 복구하고, epoch 수, sequence length, 
 | `DIF-SR + Metadata` | Intent-aware + metadata | item metadata embedding을 결합한 DIF-SR |
 
 ## Canonical Evaluation (Primary Artifact)
+
+연구용 비교는 confounding factor를 줄인 clean evaluation setting을 기준으로 정리했습니다.
 
 Filtering rules: cold users 제거, cold items 제거, zero-history users 제거, repeat purchases 제거
 
@@ -116,6 +120,8 @@ Filtering rules: cold users 제거, cold items 제거, zero-history users 제거
 - [`reports/canonical_evaluation.md`](reports/canonical_evaluation.md)
 
 ## Service-Style Evaluation (Robustness)
+
+추가로 실제 서비스 조건에 가까운 relaxed setting에서도 결과가 유지되는지 확인했습니다.
 
 Relaxed filtering: cold-like users 허용, zero-history users 허용, repeat purchases 허용
 
