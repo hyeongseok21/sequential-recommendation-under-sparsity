@@ -1,4 +1,4 @@
-# Sequential Recommendation under Sparse Interaction Regimes
+# Sequential Recommendation under Sparse Interaction Regimes in a Real Fashion Purchase Dataset
 
 이 프로젝트는 sparse한 marketplace형 환경에서 추천 시스템이 어떻게 동작하는지를 탐구하는 더 큰 연구의 일부입니다.
 
@@ -20,20 +20,18 @@
 
 ## Quick Navigation
 
-- 메인 보고서: [`reports/README.md`](reports/README.md)
-- 최종 config 인덱스: [`configs/README.md`](configs/README.md)
-- 저장소 가이드: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
-- framework 문서: [`docs/framework/`](docs/framework)
+- Reports: [`reports/README.md`](reports/README.md)
+- Config Index: [`configs/README.md`](configs/README.md)
+- Repository Guide: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
+- Framework Docs: [`docs/framework/`](docs/framework)
 
 ## Abstract
 
-최종 실험의 핵심 관찰은 다음과 같습니다.
+이 프로젝트는 real fashion purchase dataset에서 sparse interaction regime 하의 sequential recommendation을 분석합니다. 핵심 질문은 item metadata가 recommendation quality를 개선하는지, 그리고 어떤 user regime에서 그 효과가 가장 크게 나타나는지입니다. 실험 결과, `TopPopular`는 전체적으로 가장 강한 baseline으로 남아 strong popularity dominance를 보여주었고, personalized model 중에서는 `DIF-SR + Metadata`가 가장 높은 성능을 보였습니다. 또한 metadata는 cold-like user와 short-history user에서 특히 유용했고, repeat-heavy scenario는 일반적인 sparse recommendation과 다른 memorization-oriented regime으로 해석할 수 있었습니다. 실험 과정에서는 SASRec baseline의 causal masking 문제를 발견하고 수정했으며, 이 baseline verification이 모델 비교 해석을 실질적으로 바꾸는 핵심 단계였습니다.
 
-- `TopPopular`가 전체적으로 가장 강하며, 이는 이 데이터셋의 popularity dominance가 매우 강하다는 뜻입니다.
-- personalized model 중에서는 `DIF-SR + Metadata`가 가장 높은 성능을 보였습니다.
-- metadata는 cold-like user와 short-history user에서 가장 큰 이득을 보였습니다.
-- repeat-heavy scenario는 일반 sparse recommendation과 다르게 동작하며, SASRec 같은 memorization 친화적 sequence model이 더 유리했습니다.
-- baseline verification 이후 모델 비교 해석이 실질적으로 달라졌습니다.
+- `TopPopular` remains the strongest overall baseline.
+- `DIF-SR + Metadata` is the strongest personalized model.
+- Metadata is most useful under weak behavioral signals such as cold-like and short-history regimes.
 
 ## Research Question
 
@@ -197,7 +195,7 @@ timeline
 
 ## Experiment Orchestration Framework
 
-실험은 연구 workflow를 재현 가능하고 추적 가능하게 만들기 위한 구조화된 agent-driven experimentation framework 위에서 수행했습니다.
+실험은 연구 workflow를 재현 가능하고 추적 가능하게 만들기 위한 agent-driven experimentation framework 위에서 수행했습니다.
 
 핵심 framework documents:
 
@@ -206,38 +204,16 @@ timeline
 - 반복 루프: [`docs/framework/SELF_EVOLUTION_LOOP.md`](docs/framework/SELF_EVOLUTION_LOOP.md)
 - 프로토콜: [`docs/framework/protocol.md`](docs/framework/protocol.md)
 
-### Skills
+이 framework는 reusable skills와 role-based agents를 통해 실험을 운영합니다. 주요 execution unit은 dataset preprocessing, model training, evaluation, slice analysis, metric aggregation, plot generation이며, 실험 수명주기에서는 `Experiment Planner`, `Training Agent`, `Evaluation Agent`, `Analysis Agent`가 서로 다른 책임을 맡습니다.
 
-재사용 가능한 실행 모듈을 다음 작업에 사용했습니다.
-
-- dataset preprocessing
-- model training
-- evaluation
-- slice analysis
-- metric aggregation
-- plot generation
-
-### Multi-Agent Roles
-
-에이전트는 실험 수명주기의 서로 다른 단계에서 역할을 맡습니다.
-
-- Experiment Planner
-- Training Agent
-- Evaluation Agent
-- Analysis Agent
-
-### Phase-Based Experimentation
-
-실험은 다음과 같은 phase로 구성됩니다.
+실험은 다음 phase로 구성됩니다.
 
 - baseline verification
 - model comparison
 - slice analysis
 - robustness evaluation
 
-### Self-Evolution Loop
-
-workflow는 다음과 같은 반복 구조를 따릅니다.
+workflow는 다음과 같은 self-evolution loop를 따릅니다.
 
 `run experiment -> analyze anomaly -> refine configuration -> rerun experiment`
 
@@ -469,18 +445,24 @@ Sequential model은 의미 있는 과거 패턴에 의존합니다. 하지만 se
 
 이 점은 sparsity와 popularity bias가 흔한 marketplace 추천 시스템과도 자연스럽게 연결됩니다.
 
-## Key Insights
-
-1. popularity dominance는 이 데이터셋의 가장 강한 특성입니다.
-2. baseline verification 이후 모델 비교 해석이 크게 달라졌습니다.
-3. metadata는 behavioral signal이 약한 환경에서 가장 유용합니다.
-4. evaluation regime에 따라 aggregate metric 해석이 달라집니다.
-5. 서로 다른 regime은 서로 다른 모델을 선호합니다.
-
 ## Reproducibility
 
-이 public 저장소는 저장된 실험 산출물을 기반으로 artifact를 재생성하고 보고서를 다시 패키징하는 용도를 지원합니다.
-원본 로컬 transaction 데이터는 배포하지 않기 때문에, raw data에서 시작하는 full end-to-end reproduction은 제공하지 않습니다.
+### Reproduction Scope
+
+이 public 저장소는 저장된 실험 산출물을 기반으로 artifact를 재생성하고 보고서를 다시 패키징하는 용도를 지원합니다. 원본 로컬 transaction 데이터는 배포하지 않기 때문에, raw data에서 시작하는 full end-to-end reproduction은 제공하지 않습니다.
+
+재현 가능한 범위:
+
+- saved outputs 기반 research analysis 재생성
+- service-style supplementary report 재생성
+- portfolio plots 및 curated reports 재패키징
+
+재현하지 않는 범위:
+
+- original local transaction data로부터의 full dataset rebuild
+- raw data에서 시작하는 end-to-end training reproduction
+
+### Commands
 
 Run main research analysis:
 
