@@ -121,37 +121,22 @@ G --> S3
 실험 도중 SASRec baseline의 성능 이상이 발견되었고, 이를 점검하는 과정에서 원래 구현에 causal masking이 빠져 있다는 것을 확인했습니다. 이후 baseline을 수정한 뒤 동일 조건에서 모델 비교를 다시 맞췄습니다.
 
 ```mermaid
-timeline
-    title Sequential Recommendation Experiment Timeline
+flowchart TD
 
-    Phase 1 : Dataset Construction
-        sequential purchase dataset 구축
-        temporal train/test split
+A["Phase 1. Dataset Construction<br/>sequential purchase dataset 구축<br/>temporal train/test split"]
+--> B["Phase 2. Initial Model Experiments<br/>SASRec baseline<br/>DIF-SR implementation<br/>metadata embedding experiments"]
 
-    Phase 2 : Initial Model Experiments
-        SASRec baseline
-        DIF-SR implementation
-        metadata embedding experiments
+B --> C["Phase 3. Baseline Sanity Check<br/>SASRec anomaly detection<br/>causal masking issue discovery"]
 
-    Phase 3 : Baseline Sanity Check
-        SASRec anomaly detection
-        causal masking issue discovery
+C --> D["Phase 4. Baseline Correction<br/>corrected SASRec implementation<br/>fair comparison rerun"]
 
-    Phase 4 : Baseline Correction
-        corrected SASRec implementation
-        fair comparison rerun
+D --> E["Phase 5. Slice Analysis<br/>cold-like users<br/>short history users<br/>repeat purchase cases"]
 
-    Phase 5 : Slice Analysis
-        cold-like users
-        short history users
-        repeat purchase cases
+E --> F["Phase 6. Robustness Evaluation<br/>service-style evaluation with relaxed filtering"]
 
-    Phase 6 : Robustness Evaluation
-        service-style evaluation with relaxed filtering
+F --> G["Phase 7. Final Interpretation<br/>popularity dominance analysis<br/>metadata usefulness analysis"]
 
-    Phase 7 : Final Interpretation
-        popularity dominance analysis
-        metadata usefulness analysis
+C -. changed interpretation .-> G
 ```
 
 ## Dataset
