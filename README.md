@@ -15,19 +15,17 @@
 
 ## Research Question
 
-이 프로젝트는 behavioral signal이 약한 환경에서 sequential recommender가 어떻게 동작하는지, 그리고 item metadata가 sparse interaction history를 얼마나 보완할 수 있는지를 분석합니다.
+이 프로젝트는 weak behavioral signal 환경에서 sequential recommendation을 어떻게 해석해야 하는지에 초점을 둡니다.
 
-| Component | Focus |
+| Research Question | Why It Matters |
 | --- | --- |
-| Environment | sparse interaction regime, short user histories, strong popularity bias |
-| Core Question | can item metadata improve recommendation quality under weak behavioral signals? |
-| Model Comparison | `SASRec`, `DIF-SR`, `DIF-SR + Metadata` |
-| Evaluation Goal | understand model behavior across user regimes rather than compare only aggregate metrics |
-| Slice Focus | cold-like users, short-history users, repeat-heavy cases |
+| Can item metadata improve recommendation quality under weak behavioral signals? | sparse interaction history를 metadata가 얼마나 보완할 수 있는지 확인합니다. |
+| Which user regimes benefit most from metadata-enhanced recommendation? | cold-like users와 short-history users처럼 metadata가 실제로 유용한 구간을 구분합니다. |
+| How do backbone differences behave under sparse interaction regimes? | model architecture 차이가 dataset regime 효과와 어떻게 상호작용하는지 해석합니다. |
 
 ## Experiment Process
 
-이 실험은 dataset construction, model training, evaluation, slice analysis, interpretation으로 이어지는 standard recommender workflow를 따릅니다. 이 프로젝트에서 중요한 차별점은 실험 중간에 baseline anomaly를 발견하고, sanity check와 baseline correction을 통해 전체 비교 해석을 다시 정렬했다는 점입니다.
+이 실험은 dataset construction, model training, evaluation, slice analysis, interpretation으로 이어지는 standard recommender workflow로 진행했습니다.
 
 | Phase | Main Action | Why It Mattered |
 | --- | --- | --- |
@@ -41,37 +39,15 @@
 
 ## Dataset
 
-데이터셋은 익명화된 구매 이벤트를 포함한 로컬 H&M 거래 파일로부터 구성했습니다.
+데이터셋은 익명화된 구매 이벤트를 포함한 로컬 H&M 거래 파일로부터 구성했습니다. 사용자 ID는 해시된 식별자(`userhash32`)이며, 구매 이벤트를 timestamp 순으로 정렬해 sequence를 만들었습니다.
 
-### Dataset Statistics
-
-- Users: `22,258`
-- Items: `29,785`
-- Interactions: `135,412`
-- Average sequence length: `9.35`
-- Median sequence length: `6`
-- Sparsity: `99.98%`
-
-### Metadata Features
-
-- `product_type`
-- `department`
-- `garment_group`
-
-### Dataset Characteristics
-
-- 극도로 희소한 interaction matrix
-- 짧은 사용자 이력
-- 강한 popularity bias
-
-사용자 ID는 해시된 식별자(`userhash32`)이며, 구매 이벤트를 timestamp 순으로 정렬해 sequence를 구성했습니다.
-
-시간 기반 분할:
-
-- `week < 27 -> train`
-- `week == 27 -> test`
-
-즉, 이 프로젝트는 temporal next-item prediction 설정을 사용합니다.
+| Category | Details |
+| --- | --- |
+| Dataset statistics | Users `22,258`, Items `29,785`, Interactions `135,412`, Average sequence length `9.35`, Median sequence length `6`, Sparsity `99.98%` |
+| Metadata features | `product_type`, `department`, `garment_group` |
+| Dataset characteristics | 극도로 희소한 interaction matrix, 짧은 사용자 이력, 강한 popularity bias |
+| Temporal split | `week < 27 -> train`, `week == 27 -> test` |
+| Task setting | temporal next-item prediction |
 
 ## Experiment Orchestration Framework
 
@@ -84,7 +60,7 @@
 - 반복 루프: [`docs/framework/SELF_EVOLUTION_LOOP.md`](docs/framework/SELF_EVOLUTION_LOOP.md)
 - 프로토콜: [`docs/framework/protocol.md`](docs/framework/protocol.md)
 
-이 framework는 reusable skills와 role-based agents를 통해 실험을 운영합니다. 주요 execution unit은 dataset preprocessing, model training, evaluation, slice analysis, metric aggregation, plot generation이며, 실험 수명주기에서는 `Experiment Planner`, `Training Agent`, `Evaluation Agent`, `Analysis Agent`가 서로 다른 책임을 맡습니다.
+이 framework는 reusable skills와 role-based agents를 사용해 preprocessing, training, evaluation, analysis, reporting을 구조적으로 운영합니다.
 
 | Phase | Purpose | Typical Output |
 | --- | --- | --- |
@@ -93,11 +69,7 @@
 | `slice analysis` | user regime별 성능 차이 해석 | cold-like, short-history, repeat-heavy findings |
 | `robustness evaluation` | service-style setting에서 결과 안정성 확인 | supplementary metrics and plots |
 
-workflow는 다음과 같은 self-evolution loop를 따릅니다.
-
 `run experiment -> analyze anomaly -> refine configuration -> rerun experiment`
-
-이 루프는 잘못된 SASRec baseline을 찾아내고, 실험 수정 이력을 추적 가능하게 유지하는 데 핵심적이었습니다.
 
 ## Baseline Verification
 
@@ -117,8 +89,6 @@ workflow는 다음과 같은 self-evolution loop를 따릅니다.
 
 ## Models
 
-최종 아티팩트에서는 네 가지 모델을 비교합니다.
-
 | Model | Role | Description |
 | --- | --- | --- |
 | `TopPopular` | Non-personalized baseline | global popularity recommender |
@@ -128,18 +98,11 @@ workflow는 다음과 같은 self-evolution loop를 따릅니다.
 
 ## Canonical Evaluation (Primary Artifact)
 
-메인 실험은 연구용으로 정제된 clean evaluation setting을 사용합니다.
-
-필터링 규칙:
-
-- cold user 제거
-- cold item 제거
-- zero-history user 제거
-- repeat purchase 제거
+Filtering rules: cold user 제거, cold item 제거, zero-history user 제거, repeat purchase 제거
 
 ### Results
 
-![Canonical model comparison](plots/final_model_comparison.png)
+<img src="plots/final_model_comparison.png" alt="Canonical model comparison" width="720" />
 
 | Model | Recall@20 | NDCG@20 | MRR@20 |
 | --- | ---: | ---: | ---: |
@@ -148,11 +111,7 @@ workflow는 다음과 같은 self-evolution loop를 따릅니다.
 | DIF-SR | 0.0155 | 0.0061 | 0.0036 |
 | DIF-SR + Metadata | 0.0184 | 0.0075 | 0.0045 |
 
-personalized model 중에서는 `DIF-SR + Metadata`가 가장 좋았습니다.
-
-다만 clean research setting에서도 `TopPopular`가 전체적으로 가장 강했으며, 이는 이 데이터셋의 popularity dominance가 여전히 매우 강하다는 뜻입니다.
-
-**Takeaway:** `DIF-SR + Metadata` is the strongest personalized model, but `TopPopular` remains dominant overall.
+**Takeaway:** strongest personalized model은 `DIF-SR + Metadata`였지만, overall winner는 여전히 `TopPopular`였습니다.
 
 canonical report:
 
@@ -160,17 +119,11 @@ canonical report:
 
 ## Service-Style Evaluation (Robustness)
 
-추가적인 supplementary evaluation으로 실제 서비스 조건에 더 가까운 환경을 시뮬레이션했습니다.
-
-relaxed filtering:
-
-- cold-like user 허용
-- zero-history 허용
-- repeat purchase 허용
+Relaxed filtering: cold-like user 허용, zero-history 허용, repeat purchase 허용
 
 ### Results
 
-![Canonical vs service-style comparison](plots/canonical_vs_service_comparison.png)
+<img src="plots/canonical_vs_service_comparison.png" alt="Canonical vs service-style comparison" width="720" />
 
 | Model | Recall@20 | NDCG@20 | MRR@20 |
 | --- | ---: | ---: | ---: |
@@ -179,19 +132,13 @@ relaxed filtering:
 | DIF-SR | 0.0169 | 0.0086 | 0.0063 |
 | DIF-SR + Metadata | 0.0202 | 0.0093 | 0.0063 |
 
-`DIF-SR + Metadata`는 여기서도 personalized model 중 가장 강했습니다.
-
-repeat purchase를 허용하면 일부 target이 더 쉬워지므로 aggregate metric은 소폭 상승합니다.
-
-**Takeaway:** even under service-style conditions, `DIF-SR + Metadata` stays strongest among personalized models while repeat purchases make aggregate metrics easier.
+**Takeaway:** service-style setting에서도 strongest personalized model은 `DIF-SR + Metadata`였습니다.
 
 service-style report:
 
 - [`reports/service_style_evaluation.md`](reports/service_style_evaluation.md)
 
 ## Slice Analysis
-
-서로 다른 사용자 구간은 서로 다른 모델을 선호합니다.
 
 ### User Regime Preference Map
 
@@ -203,7 +150,7 @@ service-style report:
 | Short-history users | `⬜` | `🟨` | `🟩` |
 | Repeat-heavy cases | `🟩` | `⬜` | `⬜` |
 
-![Service-style slice analysis](plots/final_slice_analysis.png)
+<img src="plots/final_slice_analysis.png" alt="Service-style slice analysis" width="720" />
 
 | Slice | Best Model | Metrics | Interpretation |
 | --- | --- | --- | --- |
@@ -234,11 +181,9 @@ service-style report:
 
 ### 1. Extremely Sparse Interaction Matrix
 
-- `22k` users
-- `29k` items
-- `135k` interactions
-- 평균 sequence 길이 약 `9`
-- 중간 sequence 길이 `6`
+`22k` users, `29k` items, `135k` interactions
+
+평균 sequence 길이 약 `9`, 중간 sequence 길이 `6`
 
 대부분의 사용자는 아주 적은 수의 item과만 상호작용합니다. behavioral evidence가 부족한 환경에서는 personalized signal보다 global popularity가 더 안정적으로 작동합니다.
 
