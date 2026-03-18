@@ -25,7 +25,7 @@
 - 저장소 가이드: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
 - framework 문서: [`docs/framework/`](docs/framework)
 
-## TL;DR
+## Abstract
 
 최종 실험의 핵심 관찰은 다음과 같습니다.
 
@@ -454,7 +454,7 @@ Sequential model은 의미 있는 과거 패턴에 의존합니다. 하지만 se
 
 이 분포에서는 인기 item이 test target으로 자주 등장하므로, popularity-based recommender가 구조적으로 유리합니다.
 
-### Implication for Recommender Systems
+### 4. Implications for Recommender Systems
 
 이 결과는 실무적으로 중요한 시사점을 줍니다.
 
