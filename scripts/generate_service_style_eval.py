@@ -148,15 +148,15 @@ def render_service_comparison_plot(canonical, service_results, output_path: Path
 def render_service_slice_plot(slice_results, output_path: Path):
     slice_names = ["cold-like users", "short history users (<=5)", "repeat purchase cases"]
     slice_titles = {
-        "cold-like users": "Cold-like Users\n(Recall@20 / NDCG@20)",
-        "short history users (<=5)": "Short-history Users\n(Recall@20 / NDCG@20)",
-        "repeat purchase cases": "Repeat-heavy Cases\n(Recall@20 / NDCG@20)",
+        "cold-like users": "Cold-like Users",
+        "short history users (<=5)": "Short-history Users",
+        "repeat purchase cases": "Repeat-heavy Cases",
     }
     models = ["TopPopular", "Corrected SASRec", "DIF-SR", "DIF-SR + Metadata"]
     x = np.arange(len(models))
     width = 0.35
 
-    fig, axes = plt.subplots(1, len(slice_names), figsize=(15, 4), sharey=True)
+    fig, axes = plt.subplots(1, len(slice_names), figsize=(15, 4), sharey=False)
     for ax, slice_name in zip(axes, slice_names):
         recall_vals = [slice_results[m][slice_name]["Recall@20"] for m in models]
         ndcg_vals = [slice_results[m][slice_name]["NDCG@20"] for m in models]
@@ -165,9 +165,11 @@ def render_service_slice_plot(slice_results, output_path: Path):
         ax.set_title(slice_titles[slice_name])
         ax.set_xticks(x)
         ax.set_xticklabels(models, rotation=15, ha="right")
-        ax.set_ylabel("Metric score")
+        ax.set_ylabel("Metric Score")
+        if slice_name in {"cold-like users", "short history users (<=5)"}:
+            ax.set_ylim(0.0, 0.10)
     axes[0].legend()
-    fig.suptitle("Service-Style Slice Analysis (Recall@20 / NDCG@20)")
+    fig.suptitle("Service-Style Slice Analysis")
     fig.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path)

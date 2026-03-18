@@ -4,27 +4,6 @@
 
 이 저장소는 H&M 거래 데이터로부터 구성한 구매 시퀀스를 사용해, 극도로 희소한 상호작용 환경에서 sequential recommendation이 어떻게 동작하는지 분석합니다.
 
-이 프로젝트는 다음 세 가지 질문에 답하는 것을 목표로 합니다.
-
-- item metadata가 추천 성능을 개선하는가?
-- 어떤 사용자 구간에서 metadata가 특히 더 유용해지는가?
-- 약한 behavioral signal 환경에서 모델 구조 차이가 어떻게 작동하는가?
-
-최종 아티팩트는 다음을 포함하는 연구형 실험 패키지로 구성되어 있습니다.
-
-- baseline verification
-- canonical research evaluation
-- service-style robustness evaluation
-- user regime별 slice analysis
-- dataset regime 해석
-
-## Quick Navigation
-
-- Reports: [`reports/README.md`](reports/README.md)
-- Config Index: [`configs/README.md`](configs/README.md)
-- Repository Guide: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
-- Framework Docs: [`docs/framework/`](docs/framework)
-
 ## Abstract
 
 이 프로젝트는 real fashion purchase dataset에서 sparse interaction regime 하의 sequential recommendation을 분석합니다. 핵심 질문은 item metadata가 recommendation quality를 개선하는지, 그리고 어떤 user regime에서 그 효과가 가장 크게 나타나는지입니다.
@@ -226,34 +205,11 @@ service-style report:
 
 ![Service-style slice analysis](plots/final_slice_analysis.png)
 
-각 panel은 `Recall@20`와 `NDCG@20`를 함께 보여줍니다.
-
-### Cold-Like Users
-
-`DIF-SR + Metadata`
-
-- `Recall@20: 0.0233`
-- `NDCG@20: 0.0116`
-
-behavioral signal이 약할수록 metadata의 가치가 더 커집니다.
-
-### Short History Users
-
-`DIF-SR + Metadata`
-
-- `Recall@20: 0.0239`
-- `NDCG@20: 0.0107`
-
-짧은 interaction history에서는 metadata가 추천 성능을 뚜렷하게 개선합니다.
-
-### Repeat Purchase Cases
-
-`Corrected SASRec`
-
-- `Recall@20: 0.3194`
-- `NDCG@20: 0.2640`
-
-repeat-heavy scenario는 일반적인 sparse recommendation보다 memorization problem에 더 가깝게 동작합니다.
+| Slice | Best Model | Metrics | Interpretation |
+| --- | --- | --- | --- |
+| Cold-Like Users | `DIF-SR + Metadata` | `Recall@20: 0.0233`, `NDCG@20: 0.0116` | behavioral signal이 약할수록 metadata의 가치가 더 커집니다. |
+| Short History Users | `DIF-SR + Metadata` | `Recall@20: 0.0239`, `NDCG@20: 0.0107` | 짧은 interaction history에서는 metadata가 추천 성능을 뚜렷하게 개선합니다. |
+| Repeat Purchase Cases | `Corrected SASRec` | `Recall@20: 0.3194`, `NDCG@20: 0.2640` | repeat-heavy scenario는 일반적인 sparse recommendation보다 memorization problem에 더 가깝게 동작합니다. |
 
 ## Result Interpretation
 
