@@ -89,6 +89,11 @@ def plot_canonical_vs_service(canonical_results, service_results, output_path: P
 def plot_service_slices(service_slices, output_path: Path):
     models = ["TopPopular", "Corrected SASRec", "DIF-SR", "DIF-SR + Metadata"]
     slice_names = ["cold-like users", "short history users (<=5)", "repeat purchase cases"]
+    slice_titles = {
+        "cold-like users": "Cold-like Users\n(Recall@20 / NDCG@20)",
+        "short history users (<=5)": "Short-history Users\n(Recall@20 / NDCG@20)",
+        "repeat purchase cases": "Repeat-heavy Cases\n(Recall@20 / NDCG@20)",
+    }
     x = np.arange(len(models))
     width = 0.35
 
@@ -98,11 +103,12 @@ def plot_service_slices(service_slices, output_path: Path):
         ndcg_values = [service_slices[m][slice_name]["NDCG@20"] for m in models]
         ax.bar(x - width / 2, recall_values, width, label="Recall@20", color="#2f6bff")
         ax.bar(x + width / 2, ndcg_values, width, label="NDCG@20", color="#ff7f32")
-        ax.set_title(slice_name)
+        ax.set_title(slice_titles[slice_name])
         ax.set_xticks(x)
         ax.set_xticklabels(models, rotation=15, ha="right")
+        ax.set_ylabel("Metric score")
     axes[0].legend()
-    fig.suptitle("Service-Style Slice Analysis")
+    fig.suptitle("Service-Style Slice Analysis (Recall@20 / NDCG@20)")
     fig.tight_layout()
     fig.savefig(output_path, dpi=180)
     plt.close(fig)
