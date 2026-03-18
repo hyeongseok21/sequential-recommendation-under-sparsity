@@ -60,7 +60,7 @@ Real fashion purchase dataset을 바탕으로 sparse interaction regime 하의 s
 - 반복 루프: [`docs/framework/SELF_EVOLUTION_LOOP.md`](docs/framework/SELF_EVOLUTION_LOOP.md)
 - 프로토콜: [`docs/framework/protocol.md`](docs/framework/protocol.md)
 
-실험은 reusable skills와 role-based agents를 바탕으로 preprocessing, training, evaluation, analysis, reporting 단계로 나누어 운영했습니다.
+운영 구조는 reusable skills와 role-based agents를 바탕으로 preprocessing, training, evaluation, analysis, reporting 단계로 나누어 설계했습니다.
 
 | Phase | Purpose | Typical Output |
 | --- | --- | --- |
@@ -115,7 +115,7 @@ Filtering rules: cold users 제거, cold items 제거, zero-history users 제거
 | DIF-SR | 0.0155 | 0.0061 | 0.0036 |
 | DIF-SR + Metadata | 0.0184 | 0.0075 | 0.0045 |
 
-**Takeaway:** personalized model 중 최고 성능은 `DIF-SR + Metadata`였지만, 전체 최고 성능은 여전히 `TopPopular`였습니다.
+**한 줄 해석:** personalized model 중 최고 성능은 `DIF-SR + Metadata`였지만, 전체 최고 성능은 여전히 `TopPopular`였습니다.
 
 - [`reports/canonical_evaluation.md`](reports/canonical_evaluation.md)
 
@@ -136,7 +136,7 @@ Relaxed filtering: cold-like users 허용, zero-history users 허용, repeat pur
 | DIF-SR | 0.0169 | 0.0086 | 0.0063 |
 | DIF-SR + Metadata | 0.0202 | 0.0093 | 0.0063 |
 
-**Takeaway:** service-style setting에서도 personalized model 중 최고 성능은 `DIF-SR + Metadata`였습니다.
+**한 줄 해석:** service-style setting에서도 personalized model 중 최고 성능은 `DIF-SR + Metadata`였습니다.
 
 - [`reports/service_style_evaluation.md`](reports/service_style_evaluation.md)
 
@@ -155,6 +155,8 @@ Service-style slice를 기준으로 user regime마다 어떤 모델이 우세한
 | Repeat-heavy cases | `🟩` | `⬜` | `⬜` |
 
 <img src="plots/final_slice_analysis.png" alt="Service-style slice analysis" width="720" />
+
+### Detailed Slice Summary
 
 | Slice | Best Model | Metrics | Interpretation |
 | --- | --- | --- | --- |
