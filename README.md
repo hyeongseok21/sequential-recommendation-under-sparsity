@@ -21,7 +21,7 @@ real fashion purchase dataset을 바탕으로 sparse interaction regime에서의
 
 핵심은 weak behavioral signal 환경에서 sequential recommendation을 어떻게 해석해야 하는지에 있습니다.
 
-| 연구 질문 | 왜 중요한가 |
+| Research Question | Why It Matters |
 | --- | --- |
 | weak behavioral signal 환경에서 item metadata가 recommendation quality를 개선할 수 있는가? | sparse interaction history를 metadata가 얼마나 보완할 수 있는지 확인합니다. |
 | metadata-enhanced recommendation의 이득이 가장 큰 user regime은 어디인가? | cold-like users와 short-history users처럼 metadata가 실제로 유용한 구간을 구분합니다. |
@@ -31,19 +31,19 @@ real fashion purchase dataset을 바탕으로 sparse interaction regime에서의
 
 익명화된 로컬 H&M 거래 로그에서 구매 이벤트를 추출해 데이터를 구성했습니다. 사용자 ID는 해시된 식별자(`userhash32`)이며, 구매 이벤트를 timestamp 순으로 정렬해 sequence를 만들었습니다.
 
-| 항목 | 내용 |
+| Category | Details |
 | --- | --- |
-| 데이터 통계 | Users `22,258`, Items `29,785`, Interactions `135,412`, Average sequence length `9.35`, Median sequence length `6`, Sparsity `99.98%` |
-| Metadata feature | `product_type`, `department`, `garment_group` |
-| 데이터 특성 | 극도로 희소한 interaction matrix, 짧은 사용자 이력, 강한 popularity bias |
-| 시간 분할 | `week < 27 -> train`, `week == 27 -> test` |
-| 예측 과제 | temporal next-item prediction |
+| Dataset Statistics | Users `22,258`, Items `29,785`, Interactions `135,412`, Average sequence length `9.35`, Median sequence length `6`, Sparsity `99.98%` |
+| Metadata Features | `product_type`, `department`, `garment_group` |
+| Dataset Characteristics | 극도로 희소한 interaction matrix, 짧은 사용자 이력, 강한 popularity bias |
+| Temporal Split | `week < 27 -> train`, `week == 27 -> test` |
+| Task Setting | temporal next-item prediction |
 
 ## Models
 
 최종 비교는 non-personalized baseline, sequential baseline, intent-aware backbone, metadata-enhanced variant를 함께 두고 해석했습니다.
 
-| 모델 | 역할 | 설명 |
+| Model | Role | Description |
 | --- | --- | --- |
 | `TopPopular` | 비개인화 baseline | global popularity recommender |
 | `Corrected SASRec` | sequential baseline | Transformer 기반 sequential recommender |
@@ -126,7 +126,7 @@ Service-style slice를 기준으로 user regime마다 어떤 모델이 우세한
 
 ### Detailed Slice Summary
 
-| Slice | 최고 성능 모델 | 지표 | 해석 |
+| Slice | Best Model | Metrics | Interpretation |
 | --- | --- | --- | --- |
 | Cold-like Users | `DIF-SR + Metadata` | `Recall@20: 0.0233`, `NDCG@20: 0.0116` | behavioral signal이 약할수록 metadata의 가치가 더 커집니다. |
 | Short-history Users | `DIF-SR + Metadata` | `Recall@20: 0.0239`, `NDCG@20: 0.0107` | 짧은 interaction history에서는 metadata가 추천 성능을 뚜렷하게 개선합니다. |
@@ -134,7 +134,7 @@ Service-style slice를 기준으로 user regime마다 어떤 모델이 우세한
 
 ## Result Interpretation
 
-| 조건 | 관찰된 현상 | 해석 |
+| Condition | What Happens | Interpretation |
 | --- | --- | --- |
 | Sparse interaction regime | behavioral signal이 약해짐 | model architecture alone struggles to overcome sparsity |
 | Cold-like / short-history users | `DIF-SR + Metadata`가 가장 강함 | metadata becomes more valuable when user history is weak |
@@ -147,7 +147,7 @@ Service-style slice를 기준으로 user regime마다 어떤 모델이 우세한
 
 `TopPopular`가 전체 최고 성능 모델로 남은 이유는 이 데이터셋의 세 가지 구조적 특성으로 설명할 수 있습니다.
 
-### 1. 극도로 희소한 Interaction Matrix
+### 1. Extremely Sparse Interaction Matrix
 
 `22k` users, `29k` items, `135k` interactions
 
@@ -155,17 +155,17 @@ Service-style slice를 기준으로 user regime마다 어떤 모델이 우세한
 
 대부분의 사용자는 아주 적은 수의 item과만 상호작용합니다. behavioral evidence가 부족한 환경에서는 personalized signal보다 global popularity가 더 안정적으로 작동합니다.
 
-### 2. 짧은 User History
+### 2. Short User History
 
 `behavior signal < popularity signal`
 
 상당수 사용자가 short-history regime에 속하기 때문에, sequential model이 활용할 과거 패턴 자체가 제한적입니다.
 
-### 3. Marketplace-like 수요 분포
+### 3. Marketplace-like Demand Distribution
 
 구매 데이터는 heavy-tailed demand distribution을 따르며, 인기 item이 test target으로 자주 등장합니다. 이 구조는 popularity-based recommender를 자연스럽게 유리하게 만듭니다.
 
-### 4. Recommender Systems에 대한 시사점
+### 4. Implications for Recommender Systems
 
 희소 추천 환경에서는 모델 구조 개선만으로 popularity baseline을 넘기기 어렵습니다. 실제 개선은 metadata 같은 추가 signal, 더 풍부한 interaction history, stronger candidate generation, domain-specific policy를 함께 필요로 합니다.
 
@@ -175,7 +175,7 @@ Service-style slice를 기준으로 user regime마다 어떤 모델이 우세한
 
 Sanity check 이후 causal masking을 복구하고, epoch 수, sequence length, embedding size를 포함한 학습 설정을 보다 합리적인 SASRec baseline 수준으로 다시 조정했습니다.
 
-| 항목 | Initial SASRec | Corrected SASRec | 왜 중요한가 |
+| Item | Initial SASRec | Corrected SASRec | Why It Matters |
 | --- | --- | --- | --- |
 | Implementation | missing causal masking | causal masking restored | sequential baseline으로서의 validity를 회복합니다. |
 | Training setup | undertrained configuration | reasonable SASRec baseline configuration | underfitting 때문에 왜곡된 비교를 줄입니다. |
@@ -202,7 +202,7 @@ Sanity check 이후 causal masking을 복구하고, epoch 수, sequence length, 
 
 실험은 reusable skills와 role-based agents를 바탕으로 preprocessing, training, evaluation, analysis, reporting 단계로 나누어 운영했습니다.
 
-| 단계 | 목적 | 주요 산출물 |
+| Phase | Purpose | Typical Output |
 | --- | --- | --- |
 | `baseline verification` | baseline validity 점검 및 anomaly 확인 | sanity check, corrected baseline |
 | `model comparison` | aligned setting에서 backbone 및 metadata variant 비교 | canonical model metrics |
@@ -213,7 +213,7 @@ Sanity check 이후 causal masking을 복구하고, epoch 수, sequence length, 
 
 실험은 dataset construction, model training, evaluation, slice analysis, interpretation 순으로 진행했습니다.
 
-| 단계 | 주요 작업 | 왜 중요했는가 |
+| Phase | Main Action | Why It Mattered |
 | --- | --- | --- |
 | `Phase 1: Dataset Construction` | purchase dataset 구축, temporal train/test split | sequential recommendation setting을 정의하고 비교 가능한 evaluation base를 만듭니다. |
 | `Phase 2: Initial Experiments` | SASRec baseline, DIF-SR implementation, metadata embedding experiments | 초기 backbone 비교와 metadata 효과를 빠르게 확인합니다. |
