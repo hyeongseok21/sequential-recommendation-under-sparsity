@@ -1,6 +1,6 @@
 # Sequential Recommendation under Sparse Interaction Regimes in a Real Fashion Purchase Dataset
 
-Sparse한 marketplace형 환경의 추천 시스템을 다루는 더 큰 연구 맥락 안에서 진행한 작업입니다.
+Sparse한 marketplace형 환경의 추천 시스템을 다루는 연구의 일부로 진행한 작업입니다.
 
 H&M 거래 데이터 기반 구매 시퀀스를 사용해, 극도로 희소한 상호작용 환경에서 sequential recommendation이 어떻게 동작하는지 분석합니다.
 
@@ -53,14 +53,14 @@ Real fashion purchase dataset을 바탕으로 sparse interaction regime 하의 s
 
 실험은 재현성과 추적성을 확보하기 위해 agent-driven experimentation framework 위에서 운영했습니다.
 
-핵심 framework documents:
+핵심 문서:
 
 - 정책: [`docs/framework/AGENT.md`](docs/framework/AGENT.md)
 - 실행 절차: [`docs/framework/RUNBOOK.md`](docs/framework/RUNBOOK.md)
 - 반복 루프: [`docs/framework/SELF_EVOLUTION_LOOP.md`](docs/framework/SELF_EVOLUTION_LOOP.md)
 - 프로토콜: [`docs/framework/protocol.md`](docs/framework/protocol.md)
 
-구조적으로는 reusable skills와 role-based agents를 바탕으로 preprocessing, training, evaluation, analysis, reporting을 나눠 운영합니다.
+실험은 reusable skills와 role-based agents를 바탕으로 preprocessing, training, evaluation, analysis, reporting 단계로 나누어 운영했습니다.
 
 | Phase | Purpose | Typical Output |
 | --- | --- | --- |
@@ -89,7 +89,7 @@ Sanity check 이후 causal masking을 복구하고, epoch 수, sequence length, 
 
 ## Models
 
-최종 비교는 non-personalized baseline, sequential baseline, intent-aware backbone, metadata-enhanced variant를 함께 놓고 해석하는 방식으로 구성했습니다.
+최종 비교는 non-personalized baseline, sequential baseline, intent-aware backbone, metadata-enhanced variant를 함께 두고 해석했습니다.
 
 | Model | Role | Description |
 | --- | --- | --- |
@@ -142,6 +142,8 @@ Relaxed filtering: cold-like users 허용, zero-history users 허용, repeat pur
 
 ## Slice Analysis
 
+Service-style slice를 기준으로 user regime마다 어떤 모델이 우세한지 비교했습니다.
+
 ### User Regime Preference Map
 
 `🟩` strongest, `🟨` competitive, `⬜` not leading
@@ -173,7 +175,7 @@ Relaxed filtering: cold-like users 허용, zero-history users 허용, repeat pur
 
 ## Why Does Popularity Dominate in This Dataset?
 
-`TopPopular`가 overall strongest model로 남은 이유는 이 데이터셋의 세 가지 구조적 특성으로 설명할 수 있습니다.
+`TopPopular`가 전체 최고 성능 모델로 남은 이유는 이 데이터셋의 세 가지 구조적 특성으로 설명할 수 있습니다.
 
 ### 1. Extremely Sparse Interaction Matrix
 
