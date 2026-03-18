@@ -116,40 +116,23 @@ G --> S2
 G --> S3
 ```
 
-## Experiment Timeline
+## Experiment Process
 
 실험 도중 SASRec baseline의 성능 이상이 발견되었고, 이를 점검하는 과정에서 원래 구현에 causal masking이 빠져 있다는 것을 확인했습니다. 이후 baseline을 수정한 뒤 동일 조건에서 모델 비교를 다시 맞췄습니다.
 
-```mermaid
-flowchart TD
-
-A["Phase 1: Dataset Construction<br/>purchase dataset<br/>train/test split"]
---> B["Phase 2: Initial Experiments<br/>SASRec baseline<br/>DIF-SR<br/>metadata embedding"]
-
-B --> C["Phase 3: Baseline Sanity Check<br/>anomaly detection<br/>causal masking issue"]
-
-C --> D["Phase 4: Baseline Correction<br/>corrected SASRec<br/>fair comparison rerun"]
-
-D --> E["Phase 5: Slice Analysis<br/>cold-like users<br/>short-history users<br/>repeat purchases"]
-
-E --> F["Phase 6: Robustness Evaluation<br/>service-style evaluation<br/>relaxed filtering"]
-
-F --> G["Phase 7: Final Interpretation<br/>popularity dominance<br/>metadata usefulness"]
-
-C -. changed interpretation .-> G
-
-classDef phase fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#111827;
-class A,B,C,D,E,F,G phase;
-```
+| Phase | Main Action | Why It Mattered |
+| --- | --- | --- |
+| `Phase 1: Dataset Construction` | purchase dataset 구축, temporal train/test split | sequential recommendation setting을 정의하고 비교 가능한 evaluation base를 만듭니다. |
+| `Phase 2: Initial Experiments` | SASRec baseline, DIF-SR implementation, metadata embedding experiments | 초기 backbone 비교와 metadata 효과를 빠르게 확인합니다. |
+| `Phase 3: Baseline Sanity Check` | anomaly detection, causal masking issue discovery | 잘못된 baseline을 찾아내며, 이 단계가 이후 모델 비교 해석을 바꾸는 핵심 분기점이 됩니다. |
+| `Phase 4: Baseline Correction` | corrected SASRec, fair comparison rerun | baseline validity를 회복하고 공정 비교 조건을 다시 맞춥니다. |
+| `Phase 5: Slice Analysis` | cold-like users, short-history users, repeat purchases | 어떤 user regime에서 어떤 model이 유리한지 구조적으로 해석합니다. |
+| `Phase 6: Robustness Evaluation` | service-style evaluation, relaxed filtering | canonical setting 바깥에서도 결과가 얼마나 유지되는지 확인합니다. |
+| `Phase 7: Final Interpretation` | popularity dominance analysis, metadata usefulness analysis | 최종적으로 dataset regime, model behavior, evaluation meaning을 정리합니다. |
 
 ## Dataset
 
 데이터셋은 익명화된 구매 이벤트를 포함한 로컬 H&M 거래 파일로부터 구성했습니다.
-
-### Data Availability Note
-
-- 원본 transaction 데이터와 로컬에서 파생된 dataset 파일은 이 public 저장소에 포함하지 않습니다.
-- 이 저장소에는 실험 설계 검토와 저장된 산출물 기반 포트폴리오 재구성을 위해 필요한 코드, config, 보고서, 분석 아티팩트를 포함합니다.
 
 ### Dataset Statistics
 
@@ -235,21 +218,12 @@ causal masking을 복구하고 다시 학습한 뒤의 corrected SASRec:
 
 최종 아티팩트에서는 네 가지 모델을 비교합니다.
 
-### TopPopular
-
-global popularity recommender입니다.
-
-### Corrected SASRec
-
-Transformer 기반 sequential recommender입니다.
-
-### DIF-SR
-
-intent-aware sequential recommender입니다.
-
-### DIF-SR + Metadata
-
-item metadata embedding을 결합한 DIF-SR입니다.
+| Model | Role | Description |
+| --- | --- | --- |
+| `TopPopular` | Non-personalized baseline | global popularity recommender |
+| `Corrected SASRec` | Sequential baseline | Transformer 기반 sequential recommender |
+| `DIF-SR` | Intent-aware backbone | intent-aware sequential recommender |
+| `DIF-SR + Metadata` | Intent-aware + metadata | item metadata embedding을 결합한 DIF-SR |
 
 ## Canonical Evaluation (Primary Artifact)
 
@@ -276,6 +250,8 @@ item metadata embedding을 결합한 DIF-SR입니다.
 personalized model 중에서는 `DIF-SR + Metadata`가 가장 좋았습니다.
 
 다만 clean research setting에서도 `TopPopular`가 전체적으로 가장 강했으며, 이는 이 데이터셋의 popularity dominance가 여전히 매우 강하다는 뜻입니다.
+
+**Takeaway:** `DIF-SR + Metadata` is the strongest personalized model, but `TopPopular` remains dominant overall.
 
 canonical report:
 
@@ -306,6 +282,8 @@ relaxed filtering:
 
 repeat purchase를 허용하면 일부 target이 더 쉬워지므로 aggregate metric은 소폭 상승합니다.
 
+**Takeaway:** even under service-style conditions, `DIF-SR + Metadata` stays strongest among personalized models while repeat purchases make aggregate metrics easier.
+
 service-style report:
 
 - [`reports/service_style_evaluation.md`](reports/service_style_evaluation.md)
@@ -314,8 +292,15 @@ service-style report:
 
 서로 다른 사용자 구간은 서로 다른 모델을 선호합니다.
 
-- cold-like / short-history user -> `DIF-SR + Metadata`
-- repeat-heavy scenario -> `Corrected SASRec`
+### User Regime Preference Map
+
+`🟩` strongest, `🟨` competitive, `⬜` not leading
+
+| User Regime | `Corrected SASRec` | `DIF-SR` | `DIF-SR + Metadata` |
+| --- | --- | --- | --- |
+| Cold-like users | `⬜` | `🟨` | `🟩` |
+| Short-history users | `⬜` | `🟨` | `🟩` |
+| Repeat-heavy cases | `🟩` | `⬜` | `⬜` |
 
 ![Service-style slice analysis](plots/final_slice_analysis.png)
 
@@ -348,28 +333,12 @@ repeat-heavy scenario는 일반적인 sparse recommendation보다 memorization p
 
 ## Result Interpretation
 
-```mermaid
-flowchart TD
-
-A["Sparse Interaction Regime"]
-
-A --> B["Weak Behavioral Signals"]
-A --> C["Short User Histories"]
-A --> D["Popularity Bias"]
-
-B --> E["Metadata Becomes Valuable"]
-
-E --> F["DIF-SR + Metadata Performs Best"]
-
-D --> G["Popularity Baseline Remains Strong"]
-
-C --> H["Cold / Short History Users"]
-
-H --> F
-
-I["Repeat-heavy Scenario"] --> J["Sequence Memorization"]
-J --> K["SASRec Performs Well"]
-```
+| Condition | What Happens | Interpretation |
+| --- | --- | --- |
+| Sparse interaction regime | behavioral signal becomes weak | model architecture alone struggles to overcome sparsity |
+| Cold-like / short-history users | `DIF-SR + Metadata` performs best | metadata becomes more valuable when user history is weak |
+| Strong popularity bias | `TopPopular` remains strongest overall | global popularity dominates personalized signal in this dataset |
+| Repeat-heavy scenario | `Corrected SASRec` performs well | this regime behaves more like sequence memorization than sparse discovery |
 
 이 결과는 모델 구조만 복잡하게 만든다고 해서 extreme sparsity를 쉽게 극복할 수 없음을 보여줍니다.
 
@@ -437,15 +406,15 @@ Sequential model은 의미 있는 과거 패턴에 의존합니다. 하지만 se
 
 ### Reproduction Scope
 
-이 public 저장소는 저장된 실험 산출물을 기반으로 artifact를 재생성하고 보고서를 다시 패키징하는 용도를 지원합니다. 원본 로컬 transaction 데이터는 배포하지 않기 때문에, raw data에서 시작하는 full end-to-end reproduction은 제공하지 않습니다.
+이 public 저장소는 saved outputs 기반의 artifact regeneration과 report packaging을 지원합니다. 원본 로컬 transaction 데이터는 배포하지 않기 때문에, raw data에서 시작하는 full end-to-end reproduction은 제공하지 않습니다.
 
-재현 가능한 범위:
+지원 범위:
 
 - saved outputs 기반 research analysis 재생성
 - service-style supplementary report 재생성
 - portfolio plots 및 curated reports 재패키징
 
-재현하지 않는 범위:
+비지원 범위:
 
 - original local transaction data로부터의 full dataset rebuild
 - raw data에서 시작하는 end-to-end training reproduction
@@ -488,16 +457,3 @@ Key artifacts:
 - repository guide: [`REPOSITORY_GUIDE.md`](REPOSITORY_GUIDE.md)
 - update log index: [`updates/README.md`](updates/README.md)
 - phase-agent logs: [`updates/4.portfolio-closure/`](updates/4.portfolio-closure)
-
-## Project Structure
-
-```text
-datasets/
-configs/
-docs/
-experiments/
-analysis/
-plots/
-reports/
-README.md
-```
