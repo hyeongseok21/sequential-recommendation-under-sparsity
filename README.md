@@ -123,20 +123,23 @@ G --> S3
 ```mermaid
 flowchart TD
 
-A["Phase 1<br/>Dataset Construction<br/>purchase dataset<br/>train/test split"]
---> B["Phase 2<br/>Initial Experiments<br/>SASRec baseline<br/>DIF-SR<br/>metadata embedding"]
+A["Phase 1: Dataset Construction<br/>purchase dataset<br/>train/test split"]
+--> B["Phase 2: Initial Experiments<br/>SASRec baseline<br/>DIF-SR<br/>metadata embedding"]
 
-B --> C["Phase 3<br/>Baseline Sanity Check<br/>anomaly detection<br/>causal masking issue"]
+B --> C["Phase 3: Baseline Sanity Check<br/>anomaly detection<br/>causal masking issue"]
 
-C --> D["Phase 4<br/>Baseline Correction<br/>corrected SASRec<br/>fair comparison rerun"]
+C --> D["Phase 4: Baseline Correction<br/>corrected SASRec<br/>fair comparison rerun"]
 
-D --> E["Phase 5<br/>Slice Analysis<br/>cold-like users<br/>short-history users<br/>repeat purchases"]
+D --> E["Phase 5: Slice Analysis<br/>cold-like users<br/>short-history users<br/>repeat purchases"]
 
-E --> F["Phase 6<br/>Robustness Evaluation<br/>service-style evaluation<br/>relaxed filtering"]
+E --> F["Phase 6: Robustness Evaluation<br/>service-style evaluation<br/>relaxed filtering"]
 
-F --> G["Phase 7<br/>Final Interpretation<br/>popularity dominance<br/>metadata usefulness"]
+F --> G["Phase 7: Final Interpretation<br/>popularity dominance<br/>metadata usefulness"]
 
 C -. changed interpretation .-> G
+
+classDef phase fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#111827;
+class A,B,C,D,E,F,G phase;
 ```
 
 ## Dataset
