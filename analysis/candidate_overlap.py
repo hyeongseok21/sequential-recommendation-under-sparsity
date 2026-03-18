@@ -13,6 +13,12 @@ PAIR_ORDER = [
     ("DIF-SR", "DIF-SR + metadata"),
 ]
 
+PAIR_COLORS = {
+    "SASRec vs DIF-SR": "#4C78A8",
+    "SASRec vs DIF-SR + metadata": "#F58518",
+    "DIF-SR vs DIF-SR + metadata": "#54A24B",
+}
+
 
 def compute_pair_overlap(left: pd.DataFrame, right: pd.DataFrame, label_left: str, label_right: str):
     merged = left[["source_user_id", "category_entropy_bucket", "top100_items"]].merge(
@@ -33,7 +39,14 @@ def render_overlap_histograms(overlap_frame: pd.DataFrame, output_path: Path):
     for ax, (left, right) in zip(axes, PAIR_ORDER):
         pair_name = f"{left} vs {right}"
         values = overlap_frame.loc[overlap_frame["pair"] == pair_name, "overlap"]
-        ax.hist(values, bins=20, color="#d66c5f", alpha=0.8)
+        ax.hist(
+            values,
+            bins=20,
+            color=PAIR_COLORS[pair_name],
+            alpha=0.8,
+            edgecolor="#2f2f2f",
+            linewidth=0.7,
+        )
         ax.set_title(pair_name)
         ax.set_xlabel("Top-100 overlap")
     axes[0].set_ylabel("User count")

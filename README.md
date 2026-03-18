@@ -98,6 +98,20 @@ Sanity check 이후 causal masking을 복구하고, epoch 수, sequence length, 
 | `DIF-SR` | Intent-aware backbone | intent-aware sequential recommender |
 | `DIF-SR + Metadata` | Intent-aware + metadata | item metadata embedding을 결합한 DIF-SR |
 
+## Candidate Frontier and Metadata Heads
+
+Candidate stage에서는 multi-source channel 기준 `candidate recall@100`이 대체로 `0.295 ~ 0.298` 수준으로 유지되었습니다.
+
+Metadata head를 추가하면 candidate recall이 개선되었고, 특히 `product_type` head가 가장 안정적으로 좋은 성능을 보였습니다.
+
+이 변화가 단순 reranking이 아니라 candidate frontier 자체의 변화를 동반하는지 보기 위해 top-100 overlap distribution도 함께 확인했습니다.
+
+이 figure는 모델 변경이 비슷한 후보를 다시 정렬하는 수준인지, 아니면 추천 후보군 자체를 바꾸는지를 보여줍니다. overlap이 낮을수록 candidate frontier change가 더 크다는 뜻입니다.
+
+<img src="plots/candidate_overlap_histogram.png" alt="Candidate overlap histogram" width="720" />
+
+**한 줄 해석:** metadata와 intent-aware backbone은 accuracy뿐 아니라 추천 후보군 자체를 바꾸는 방향으로 작동했습니다.
+
 ## Canonical Evaluation (Primary Artifact)
 
 연구용 비교는 confounding factor를 줄인 clean evaluation setting을 기준으로 정리했습니다.
