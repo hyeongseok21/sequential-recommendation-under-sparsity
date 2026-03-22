@@ -1,0 +1,122 @@
+[
+  {
+    "switch_bucket": "0 switches",
+    "model": "Corrected SASRec",
+    "users": 421,
+    "recall20": 0.004750593824228029,
+    "ndcg20": 0.0024175357738859837,
+    "mrr20": 0.00166270783847981,
+    "history_len": 1.0285035629453683,
+    "unique_product_types": 0.33966745843230406
+  },
+  {
+    "switch_bucket": "0 switches",
+    "model": "DIF-SR",
+    "users": 421,
+    "recall20": 0.004750593824228029,
+    "ndcg20": 0.0012837917074932054,
+    "mrr20": 0.000395882818685669,
+    "history_len": 1.0285035629453683,
+    "unique_product_types": 0.33966745843230406
+  },
+  {
+    "switch_bucket": "0 switches",
+    "model": "DIF-SR + Metadata",
+    "users": 421,
+    "recall20": 0.011876484560570071,
+    "ndcg20": 0.0036136502467167997,
+    "mrr20": 0.0014362395789669787,
+    "history_len": 1.0285035629453683,
+    "unique_product_types": 0.33966745843230406
+  },
+  {
+    "switch_bucket": "0 switches",
+    "model": "TopPopular",
+    "users": 421,
+    "recall20": 0.04513064133016627,
+    "ndcg20": 0.01511253945771848,
+    "mrr20": 0.00723947140217924,
+    "history_len": 1.0285035629453683,
+    "unique_product_types": 0.33966745843230406
+  },
+  {
+    "switch_bucket": "1-2 switches",
+    "model": "Corrected SASRec",
+    "users": 397,
+    "recall20": 0.017632241813602016,
+    "ndcg20": 0.0064506784592752815,
+    "mrr20": 0.003323169384418224,
+    "history_len": 9.6272040302267,
+    "unique_product_types": 2.455919395465995
+  },
+  {
+    "switch_bucket": "1-2 switches",
+    "model": "DIF-SR",
+    "users": 397,
+    "recall20": 0.010075566750629723,
+    "ndcg20": 0.0034677588033990036,
+    "mrr20": 0.001755462890445851,
+    "history_len": 9.6272040302267,
+    "unique_product_types": 2.455919395465995
+  },
+  {
+    "switch_bucket": "1-2 switches",
+    "model": "DIF-SR + Metadata",
+    "users": 397,
+    "recall20": 0.012594458438287154,
+    "ndcg20": 0.005107300086068109,
+    "mrr20": 0.0032652985627500374,
+    "history_len": 9.6272040302267,
+    "unique_product_types": 2.455919395465995
+  },
+  {
+    "switch_bucket": "1-2 switches",
+    "model": "TopPopular",
+    "users": 397,
+    "recall20": 0.030226700251889168,
+    "ndcg20": 0.012798333426785831,
+    "mrr20": 0.008181502306167949,
+    "history_len": 9.6272040302267,
+    "unique_product_types": 2.455919395465995
+  },
+  {
+    "switch_bucket": "3+ switches",
+    "model": "Corrected SASRec",
+    "users": 863,
+    "recall20": 0.011587485515643106,
+    "ndcg20": 0.003654903723270059,
+    "mrr20": 0.0014994468644526583,
+    "history_len": 16.803012746234067,
+    "unique_product_types": 3.9490150637311703
+  },
+  {
+    "switch_bucket": "3+ switches",
+    "model": "DIF-SR",
+    "users": 863,
+    "recall20": 0.008111239860950173,
+    "ndcg20": 0.002411654948176672,
+    "mrr20": 0.0008896826104242096,
+    "history_len": 16.803012746234067,
+    "unique_product_types": 3.9490150637311703
+  },
+  {
+    "switch_bucket": "3+ switches",
+    "model": "DIF-SR + Metadata",
+    "users": 863,
+    "recall20": 0.004634994206257242,
+    "ndcg20": 0.0021102693950036185,
+    "mrr20": 0.0013711857860177674,
+    "history_len": 16.803012746234067,
+    "unique_product_types": 3.9490150637311703
+  },
+  {
+    "switch_bucket": "3+ switches",
+    "model": "TopPopular",
+    "users": 863,
+    "recall20": 0.01853997682502897,
+    "ndcg20": 0.006557004990387789,
+    "mrr20": 0.0034015530437042263,
+    "history_len": 16.803012746234067,
+    "unique_product_types": 3.9490150637311703
+  }
+]

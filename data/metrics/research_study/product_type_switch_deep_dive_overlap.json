@@ -1,0 +1,14 @@
+[
+  {
+    "pair": "Corrected SASRec vs DIF-SR + Metadata",
+    "users": 204,
+    "mean_overlap": 0.01034313725490196,
+    "median_overlap": 0.01
+  },
+  {
+    "pair": "DIF-SR vs DIF-SR + Metadata",
+    "users": 204,
+    "mean_overlap": 0.04754901960784314,
+    "median_overlap": 0.04
+  }
+]
